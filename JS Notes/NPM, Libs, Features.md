@@ -994,6 +994,8 @@ The new folder name was decided by "destination" in the jsdoc.json file
 
 
 
+
+
 ### Basic Usage
 
 We'll be describing a simple function in this example
@@ -1128,6 +1130,948 @@ MAKING BETTER DESCRIPTIONS: https://stackoverflow.com/questions/28245463/how-to-
 #### Add text to Home
 
 #### README
+
+# ====== FEATURE CREATION ======
+
+There are plenty of webpage features that we'll be learning
+This is a collection of ones we've encountered/built 
+
+# Dynamic Feature Creation
+
+### Coordinates and Scroll Methods (S1)
+
+Smooth scrolling is when you click on something which will cause your webpage to ~~smoothly scroll~ down to what that thing is referencing
+
+ALL METHODS DEMO'D HERE: [Smooth Scrolling (codepen.io)](https://codepen.io/NFuego24-7/pen/QWdBYmM) 
+
+There are 2 main ways of achieving this, the classic method, and the new method which isn't universally supported yet (as of early 2021)
+
+#### Get Viewport Dimensions 
+
+```js
+// Actual syntax
+let a= document.documentElement.clientHeight 
+let b= document.documentElement.clientWidth
+```
+
+These give you the height and width of the current viewport. 
+If you adjust the webpage's window/view area, then the values returned will change
+
+#### Current Webpage Location Coordinates
+
+```js
+let c= window.pageXOffset
+let d= window.pageYOffset
+```
+
+These tell you how far the document's viewport has scrolled vertically or horizontally at the current position. 0 for both would be the upper left corner of the webpage
+
+Positive horiz movement: 	→ 
+Positive vertical movement:  ↓
+
+#### Get Relative Coordinates of an Element
+
+```js
+htmlEl.getBoundingClientRect()
+```
+
+This method returns a DOMRect object containing key value pairs that describe certain aspects of the element it's used on. 
+
+They're given in pixel units, and are relative to wherever the viewport may be
+
+- The aforementioned aspects are width, height, and left/right/bottom/top 
+- The width/height take the element's content, padding, and border widths into account
+  (Means if `box-sizing: border-box` is set for the element, this would be directly equal to its width/height anyway)
+
+<img src="https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect/element-box-diagram.png" alt="img" style="zoom: 33%;" />
+
+EXAMPLE: 
+
+Button b1 logs its own DOMRect when pressed. We get different results when we click it in different viewport locations.
+
+a) At the default location upon page loading (x and y offset equal 0)
+b) At a point where we've scrolled down and can only see half the button
+
+![image-20210418005923561](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210418005923561.png)
+
+![image-20210418010150471](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210418010150471.png)
+
+#### Scroll Viewport Relatively
+
+```js
+scrollBy(x-offset,y-offset)
+```
+
+- This object will forcibly scroll your webpage horizontally and vertically, according to the 2 pixel arguments you feed it. 
+- It starts moving the viewport FROM the position it was originally
+  Just like `position: relative` top/left/bottom/right movement in CSS
+
+Positive horiz movement: 	→ 
+Positive vertical movement:  ↓
+
+EXAMPLE: A button takes you 100 px lower on click with  `.scrollBy(0,100)`
+
+If you press that button at different scroll heights, the locations you'll be scrolled down to will differ
+
+#### Scroll Viewport Absolutely
+
+```js
+// Ver 1 
+window.scrollTo(x-coord, y-coord)
+
+// Ver 2 (with options)
+window.scrollTo({
+  top: 100,
+  left: 100,
+  behavior: 'smooth'
+});
+```
+
+We need to pass this method the coordinates of where we want it to scroll. 
+
+- The methods explained earlier should help you find elements' coordinates
+- Just make sure that the coordinates you feed this method are absolute, NOT RELATIVE
+- This may require a bit pf creative math on your part 
+  (adding viewport location to relative displacement of an element)
+
+
+
+### Smooth Scrolling Implementation (S2)
+
+Demonstration: [Smooth Scrolling (codepen.io)](https://codepen.io/NFuego24-7/pen/QWdBYmM) 
+
+#### Old School Way
+
+I've created a function that automates smooth scrolling to the element of your choice
+If scrolls horizontally and vertically to the destination element's position
+ARG: The element you want to scroll to
+
+```js
+function scrollHere(destinationEl) {
+  // Relative Coordinates of the destination element
+  let relY_dest = destinationEl.getBoundingClientRect().y;
+  let relX_dest = destinationEl.getBoundingClientRect().x;
+  // Absolute Coordinates of the Current Viewport
+  let absY_Viewport = window.pageYOffset;
+  let absX_Viewport = window.pageXOffset;
+  // calculate the desired coordinates you want to scroll to
+  let destinationY = relY_dest + absY_Viewport;
+  let destinationX = relX_dest + absX_Viewport;
+  window.scrollTo({
+    top: destinationY,
+    left: destinationX,
+    behavior: "smooth",
+  });
+}
+```
+
+#### Logic Behind Old School Method
+
+```
+<<  absoluteCoordinates= relative position + absolute position of viewport  >>
+
+SIMPLE EXPLANATION IN 1D: (Though this rule is true in both X and Y directions )
+You want to know the exact distance between your house, and the mailbox
+Your house is the starting point
+
+You're currently 8m away from the mailbox (relative coords of destination)
+You know you've walked 4m from your house already (absolute coords of viewport)
+The absolute distance between the mailbox and your house is 8+4 meters
+```
+
+#### New School Way
+
+```js
+destinationEl.scrollIntoView({behavior:'smooth'})
+// (not universally supported yet)
+```
+
+This does the exact same thing as the function I created manually- so use whichever you prefer. This may be universally supported at some point down the line
+
+
+
+### Building a Tabbed Component
+
+A tabbed component is when you have an element that changes webpage content after its clicked:
+
+![image-20210421043717666](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421043717666.png)
+
+![image-20210421043756391](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421043756391.png)
+
+#### Useful Custom Function
+
+You're usually just adding and removing classes that are styled in CSS to change the appearance of your webpage after a button is clicked
+
+```js
+// This ƒ() removes a classname from all potential element locations then adds it to one element of your choosing 
+
+function classMove(locationsArray, newLocationEl, classNameString) {
+  locationsArray.forEach(el => {
+    el.classList.remove(classNameString); // remove class names from all possible spots
+  });
+  newLocationEl.classList.add(classNameString);
+}
+```
+
+#### Procedure
+
+1. Make clicking any location on the button return the button element
+   Event delegation (optimizes webpage performance)
+
+2. Make the clicked tab button bounce upwards, while the others stay down
+   Class moving
+3. Make the tab's content appear once clicked
+   Class moving
+
+Final code for the tab event Listener with no context:
+
+```js
+const tabs = document.querySelectorAll('.operations__tab'); 
+// buttons to press for tab activation
+const tabsContainer = document.querySelector('.operations__tab-container'); 
+// only contains btns
+const tabsContent = document.querySelectorAll('.operations__content');
+
+tabsContainer.addEventListener('click', e => {
+  //#1: 
+  const clicked = e.target.closest('.operations__tab'); // pick nearest btn element
+  if (!clicked) return; // end handler early if we get null back from closest()
+  //#2: 
+  classMove([...tabs], clicked, 'operations__tab--active');
+  //#3: 
+  let clickedData= clicked.dataset.tab // 1, 2, or 3
+  let associatedDiv= document.querySelector(`.operations__content--${clickedData}`)
+  classMove([...tabsContent],associatedDiv,'operations__content--active');
+});
+```
+
+Each of these steps boils down to a really simple operation, but we use sophisticated concepts to make them work in this example:
+
+- Custom functions for class adding/removing
+- closest() with guard clauses to pick the right element when the parent container is clicked
+- Data attributes to relate the buttons you clicked to another element
+
+You can use more juvenile methods to get the job done, but you should probably get used to these. Find code below
+
+https://drive.google.com/drive/folders/1UNaaxxYkkQMUM5pqusqF-PCxxhU7Twev?usp=sharing
+[JSFiddle - Code Playground](https://jsfiddle.net/JasonXtuyotech/sgp2akbL/#save)
+
+### Fade in and Out after Hovering an Element
+
+Not hovering:		 ![image-20210421110129388](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421110129388.png)
+
+Hovering:			 ![image-20210421110046520](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421110046520.png)
+
+Not hovering again:   ![image-20210421110129388](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421110129388.png)
+
+#### PROCEDURE:
+
+1. Reduce the opacity of every link element besides the one you're hovering over
+   Need the mouseover event listener. Capture all anchors but the one you're hovering
+2. Return opacity back to normal as soon as you stop hovering an anchor
+   Need the mouseout event listener.
+   The handler should be identical to step 1's but with a different opacity value
+
+Capturing all anchors except the one you're in
+
+![image-20210421111000674](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421111000674.png)
+
+mouseover event listener:
+
+- Use closest() to capture the nearest `<ul`, then use querySelectorAll on that to capture all the anchors (depicted above)
+- Delete the anchor you clicked on from the HTMLcollection
+  You'll probably need to convert that to an array first, to use `splice(ind,amount)`
+- Change the opacity of all the elements after that deletion to about 0.4
+
+mouseout event listener
+
+- Exact same as the first, just with a different event type and opacity value. 
+  Great chance to use an event handler with an argument
+
+#### JS Code
+
+```js
+const navContainer = document.querySelector('.nav__links');
+function changeOpacity(e, opacity){
+  const nearestUL = e.target.closest('.nav__links'); //finds nearest ul
+  const anchorsIn_nearestUL = [...nearestUL.querySelectorAll('.nav__link')];
+  const clickedAnchor = e.target.closest('.nav__link');
+
+  if (!nearestUL) return;
+  if (!clickedAnchor) return;
+
+  let indexOfClickedAnchor = anchorsIn_nearestUL.findIndex(element => {
+    return element == clickedAnchor;
+  });
+  anchorsIn_nearestUL.splice(indexOfClickedAnchor, 1); //remove anchor we clicked
+  anchorsIn_nearestUL.forEach(el => {
+    el.style.opacity = opacity;
+  });
+}
+//@ Begin Focus: Use event with mouseover (that event type works with bubbling)
+navContainer.addEventListener('mouseover', e => changeOpacity(e, 0.4));
+
+//@ Exit Focus: Use event with mouseout (that event type works with bubbling)
+navContainer.addEventListener('mouseout', e => changeOpacity(e, 1));
+```
+
+LEAN DEMO: [JSFiddle - Code Playground](https://jsfiddle.net/JasonXtuyotech/hqspwgzm/6/)
+
+#### Alternative way to Pass Handler Arguments
+
+Shown below is the last section where we call our externally defined event handler, and pass in an argument.
+
+```js
+//@ Begin Focus: Use event with mouseover (that event type works with bubbling)
+navContainer.addEventListener('mouseover', e => changeOpacity(e, 0.4));
+
+//@ Exit Focus: Use event with mouseout (that event type works with bubbling)
+navContainer.addEventListener('mouseout', e => changeOpacity(e, 1));
+```
+
+This is the only legitimate way to do pass in an argument to a handler, but we can refactor it slightly using the bind() method. 
+
+- bind() won't let us pass an argument, but we can set the "this" keyword equal to something unconventional, the opacity value. 
+- Usually its equal to `eventObj.currentTarget`, but we can change that
+
+DID NOT TRY IT. Check end of [The Complete JavaScript Course 2021: From Zero to Expert! | Udemy](https://www.udemy.com/course/the-complete-javascript-course/learn/lecture/22648983#questions) if you're curious
+
+### Sticky Navigation 
+
+- You already know how to make a navbar stay on screen permanently- just use the fixed position value in CSS. This lesson is a twist on that.
+- The navbar starts off visible at the top (as is customary)
+  It is allowed to go offscreen when you scroll down (is not fixed, then)
+  At a certain point the navbar returns and sticks on screen 
+
+![image-20210421123134652](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421123134652.png)
+
+![image-20210421123249481](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421123249481.png)
+
+![image-20210421123203218](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421123203218.png)
+
+There are multiple ways to code this feature. 
+
+- The first one involves using scroll events- but these are absolutely terrible for performance since an event fires every time you look up and down the page
+- To avoid this, we're going to use the "Intersection Observer API"
+  Relearn how it works if you need to 
+
+#### Solution
+
+- We add or remove a CSS class based on whether the `isIntersection` property of the "entries" object equals true or not
+- The CSS class is pre-programmed to make a transparent version of the navbar appear fixed on screen
+- We make the intersection event trigger a bit earlier using `rootMargin`
+  The offset is not hard-coded or random
+  It's offset by the exact height of the navbar so it pops in before a certain line
+
+```js
+const header = document.querySelector('.header');
+const navInfo = nav.getBoundingClientRect();
+
+//# Define options array
+const obsOptions = {
+  root: null,
+  rootMargin: `-${navInfo.height}px`,
+  // want the pop in to happen earlier. By the height of the nav
+  threshold: 0,
+};
+//# Observe callback ƒunction
+const obsCallback = function (entries) {
+  let first = entries[0];
+  if (first.isIntersecting === false) {
+    nav.classList.add('sticky');
+  } else nav.classList.remove('sticky');
+};
+
+//# API call, specify the target element
+const section1Observe = new IntersectionObserver(obsCallback, obsOptions);
+section1Observe.observe(header); 
+```
+
+OUTCOME:
+
+![image-20210421191534432](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421191534432.png)
+
+![image-20210421191553776](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421191553776.png)
+
+FULL DEMO: [Sticky Nav (codepen.io)](https://codepen.io/NFuego24-7/pen/gOgQodz)
+(the nav timing is off on these demo sites, but looks fine on VSC live server)
+
+
+
+### Lazy Loading Images
+
+Webpage performance matters, and images have a huge impact on that. Lazy loading can help create a better experience for people who have slow internet, while providing a nice visual effect for those who don't
+
+#### Description and Procedure:
+
+SETUP:
+
+- You have a high resolution image you want displayed on your webpage, but it isn't loaded right at the start
+- Instead, you have a smaller, lower resolution replica of that image loaded initially
+  It looks terrible, but we apply a blur filter to the `img` tag with CSS 
+
+> ​		![image-20210423111805275](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210423111805275.png) ![image-20210423103920281](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210423103920281.png)
+>
+> src: 	 Contains link to the blurry, low res image
+> data-src: Contains link to the high resolution version we want displayed at the end
+
+1. Use intersection observer API to detect when a user scrolls down close enough to that blurred image. Once it does, set src's value equal to data-src's instead
+
+- If you don't want people to see the lazy loading, use a threshold of 0 and have a negative rootMargin
+
+Be careful here! 
+
+2. We can now remove the `lazy-img` tag from our img elements, but ONLY inside of a "load" event listener.
+
+![image-20210423113006046](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210423113006046.png)
+
+- The load event happens behind the scenes, after the src value is accepted and loads into the webpage. 
+- It's important, because without that, people with slow internet connections will have the low res image unblurred, and the high res one will take forever to load in
+- The low res image will be out in full display, looking like trash
+
+3. Stop the API from observing an image after it's found the first time
+
+#### EXAMPLE
+
+https://drive.google.com/drive/folders/1pfwV_NxKLTG0xfxNpIFYl5MFNi2FaKPl?usp=sharing 
+
+In our example, we made the threshold equal 0.15 so we can see the lazy loading happen. If you don't want people to see this, make threshold equal 0 and add a negative root margin so the detection happens early
+
+```js
+//%————————————————————————【 LAZY LOAD IMAGES 】———————————————————————
+const blurredImages = document.querySelectorAll('img[data-src]');
+//# Define options array
+const imgScroll = {
+  root: null,
+  threshold: 0.15,
+};
+//# Observe callback ƒunction (AKA. Step 3)
+const imgScrollFunction = function (entries, observer) {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.src = entry.target.dataset.src;
+      entry.target.addEventListener('load', e => {
+        entry.target.classList.remove('lazy-img');
+        observer.unobserve(entry.target);
+      });
+    }
+  });
+};
+
+//# API call, specify the target elements
+const imgDetect = new IntersectionObserver(imgScrollFunction, imgScroll);
+blurredImages.forEach(picture => {
+  //^ add in lazy-img classes for all section programmatically
+  picture.classList.add('lazy-img');
+  imgDetect.observe(picture);
+});
+```
+
+
+
+### Hash Changes 
+
+HASH VALUE:  `#followed-by-numbers` at the end of certain web links
+
+![image-20210629214953154](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210629214953154.png)
+
+- The window object in JS has an `onhashchange` event that fires every time this hash value changes
+- If the hash changes, it does not necessarily mean your webpage reloaded
+  Click on new recipes here and see: https://forkify-v2.netlify.app/#5ed6604591c37cdc054bca5d
+
+#### Detecting Hash Changes
+
+Run a function after the hash value changes:
+
+```js
+window.addEventListener('hashchange', callbackF)
+// OR ...
+window.addEventListener('hashchange', function(){
+	~~~~~ whatever ~~~~~
+})
+```
+
+EXAMPLE 1: Get the hash number when it changes 
+
+```js
+window.addEventListener('hashchange', function(){
+	let hashNumber= window.location.hash
+    console.log(hashNumber) // do what you wish with it
+})
+```
+
+EXAMPLE 2: Get the hash value currently
+
+```js
+let currentHash= window.location.hash
+```
+
+#### Practical Use Case Example
+
+In our forkify app:
+
+- Clicking on a certain recipe's search result will change our webpage's hash
+- Our hash event listener renders visuals and cook instructions according to that same recipe
+- This is done by feeding the function that renders visuals our hash, which we use to pull up info on a certain dish..render visuals/instructions...etc
+
+Take a look: https://forkify-v2.netlify.app/#5ed6604591c37cdc054bca5d
+
+#### Managing the Hash (2BC)
+
+Research topics here: https://usefulangle.com/post/298/javascript-url-hash
+
+You can deliberately change the hash of the webpage you're currently on
+Clicking these anchors will change the hash value of the page
+
+```html
+<a href='#5ed6604591c37cdc054bc886'>RECIPE 1</a>
+<a href='#5ed6604591c37cdc054bc90b'>RECIPE 2</a>
+```
+
+
+
+### Search Results and Pagination (Overview-only)
+
+#### Search Results Procedure
+
+1. Set up a search bar that accepts submissions
+2. Use the submitted search term to look for something in an API 
+3. If the search term is valid, reformat the info you get back from the API
+   This step is optional, but it helps you rename things and exclude what isn't needed for your site
+4. Store your reformatted search results in a dedicated state object
+5. Render what's inside by generating new HTML based on the information stored in the state object
+
+#### Pagination
+
+When pulling search results from an API, you'll often get more results than you'd like to display. 
+Instead of listing them all and making your webpage absurdly long, use pagination
+
+![image-20210708020018945](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210708020018945.png)
+
+#### Procedure:
+
+1. Store all search results in an array, within your state object
+2. Render visuals by generating HTML for only the first 10 (or whatever value you decide on)
+3. Associate the first 10 results with page 1, then the next 10 with page 2... etc 
+   (inside state object, possibly with a helper function)
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210708022449254.png" alt="image-20210708022449254" style="zoom:80%;" />
+
+4. If someone clicks on a Page X button, render new visuals
+   The method you create to generate/render HTML needs to know which button layout to use
+
+![image-20210708022637482](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210708022637482.png)
+
+#### Pagination Button Layout Considerations
+
+The button layout will change depending on your number of search results, and the page you're currently on
+
+![image-20210708021856940](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210708021856940.png)
+
+![image-20210708021936288](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210708021936288.png)
+
+![image-20210708022043600](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210708022043600.png)
+
+CODING THIS:
+
+- Use information saved in your state object to figure out which layout is required at the moment
+- Will need the total # of search results, the current page you're on, and the number of rendered results per page stored somewhere in your code
+- Generate different HTML in each block
+
+![image-20210708095753189](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210708095753189.png)
+
+
+
+# Animated Features
+
+### Animated Carousel/Slider
+
+When you have a list of items that you want tablet/mobile to see, you might be limited by the horizontal space available. To remedy this, feel free to use a carousel
+
+Project Example: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210210112331259.png" alt="image-20210210112331259" style="zoom:67%;" />
+
+- It'll let you click or drag your way through a list of containers
+- It's animated and easy to implement if you use the flickity jQuery plugin
+  If you try to use pure CSS for this it's a pain in the ass
+
+Pure CSS Example (+200 lines): https://codepen.io/Schepp/pen/WNbQByE
+With flickity (<25 lines): https://codepen.io/desandro/pen/emjrBm
+
+#### Flickity Setup
+
+1. Put this in the head section of your HTML
+
+```HTML
+<link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css"> 
+```
+
+2. Place this at the end of the body in HTML
+
+```HTML
+<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+```
+
+3. Make sure when you're setting up your gallery, you include the "js-clickity" class name in your wrapper
+
+```HTML
+<!--AS SEEN IN THE SYNTAX SECTION IN THIS LESSON-->
+<div class="gallery js-flickity"> ~~contont~~ </div>
+```
+
+4. Put anything you want in your gallery cells
+
+- You can make your gallery-cell a flex container
+- `Gallery-cell-width = sum of all flex-item widths`  
+  (perhaps the sum should be a bit less)
+
+
+
+#### Syntax for a Numberless Carousel
+
+The following 2 code blocks are the most significant. 
+Obviously for complex projects, there will be lots more when you style things
+
+```html
+<div class="gallery js-flickity" data-flickity-options='{ "wrapAround": true }'>
+  <div class="gallery-cell"></div>
+  <div class="gallery-cell"></div>
+  <div class="gallery-cell"></div>
+</div>
+```
+
+Put whatever content you want in your gallery cells containers. 
+The entire cell will be moved when you're done
+
+```scss
+* { -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+.gallery-cell {
+  width: 66%; // Set the width of your cell
+  height: 200px; // Set the height of your cell
+  margin-right: 10px; 
+  	// make higher if you don't want to see the next cell's edge
+  counter-increment: gallery-cell; 
+    // comment out if you don't want a number on your cell
+}
+```
+
+#### Be Aware...
+
+Flickity my have a few problems when the HTML is placed in a location where the gallery is a flex-item. 
+
+- Try using `display:block` or `position:relative` or `position:absolute`
+  Search online for a fix. 
+- It worked out without any special hacks on my HipsterDev project
+
+You shouldn't use Clickity for any commercial projects unless you pay for a dev license ($25). 
+Call them to see how that would work on the job
+
+FOR MORE INFO:
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210210125418134.png" alt="image-20210210125418134" style="zoom:200%;" />
+
+#### Styling the Dots
+
+If you're looking to style something about the carousel...
+
+1. Go to the style section of the Flickity docs
+2. Inspect elements in the dev tools so you can find the class names whose properties you need to override
+
+ANYWAY...
+Override these classes to adjust the dots
+
+```scss
+.flickity-page-dots .dot{
+  background: blue; 
+  // color of dots that are not selected (is sset to be semi transparent by default)
+}
+.flickity-page-dots .dot.is-selected{
+  background: blue;
+  // color of dots when selected
+}
+/* position dots in gallery */
+.flickity-page-dots {
+  bottom: 0px;
+}
+```
+
+![image-20211205224249669](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211205224249669.png)
+
+### Loading Spinners
+
+Some use cases where they're useful include...
+
+1. When you have an async operation that may take long enough to warrant a distraction 
+2. When you're loading an image- especially large HD ones
+
+WARNING: You may need the "Async Operation Filepath Problems" lesson when referencing images in projects where you use the Parcel bundler
+
+SOURCE: https://www.youtube.com/watch?v=wwJcYaJg8Mc
+
+#### for Async Operations
+
+> DEFAULT CONTENT (spinner) -- replace with --> MEANINGFUL CONTENT (add HTML)
+
+PROCEDURE: https://codepen.io/jason2b3/pen/poPvvjv
+
+1. Have the spinner be present when the page loads initially
+2. Empty out the innerHTML of the container holding the spinner
+   Insert HTML containing meaningful content after your async operation completes
+
+- In your projects, I'd recommend placing the spinner styling in a SCSS mixin- for compartmentalization purposes 
+- Copy paste any of the premade spinners I have, or find new ones
+
+#### for Loading Images
+
+PROCEDURE: 
+
+1. Use a render spinner function BEFORE any async operations, which may include loading images
+   Make it one of the first steps of an async await function
+2. After the async operations you need are completed, clear out the spinner with `innerHTML=""`
+   Replace it by DOM adding the image you wanted loaded
+
+GENERAL STRUCTURE: https://codepen.io/jason2b3/pen/ExmaPro
+
+```js
+function renderSpinner (parentEl) {
+  parentEl.innerHTML = ''; // clear out content already there
+  const markup = `<div class="loading"></div>`;
+  parentEl.insertAdjacentHTML('afterbegin', markup); // insert pre-styled spinner 
+};
+
+const showRecipe = async function () {
+  	renderSpinner(container) 	// PART 1: Add spinner as your default state
+  	// ~~~ async stuff ~~~
+    container.innerHTML = ''; 	// PART 2: Remove spinner
+    const markup = `<image src="${recipe.image}">`;
+    container.insertAdjacentHTML('afterbegin', markup); // PART 3: Add image
+}
+```
+
+- For the record, fetchAPI isn't working in codepen, but the example works the same either way
+  Instead of loading a picture of chicken, we load a broken image svg
+- This procedure should work regardless whether we have a button or not
+  Loading images is asynchronous by default
+
+#### Dark theme Loaders
+
+Source: https://codepen.io/saconway/pen/vYKYyrx?editors=1100
+
+![image-20210629122104254](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210629122104254.png)
+
+Beats wave: https://codepen.io/jason2b3/pen/LYyEPyv
+Spinny Rings: https://codepen.io/jason2b3/pen/eYWmOwb
+Moving Blocks: https://codepen.io/jason2b3/pen/PomwYJz
+
+Bouncing Dots: https://codepen.io/jason2b3/pen/jOmENza
+LR Strafe: https://codepen.io/jason2b3/pen/bGWNbQr
+Drip: https://codepen.io/jason2b3/pen/RwVNbvR
+
+#### Light theme Loaders
+
+Standard: https://codepen.io/jason2b3/pen/PomwYGP
+Neon dark: https://codepen.io/jason2b3/pen/JjNjgQB
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210629123223052.png" alt="image-20210629123223052" style="zoom:67%;" />
+
+Pick what you need from this bank
+https://codepen.io/jason2b3/pen/OJmPJJj?editors=0100
+
+
+
+### Bouncy Hover Containers
+
+This is when a box seems to jump out at you a bit once they're hovered over
+FULL CODEPEN: https://codepen.io/NFuego24-7/pen/MWbWPxG?editors=0110
+
+```HTML
+<div class="container"> 
+  <div class="box"> </div> 
+  <div class="box"> </div> 
+  <div class="box"> </div>
+  <div class="box"> </div>
+  <div class="box"> </div>
+</div>
+```
+
+```CSS
+.container {
+  width: 90%;
+  padding:10px;
+  background: #ddd;
+  margin: 100px auto;
+  display:flex;				
+  justify-content: center;
+} /* ONLY THE LAST 2 LINES ABOVE MATTER IN THIS RULE */
+
+.box {
+  width: 250px;
+  height: 300px;
+  background: orange;
+  float: left;
+  margin: 0px 10px;
+  transition: 0.5s; /*adjust how fast the transition is*/
+  border-radius:50px;
+  
+}
+
+.box:hover{
+  transform:scale(1.05); /*adjust how big you want it*/
+}
+```
+
+
+
+### Sliding Menus, Navbars, & Burger Icons
+
+The comments in the codepens explain how you can customize aspects of the feature for your own projects
+
+#### Customizable Burger Icon with Animation
+
+> https://codepen.io/jason2b3/pen/PoJYpWP
+
+- This burger icon can be customized simply by editing a few SCSS variables I created
+- The animation to turn the burger to an X should work if you adjust variable values properly
+
+#### Drop Down Menu
+
+> https://codepen.io/jason2b3/pen/QWqdoew
+
+#### Sliding Navbar Menus
+
+LEFT → RIGHT
+
+> https://codepen.io/jason2b3/pen/LYzxvmX
+
+RIGHT → LEFT
+
+> Crude Example: (comments explain how it would be done, but looks very imperfect)
+> https://codepen.io/jason2b3/pen/JjrEVzw?editors=0110
+
+
+
+### Fullscreen Image with Animated Zoom
+
+Making an image fullscreen is fairly simple, but we want sophisticated animations like this:
+Medium Zoom Library →  [see here](https://medium-zoom.francoischalifour.com/#:~:text=zoom%20with%20background%20color)
+
+- The image enlarges to nearly be fullscreen, along with a colored background
+- The image growing is animated (not instantaneous/choppy), and moves to the viewport center
+
+#### Procedure
+
+1. Find images and insert them into your webpage somewhere
+2. If you don't care whether each image is the same size when zoomed in, skip step 2
+   If you do care, resize them all to the same width using [this tool](*https://redketchup.io/image-resizer*)
+
+2. Create a setup file then execute it on your main JS file
+
+animatedZoom.js
+
+```js
+import mediumZoom from "medium-zoom";
+
+export const animatedZoom = function () {
+  console.log("media zoom function ran");
+  // Decide margin based on viewport size
+  // Some margins look good on mobile but terrible on desktop & vice versa
+  let margin = 50;
+  // Set up the medium-zoom click event listener
+  const zoomProtocol = mediumZoom(".zoom", {
+    background: "rgba(0, 0, 0, 0.5)", // transparent dark filter
+    offset: 0,
+    margin, // determined by viewport size
+  });
+  const screenshot_cell = document.querySelector(".zoom");
+  if (screenshot_cell)
+    screenshot_cell.addEventListener("click", () => zoomProtocol.open());
+};
+```
+
+index.js
+
+```js
+// must use .js extension or HTML thinks these are HTML files
+import { allClickEvents } from "./clickEvents.js"; 
+import { animatedZoom } from "./animatedZoom.js"; 
+//@ must apply after click events (we change img brightness on click)
+
+// Immediately execute the imported code
+allClickEvents();
+animatedZoom(); //@ must apply after click events (we change img brightness on click)
+```
+
+- You may not have any file named clickEvents.js in your project
+- If certain JS files program in click events, execute the setup function AFTER them
+  The Medium-Zoom library deals with click events too, and it may clash with a few things
+
+#### Demo
+
+Check out the smash ultimate project you made back in December 2021
+https://github.com/Jason2B3/nintendo_webpage
+
+### General: Revealing Elements on Scroll with Animation
+
+This effect is when webpage content goes from visible=>visible after a brief animation that only occurs when you scroll down far enough on your page
+
+We're focusing on steps 1 and 3 today. The animation has been pre-prepared using vanilla CSS and will be applied simply by adding classes to the right elements
+
+![image-20210422171620729](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210422171620729.png)
+
+CSS ANIMATION CLASS WE'RE USING:
+
+```css
+.section--hidden { 
+  opacity: 0;
+  transform: translateY(8rem);
+}
+```
+
+- The section--hidden class can be hardcoded to major sections on our webpage to shift them downward and make them invisible
+- Once removed, they will return to their normal positions, and fade in. 
+  This is more of a reverse-animation than a traditional one
+
+Alternative to hardcoding hidden classes in HTML:
+
+- A smarter way to implement this is to just add this class to all major sections programmatically in JS, without any events or conditions (it'll be done on page-load) 
+- Some people disable JS in their browser, and having hidden classes hardcoded in their HTML would completely ruin their experience (since nothing would be visible, and that would never change)
+
+Starter Code: [Starter for Scroll Animation (codepen.io)](https://codepen.io/NFuego24-7/pen/BapvWgP)
+
+Ending Code: [Finished Scroll Animation (codepen.io)](https://codepen.io/NFuego24-7/pen/eYgbvaY?editors=1010)
+
+#### SOLUTION 
+
+```js
+//%————————————————————————【 CONTENT FADE-IN AFTER SCROLL 】———————————————————————
+//# Define options array
+const optionsScroll = {
+  root: null,
+  threshold: 0.15,
+};
+//# Observe callback ƒunction (AKA. Step 3)
+const callbackScroll = function (entries, observer) {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.remove('section--hidden');
+      console.log('still observin!');
+      observer.unobserve(entry.target);
+    }
+  });
+};
+
+//# API call, specify the target elements
+const scrollObserve = new IntersectionObserver(callbackScroll, optionsScroll);
+allSections.forEach(section => {
+  // STEP 2: add in hidden classes for all section programmatically
+  section.classList.add('section--hidden');
+  scrollObserve.observe(section);
+});
+```
+
+STEP 1: Import the elements we need to reach with our observer API (`allSections`)
+STEP 2: Add the section--hidden class to `allSections` elements on start-up
+STEP 3: Once 15% of them are on screen, remove the "section--hidden" class
+STEP 4: Stop the API from observing an element once it's found the first time
 
 
 

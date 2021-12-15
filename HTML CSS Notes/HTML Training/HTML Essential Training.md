@@ -20,9 +20,11 @@ Meant for texts that can independently exist outside the site like blog/forum po
 
 
 
+
+
 ### Nested Elements
 
-- Typora uses the same markdown syntax that HTML uses- the main difference is that Typora allows shortcuts to replace tags that would normally need to be typed out manually. 
+- Typora uses the same markdown syntax that HTML uses- the main difference is that Typora allows shortcuts to replace tags that normally need to be typed out manually. 
 - For example, we can underline words using CTRL U instead of typing             < u > < /u > tags around the words you need bolded
 - What makes this a nested example is that the tags for bolding are inside the tags used to tell HTML that we are creating a paragraph
 
