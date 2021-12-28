@@ -495,17 +495,6 @@ Before this example, we already had it pre-installed
 
 
 
-### What about Yarn?
-
-Most people install JS packages from the NPM registry using the NPM package manager
-Yarn is a faster and reliable alternative that can perform the same actions w/ diff syntax
-
-FOR THE RECORD:
-After the latest release of NPM, yarn is now no longer leaps ahead of it in any relevant category
-The manager you choose is irrelevant, and NPM is more popular anyway
-
-
-
 # 3rd Party Packages & Bundling
 
 This chapter is not about the JS language itself. It focuses on the development process and the modern tools/ecosystem centered around JS that all developers use
@@ -588,7 +577,7 @@ Parcel takes multiple JS files and dependencies then converts them into 1 single
 
 
 
-### Parcel Bundling & NPM Scripts: Lodash + Modules (MOST COMMON PROCEDURE)
+### MAIN LESSON: Parcel Bundling & NPM Scripts
 
 Following the "Building for Production" section of Parcel's Getting Started page
 
@@ -659,6 +648,9 @@ Step 2: Directly edit your package.json file and set up your npm scripts
 >
 > Forgot to add SASS in our first go around (that's why it's not in the devdependencies list)
 > Carry on! Nothing about the rest of the procedure changes
+>
+> If you run into issues, change 
+> "main": "index.html" 		to 			"default": "index.html"
 
 - Set the "main" property to our future entry point => `index.html`
   Added a dev and build script which targets the entry point => `index.html`
@@ -694,6 +686,7 @@ npm run build
 
 ———————————————----————【 TIME SKIP 】——————————————————————————————
 Step 6: Once your project is finished being worked on, build your final bundle
+More detailed instructions in the "Final Project Build" lesson in Deployment Chapter
 
 ```powershell
 npx parcel build index.html			"bundle code and convert to ES5 via Babel"
@@ -777,7 +770,7 @@ EXAMPLE: How I learned to use Lodash the first time
 
 ![image-20210527020335713](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527020335713.png) <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527020542061.png" alt="image-20210527020542061" style="zoom:80%;" />
 
-​					 
+​				
 
 ### Configuring Babel and Polyfills
 
@@ -819,6 +812,66 @@ Fortunately for us, Parcel will automatically apply Babel
 
 
 
+### Manage Packages with NPM: Fast Notes
+
+#### Dependencies
+
+Install lodash 
+
+```
+npm install lodash
+```
+
+Install old version of lodash (will override other installed versions)
+
+```
+mpm install lodash@4.17.3
+```
+
+Uninstall lodash
+
+```
+npm uninstall lodash
+```
+
+#### dev-dependencies
+
+Install SASS as a dev dependency
+
+```
+npm install sass --save-dev 
+OR
+npm install --save-dev sass
+```
+
+Uninstall SASS as a dev dependency
+
+```
+npm uninstall sass
+```
+
+#### Global Installs
+
+Install nodemon globally
+
+```
+npm install --global nodemon
+```
+
+See a list of all global installs
+
+```
+npm list -g --depth=0
+```
+
+Uninstall a global package
+
+```
+npm uninstall -g  nodemon
+```
+
+
+
 # Deployment
 
 ### Final Project Build 
@@ -850,6 +903,8 @@ The commands may change depending on the version of parcel you're using
 - Also, the import syntax for icons in your project will be different as well 
   (relevant in the forkify project, but may not be in another)
 
+
+
 ### Netlify: Front-end Only
 
 When deploying our site to Netlify, we have 2 options for how we'd like to do so; the manual deploy, and the continuous integration deploy method
@@ -868,7 +923,7 @@ TO CHANGE OUR LIVE WEBSITE:
 
 PROCEDURE:
 
-1. Go to the sites tab and hit the "New sit from Git" button
+1. Go to the sites tab and hit the "New site from Git" button
 
 2. Select your repo from the list
 
@@ -910,226 +965,216 @@ You are free to use API's and libraries, so long as no backend code is part of y
 
 
 
-# JSDoc Crash Course (2BC)
+# Yarn 3.0: Faster NPM
 
-JSDoc allows us to create documentation for our code, similarly to how you'd see for a library. 
-It works with the front end (JS, Typescript, React...etc) and even the back (Node, Express)
+Yarn is just NPM but with much faster install speeds and slightly different syntax
+The differences between yarn 1-3 make it real tough to use if you need global installs though
 
-- You can specify data types of variables or function parameters, leave comments about what your methods do...etc. 
-- It will render an HTML page with your functions described
+### Installation & Advantages 
 
-### Setup
+#### What is it?
 
-#### Procedure 
+Yarn is an alternative to NPM which is pretty colose to it in terms of speed (it's a tad faster)
 
-1. Have your package.json file set up already
-2. Install jsdoc as a dev dependency
+- Any package that can be installed with npm can be installed with yarn
+- NPM is built into NodeJS while yarn is not
+
+#### Installation & package.json
+
+1. Check if yarn is already installed with `yarn -v`
+
+2. If it isn't follow the instructions on the Yarn Homepage
+   Is currently [here](https://yarnpkg.com/getting-started/install) but this will change as new versions get released
+
+3. Check to see what version of yarn you have available with `yarn -v` again
+
+- Yarn 2.0 has a strange way of installing itself in its early 2.0 versions
+- If the version is still v1, then follow the remaining steps
+
+------
+
+4. Create a local package.json file using yarn and answer all the prompts
 
 ```
-npm i -D jsdoc
+yarn init 
 ```
 
-3. Create a file on the root level called `jsdoc.json`, then paste the following inside
+Add your scipts too:		 <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527175243923.png" alt="image-20210527175243923" style="zoom:80%;" />
+
+5. Enter the following in your terminal
+
+```
+yarn policies set-version berry
+```
+
+#### Don't mix NPM/Yarn
+
+Don't install packages with Yarn then install others with NPM
+
+- It can work sometimes, but it introduces potential complications
+- If someone does and it raises issues, try deleting the node_modules folder, then run `yarn install` again to install everything in package.json with yarn exclusively
+
+
+
+### Installing Packages with Yarn
+
+Yarn's syntax differs from NPM, but they both do the same things (mostly)
+
+FIND A YARN INSTALL FOR YOUR FAVORITE PACKAGES:
+https://yarnpkg.com/package/nodemon
+
+#### Dependency Installs
+
+Install the latest Lodash version as a dependency
+
+```
+yarn add lodash
+```
+
+Install an old version of Lodash  
+This will override the previous install and can be used to upgrade or downgrade
+
+```
+yarn add lodash@4.17.3
+```
+
+Uninstall Lodash as a dependency
+
+```
+yarn remove lodash
+```
+
+#### dev-dependency Installs
+
+Install Lodash as a dev-dependency
+
+```
+yarn add lodash -D
+```
+
+Uninstall Lodash as a dev-dependency
+
+```
+yarn remove lodash
+```
+
+
+
+#### Global Installs (avoid)
+
+As of early 2022 using Yarn 3.1.1 or higher, try not to globally install anything using yarn
+
+- I can't find a clear explanation for how to globally install using yarn
+- I also can't find an answer for how to check for a list of globally installed packages using yarn either
+
+There were old solutions for this, but they have been patched out as of Yarn 2.0
+
+![image-20211227231747431](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211227231747431.png)
+
+#### npm install alternative
+
+When you recieve a project with a package.json, you can easily install all its package dependencies in 1 go with `npm install` . Yarn can do the same thing, with a different command line
+
+```
+yarn install
+```
+
+#### Check for Outdated Packages
+
+Yarn can identify which packages you have installed for your project are outdated
+
+YARN 1:
+
+```
+yarn outdated
+```
+
+------
+
+This useful feature was actually removed for some reason
+In Yarn 2.0 and onwards, you need to quickly install a plugin to get this old command to work
+
+YARN 2.0+
+
+```
+yarn plugin import https://github.com/mskelton/yarn-plugin-outdated/raw/main/bundles/@yarnpkg/plugin-outdated.js
+
+yarn outdated 
+```
+
+![image-20211227233248624](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211227233248624.png)
+
+
+
+### yarn.lock file
+
+#### Purpose
+
+The yarn.lock file is important for fresh installs- when someone DL's a project without any dependencies installed yet
+
+- Yarn.lock looks inside your package.json and will force your computer to install the specific versions listed there after the coder enters `yarn install`
+- The versions installed may change if the dependency is listed with a certain version symbol
+  Ex. `"lodash": "^4.17.21"` may cause lodash 4.18.21 to be installed one day
+
+#### Working with it
+
+For the most part you don't want to touch this file- it is completely managed by Yarn
+There are a few scenarios that may come up however
+
+1. Check to see if yarn.lock package versions are in sync with package.json
+
+```
+yarn check (depreciated as of Yarn 2.0)
+```
+
+2. If the yarn.lock file gets deleted, run the following
+
+```
+yarn install
+```
+
+
+
+### Run Scripts with Yarn
+
+Just like with npm, your package.json should probably have some helpful scripts defined inside
+
+#### Make sure they Exist
+
+package.json example
 
 ```json
 {
-  "recurseDepth": 10,
-  "source": {
-    "include": ["src"],
-    "includePattern": ".js$",
-    "excludePattern": "(node_modules/|docs)"
+  "name": "yarn_canvas",
+  "version": "1.0.0",
+  "default": "index.html",
+  "author": "jxb",
+  "license": "MIT",
+  "scripts": {
+    "dev": "parcel index.html",
+    "build": "parcel build index.html"
   },
-  "plugins": ["plugins/markdown"],
-  "templates": {
-    "cleverLinks": true,
-    "monospaceLinks": true
-  },
-  "opts": {
-    "destination": "./jsdoc",
-    "recurse": true
+  "packageManager": "yarn@3.1.1",
+  "devDependencies": {
+    "lodash": "^4.17.21",
+    "parcel": "^2.0.1"
   }
 }
 ```
 
-4. Add the following script to package.json (can change script name if needed)
-   Specifies what to use as a config file
+#### Running Scripts
+
+This works the same as in NPM, just with slightly different syntax
 
 ```
-"jsdoc": "jsdoc -c jsdoc.json"
+yarn run dev		// runs a live preview of your site using Parcel HMR
 ```
 
-5. Create your src folder to house all JS files, then place a JS file in there
-   It doesn't even need to have JS code inside, we just need a JavaScript file to exist 
-6. Enter the following into the terminal to generate a new folder filled with documentation files
+![image-20211228000804146](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211228000804146.png)
 
-```
-npm run jsdoc
-```
 
-The new folder name was decided by "destination" in the jsdoc.json file
 
-![image-20210711220218453](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210711220218453.png)
 
-#### jsdoc.json Explained
-
-```json
-{
-  "plugins": ["plugins/markdown"], // lets you use markdown
-  "recurseDepth": 10,
-  "source": {  // name of the folder that should contain all your JS files
-    "includePattern": ".js$",
-    "excludePattern": "(node_modules/|docs)" // ignore ndoe_modules folder
-  },
-
-  "templates": {
-    "cleverLinks": true,	// makes links eccentuated from other text
-    "monospaceLinks": true
-  },
-  "opts": {
-    "destination": "./jsdoc",	// name and location of the jsdocs folder
-    "recurse": true
-  }
-}
-```
-
-
-
-
-
-### Basic Usage
-
-We'll be describing a simple function in this example
-
-#### Creating a JSdoc Comment
-
-1. Go on the line directly above a function then press the following
-   Some new text should automatically appear, depending on the number of arguments
-
-```js
-/** press enter
-```
-
-![image-20210711200754984](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210711200754984.png)
-
-2. Fill the first empty line with the function description
-   Add the parameter types inside the curly braces
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210711202243112.png" alt="image-20210711202243112" style="zoom: 80%;" />
-
-#### Passive Buffs in VS Code
-
-PARAMETER DESCRIPTION POPUPS:
-
-- When using a function that has JSdoc comments, a little window pop ups up and describes the parameters
-- You can trigger the same window by hovering an instance of a parameter, anywhere in the function
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210711202314071.png" alt="image-20210711202314071" style="zoom:80%;" />
-
-INTUITIVE METHOD SUGGESTIONS:
-
-When typing a parameter inside the function, the method suggestions given will only be for the data type the parameter is specified to be
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210711201633928.png" alt="image-20210711201633928" style="zoom:67%;" />
-
-#### Opening your Documentation HTML File
-
-1. Open the jsdoc generated folder, 
-2. Right click its index.html, then open it with the live server extension
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210711221245153.png" alt="image-20210711221245153" style="zoom:80%;" />
-
-
-
-### Writing Proper Documentation: P1
-
-The way you'll be describing things will changed based on what you're writing a comment for
-
-REMEMBER
-After writing your comments, run `npm run jsdoc`, to update your documentation file
-The command w/ be different if you named your script something other than "jsdoc" in package.json
-
-BEFORE WE BEGIN:
-Include this line at the top of your JS files
-
-#### String
-
-```js
-/**
- * Insert description here
- * @type {string}
- */
-const petname= "Rubi"
-```
-
-#### Number
-
-```js
-/**
- * Insert description here
- * @type {Number}
- */
-const age = 25;
-```
-
-#### PROBLEM
-
-The following is not working as expected:
-Required in order to type check our arrays, objects, and other data structures
-
-```
-//@ ts-check
-```
-
-CONTINUE COURSE ONCE RESOLVED: https://www.youtube.com/watch?v=lTCadytiCNs
-MAKING BETTER DESCRIPTIONS: https://stackoverflow.com/questions/28245463/how-to-force-newlines-in-google-apps-jsdoc-descriptions
-
-#### Array
-
-```js
-
-```
-
-
-
-#### Object
-
-```js
-
-```
-
-
-
-#### Template
-
-```js
-
-```
-
-
-
-#### Function
-
-```js
-
-```
-
-
-
-### Writing Proper Documentation: P2
-
-#### Custom Type
-
-#### Class
-
-#### Link
-
-#### Module
-
-#### Tutorials
-
-#### Add text to Home
-
-#### README
 
 # ====== FEATURE CREATION ======
 
@@ -1936,13 +1981,17 @@ The comments in the codepens explain how you can customize aspects of the featur
 
 > https://codepen.io/jason2b3/pen/QWqdoew
 
+- The above example uses a checkbox to trigger the drop down animation
+- Instead, you can use JS to dynamically assign classes when an element is clicked
+  That class being added can be allowed to trigger the animation instead of a checkbox 
+
 #### Sliding Navbar Menus
 
 LEFT → RIGHT
 
 > https://codepen.io/jason2b3/pen/LYzxvmX
 
-RIGHT → LEFT
+RIGHT → LEFT 
 
 > Crude Example: (comments explain how it would be done, but looks very imperfect)
 > https://codepen.io/jason2b3/pen/JjrEVzw?editors=0110
@@ -2160,79 +2209,11 @@ _.keys function returns an array of the property names of the JavaScript object 
 
 https://zetcode.com/javascript/lodash/   
 
-Long Explanations:
-
-- Lodash maximum and minimum
-- _.curry (learn what currying is)
-- string_case: ![image-20210530032800566](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210530032800566.png)
-- _.pick
-- _.at
-
-https://zetcode.com/javascript/lodash/
 
 
 
-# Smaller Libraries 
 
-### time-based
-
-#### timer-stopwatch
-
-PURPOSES
-
-1. Create a countdown from a specified time
-2. Create a stopwatch
-
-INSTRUCTIONS: https://openbase.com/js/timer-stopwatch
-PROJECTS: Check premades for "stopwatch and timer" for how to implement both
-
-#### date-fns (RETURN)
-
-JavaScript in general does not have many great functions for working with dates. 
-
-- Oftentimes, you're forced to create your own complex functions to switch between formats. 
-- date-fns gives you more functions to perform operations, all while being more lightweight than the industry standard: moment.js
-
-### math-based
-
-#### Fractional
-
-Use to convert decimals into fractions delivered in string form. (Like 1.5 into 1 1/2)
-Can perform mathematical operations: add, subtract, divide, multiply...etc
-
-INSTALL:
-
-```js
-npm i fractional 	// installs as a dependency
-//—————————————————————————[ go into JS file]—————————————————————————————
-var Fraction = require('fractional').Fraction
-```
-
-EXAMPLE:
-
-```js
-let numA= 4.5 // convert this to 4 1/2
-let numB= new Fraction(num).toString() // "4 1/2"
-
-// this does not permanently mutate the original number
-```
-
-
-
-GENERAL SYNTAX:
-
-```js
-// Create a new fraction with the new keyword:
-(new Fraction(7,3)).multiply(new Fraction(1,2)).toString()		// 1 1/6
-(new Fraction(7,3)).divide(new Fraction(1,2)).toString()		// 4 2/3
-(new Fraction(3,10)).add(new Fraction(5,9)).toString()			// 77/90
-(new Fraction(0.25)).add(new Fraction(1,6)).toString()			// 5/12
-(new Fraction(0.35)).subtract(new Fraction(1,4)).toString()		// 1/10
-```
-
-
-
-# Regular API's
+# General Purpose API's
 
 ### Local Storage API
 
@@ -2440,6 +2421,76 @@ Application tab -> Storage -> Local Storage -> localhost: 3000
 
 ![image-20210810020058344](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210810020058344.png)
 
+
+
+
+
+
+
+### time-based
+
+#### timer-stopwatch
+
+PURPOSES
+
+1. Create a countdown from a specified time
+2. Create a stopwatch
+
+INSTRUCTIONS: https://openbase.com/js/timer-stopwatch
+PROJECTS: Check premades for "stopwatch and timer" for how to implement both
+
+#### date-fns (RETURN)
+
+JavaScript in general does not have many great functions for working with dates. 
+
+- Oftentimes, you're forced to create your own complex functions to switch between formats. 
+- date-fns gives you more functions to perform operations, all while being more lightweight than the industry standard: moment.js
+
+### math-based
+
+#### Fractional
+
+Use to convert decimals into fractions delivered in string form. (Like 1.5 into 1 1/2)
+Can perform mathematical operations: add, subtract, divide, multiply...etc
+
+INSTALL:
+
+```js
+npm i fractional 	// installs as a dependency
+//—————————————————————————[ go into JS file]—————————————————————————————
+var Fraction = require('fractional').Fraction
+```
+
+EXAMPLE:
+
+```js
+let numA= 4.5 // convert this to 4 1/2
+let numB= new Fraction(num).toString() // "4 1/2"
+
+// this does not permanently mutate the original number
+```
+
+GENERAL SYNTAX:
+
+```js
+// Create a new fraction with the new keyword:
+(new Fraction(7,3)).multiply(new Fraction(1,2)).toString()		// 1 1/6
+(new Fraction(7,3)).divide(new Fraction(1,2)).toString()		// 4 2/3
+(new Fraction(3,10)).add(new Fraction(5,9)).toString()			// 77/90
+(new Fraction(0.25)).add(new Fraction(1,6)).toString()			// 5/12
+(new Fraction(0.35)).subtract(new Fraction(1,4)).toString()		// 1/10
+```
+
+
+
+### Random PIN Generator
+
+Read the following site's instructions which also contains the NPM Install
+
+https://www.npmjs.com/package/secure-pin
+
+
+
 # Location API's
 
 ### REST Countries: Get Info on Nations
@@ -2535,7 +2586,11 @@ If you only need to use a few animations, you can copy/paste one snippet of this
 
 3. To apply the "grow" effect in this case, assign a class of `hvr-grow` to an element
 
-# Mapty: Leaflet Maps Lib + Geolocation API
+
+
+# ====== EARLY PROJECTS ======
+
+# Mapty: Leaflet Maps + Geolocation API
 
 Pretty much every lesson in this project chapter builds off the previous one. 
 Many of our code snippets don't do anything when pasted by themselves. 

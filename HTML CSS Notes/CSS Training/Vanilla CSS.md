@@ -2273,7 +2273,9 @@ You reach the outer edge of your parent container's content
 After this point, behave normally
 ```
 
-Watch this video for visuals: [CSS - The Complete Guide 2020 (incl. Flexbox, Grid & Sass) | Udemy](https://www.udemy.com/course/css-the-complete-guide-incl-flexbox-grid-sass/learn/lecture/9520852#overview)
+Watch this video for visuals: 
+[CSS - The Complete Guide 2020 (incl. Flexbox, Grid & Sass) | Udemy](https://www.udemy.com/course/css-the-complete-guide-incl-flexbox-grid-sass/learn/lecture/9520852#overview)
+https://mastery.games/post/position-sticky/
 
 Browsers do not universally support this property value yet. 
 Knowing how it works is good, but I wouldn't harp on this

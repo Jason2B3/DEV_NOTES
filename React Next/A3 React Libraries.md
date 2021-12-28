@@ -391,7 +391,11 @@ becomes
 
 ![image-20210726144630772](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210726144630772.png)
 
-#### Multiple Dynamic CSSM Classes 
+
+
+#### Multiple Hardcoded or Dynamic CSSM Classes 
+
+MULTIPLE DYNAMIC:
 
 - To assign class names dynamically, you're going to need to place JS inside a React placeholder
   This just means setting a class depending on the value of a stateful variable
@@ -403,9 +407,17 @@ In the above example, we assign a dynamic form-control class name.
 This is hardcoded, since no matter the circumstance, our div will have that class
 We want the "invalid" class name to be present only when the value of `validInput` is false
 
+MULTIPLE STATIC:
+
+```react
+<div className={`${classes['container']} ${classes['centered']}>
+```
+
+
+
 #### Clever way to Define Multiple Classes
 
-Use an array then join all entries together using a space tp define your multiple classes
+Use an array then join all entries together using a space to define your multiple classes
 The following example uses regular CSS, but you'll need to incorporate styles[] for CSSM
 
 ![image-20211005112758586](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211005112758586.png)
@@ -4395,7 +4407,7 @@ export default function App() {
       <Route path="/products">
         <Products /> {/* Renders this if the path ends in /products */}
       </Route>
-      <h1>Appears by default, an after each route</h1> {/* Renders this by default,*/}
+      <h1>Appears by default, and after each route</h1> {/* Renders this by default,*/}
     </>
   );
 }
@@ -4786,12 +4798,14 @@ App.js return section (same as before)    ![image-20210912200855308](C:\Users\ja
 `/products/something` would match with Route 2 and 3
 
 ```react
-        <Route path="/products">    ROUTE 2
+<Switch> 
+		<Route path="/products">    ROUTE 2
           <Products />
         </Route>
         <Route path="/products/:productID">     ROUTE 3
           <ProductDetail />
         </Route>
+</Switch>
 ```
 
 ——————————————————————————————————————————————————————
@@ -4802,12 +4816,14 @@ App.js return section (same as before)    ![image-20210912200855308](C:\Users\ja
 - It wouldn't strictly match Route 2, because there's more after `/products` 
 
 ```REACT
-        <Route path="/products" exact>    ROUTE 2
+<Switch>   
+		<Route path="/products" exact>    ROUTE 2
           <Products />
         </Route>
         <Route path="/products/:productID" exact>     ROUTE 3 (added exact attribute)
           <ProductDetail />
         </Route>
+</Switch>
 ```
 
 #### Using Switch/Exact together
@@ -4816,6 +4832,26 @@ This is a good way to select specific paths depending on the URL, because you ta
 
 1. You can prevent multiple routes from loading at once
 2. You can force strict equality matches only
+
+
+
+### Route Short-Form Syntax
+
+There's a slightly faster way to render components based on what path is typed out
+
+Long Syntax
+
+```html
+<Route path="/welcome">
+	<Welcome />
+</Route>
+```
+
+Short Syntax
+
+```html
+<Route path="/welcome" component={Welcome} />
+```
 
 
 
@@ -5916,13 +5952,9 @@ LIMITATIONS OF CSS ANIMATION:
 
 
 
-# MISC
 
-### Random PIN Generator
 
-Read the following site's instructions which also contains the NPM Install
 
-https://www.npmjs.com/package/secure-pin
 
 
 

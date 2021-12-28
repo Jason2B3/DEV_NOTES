@@ -4133,3 +4133,19 @@ Some websites rely on dynamically updated information- like Google Docs for exam
 
 - If a group writes a report, we need each change to be reflected in the document right away or else there will be a lot of clashing 
 - Updating your backend information using the SSR approach is just as helpful as the SSG approach when it comes to improving SEO - just check the source files after your following demonstration!
+
+# Common Bugs
+
+Look for Next.js errors in the console when you render a webpage
+
+- If you have errors present, read the error message and look inside that page's file
+- Look inside any external files that webpage relies on as well
+  Ex. Components rendered on that page that were defined elsewhere`<Navbar>` in pages/order.js
+
+### className did not match
+
+#### Procedure
+
+1. Check to see if you labeled any classes as `class=` instead of `className=`
+   Use CTRL F to scour the files your webpage is involved with
+2. If you do not have any `class=` present, and you've checked all files the webpage with this problem uses... delete to .next folder, then run `npm run dev` to recreate it

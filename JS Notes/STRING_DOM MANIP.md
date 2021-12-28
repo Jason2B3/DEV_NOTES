@@ -310,6 +310,8 @@ htmlEl.className= 'whatever'
 This overrides every existing class the element once had. 
 Also, it limits the element to only having 1 class- the one you set here
 
+
+
 ### Checking Elements for Classes
 
 You aren't required to use `.classlist.contains()` inside an event listener, in case you're wondering
@@ -1773,6 +1775,8 @@ document.addEventListener("keydown", (eventObj) => {
 ```
 
 Pressed some keys: ![image-20210329163448714](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210329163448714.png)
+
+
 
 ### Input Events
 

@@ -2884,7 +2884,7 @@ function getJSON(url, errorMSG = "Something went wrong") {
 Performs a fetch API request and returns the data parsed by .json().
 Can also provide a custom error message
 
-# XML, JSON, API's, http Requests
+# XML, JSON, API's
 
 The goal of async JS is to deal with long-running tasks that happen in the background.
 Its most common use is fetching data from remote servers (AJAX calls to API's)
@@ -3341,32 +3341,13 @@ setTimeout(() => {
 
 
 
-### http Methods
-
-CRUD ▼	
-Create Read Update Delete	(each operation a dedicated http method)
-
-|        | purpose            | safety | idempotent<br />(nothing changes if you perform it multiple times) |
-| ------ | ------------------ | ------ | ------------------------------------------------------------ |
-| GET    | Read or fetch data | safe   | Yes                                                          |
-| POST   | Create data        | unsafe | No                                                           |
-| PUT    | Update data        | unsafe | Yes                                                          |
-| DELETE | Delete data        | unsafe | Yes                                                          |
-
-Safety?
-GET is classified as safe because all a fetch request does is pull data from a hosted server. 
-The server itself is left as it was originally afterwards
-
-- Just because an http method is classified as unsafe does not mean we shouldn't ever use it
-- The classification just implies that these operations make permanent changes
-
 ### Different kinds of API's (return4)
 
 #### Understand diff kinds of API's
 
 [REST APIs vs GraphQL APIs (academind.com)](https://academind.com/tutorials/rest-vs-graphql/)
 
-# AsyncJS: fetchAPI and Promises with then() 
+# AsyncJS: fetch() + then() Chains
 
 We'll be learning all about the fetch API to extract data from 3rd party services- and promise chaining + error handling is required to do this effectively.
 
@@ -3693,7 +3674,7 @@ btn.addEventListener('click', () => {
 
 
 
-### Custom Error Messages via Manual Error Throws (S4, and contains an all encompassing example)
+### Custom Error Messages via Manual Error Throws (S4)
 
 What if you told the fetchAPI to get information that doesn't exist? 
 
@@ -4337,7 +4318,7 @@ multiNationData('Nepal');
 
 
 
-# AsyncJS: fetchAPI and Promises with Async/Await
+# AsyncJS: fetch() + Async/Await
 
 In the 2 previous chapters, we learned about XML requests, the fetch API, and chaining promises with `then()`, `catch()`, and `finally()`
 
@@ -5767,6 +5748,350 @@ All the following techniques must be used inside an async function, or else awai
 #### Async Challenge 2 and 3:
 
 https://drive.google.com/drive/folders/1TeQ2fHqO7-ZpyXSW4RowK1BfVjuVy-E7?usp=sharing
+
+
+
+### REVIEW Part 3: Every HTTP Request with fetch()
+
+> This lesson is ripped directly from the Firebase chapter in my React Notes
+
+#### CRUD Explained
+
+Create Read Update Delete	(each operation a dedicated http method)
+
+|        | purpose            | safety | idempotent<br />(nothing changes if you perform it multiple times) |
+| ------ | ------------------ | ------ | ------------------------------------------------------------ |
+| GET    | Read or fetch data | safe   | Yes                                                          |
+| POST   | Create data        | unsafe | No                                                           |
+| PUT    | Update data        | unsafe | Yes                                                          |
+| DELETE | Delete data        | unsafe | Yes                                                          |
+
+Safety?
+GET is classified as safe because all a fetch request does is pull data from a hosted server. 
+The server itself is left as it was originally afterwards
+
+- Just because an http method is classified as unsafe does not mean we shouldn't ever use it
+- The classification just implies that these operations make permanent changes
+
+
+
+#### Simple Demo Functions
+
+Keep in mind that none of these functions involve any error handling or pending/success/failure state management (can be helped with the useHttp hook)
+
+> [firebase-practice/fetchFunctions.js](https://github.com/Jason2B3/firebase-practice/blob/master/src/components/fetchFunctions.js)		commit F1
+
+> This is a snippet from Part 2 of our React notes (See the Firebase Chapter)
+> The Firebase project is connected to jason2b3@gmail.com
+
+GET: fetches all JSON file content
+
+```react
+const firebaseLink = "https://fir-http-34540-default-rtdb.firebaseio.com/data.json";
+
+export const firebaseGET = async function (firebaseLink) {
+  const pullData = await fetch(firebaseLink);
+  if (!pullData.ok) throw new Error("No shows found in the search results");
+  const parsedData = await pullData.json();
+  console.log(parsedData);
+  return parsedData;
+};
+```
+
+DELETE: wipes the entire JSON file 
+
+```react
+const firebaseLink = "https://fir-http-34540-default-rtdb.firebaseio.com/data.json";
+
+export const firebaseDELETE = async function (firebaseLink) {
+  const deleteData= await fetch(firebaseLink, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify([]), // the argument doesn't seem to matter in this case
+  });
+  if(!deleteData.ok) throw new Error("deletion failed")
+  console.log(deleteData)
+};
+```
+
+POST: creates new data
+
+```react
+const firebaseLink = "https://fir-http-34540-default-rtdb.firebaseio.com/data.json";
+
+export const firebasePOST = async function (firebaseLink, inp) {
+  const postData = await fetch(firebaseLink, {
+    method: "POST",
+    body: JSON.stringify(inp), // the data we're storing
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!postData.ok) throw new Error("Sending cart data failed");
+  return null;
+};
+```
+
+PUT: Updates data if it already exists- if it doesn't it'll create new
+
+```REACT
+const firebaseLink = "https://fir-http-34540-default-rtdb.firebaseio.com/data.json";
+
+export const firebasePUT = async function (firebaseLink, inp) {
+  const putData = await fetch(firebaseLink, {
+    method: "PUT", // update data in our database
+    body: JSON.stringify(inp),
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!putData.ok) throw new Error("Sending cart data failed");
+  console.log(putData);
+  return null;
+};
+```
+
+
+
+# Axios: fetch() but Easier
+
+Axios is a 3rd party library that wraps over XMLHttpRequests in order to make them easier to work with
+I already know fetch(), but I'll learn it since it's still popular
+
+> TUTORIAL: 
+> https://www.youtube.com/watch?v=qM4G1Ai2ZpE
+
+### Installation & Advantages over fetch()
+
+#### Install
+
+METHOD 1: NPM or Yarn install
+
+```
+npm install axios
+or...
+yarn add axios
+```
+
+METHOD 2: Script Tag	(place above your primary js script tags)
+
+```html
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+```
+
+#### Advantages over fetch
+
+1. Data is automatically parsed from JSON to JS syntax after the request is made
+   You won't need to parse it manually like fetch() requires
+2. If Axios encounters an error, it'll automatically throw an error for you
+   You don't need to manually throw an error yourself
+
+- Fetch only auto-throws errors when a technical problem like a lost connection occurs
+- Axios will throw one even if the request succeeds but we get an error code like 404 or 500 back
+  Since error handling is so important, Axios removing the heavy lifting becomes a huge plus
+
+In POST requests...
+
+3. You can pass Axios JS data directly and it will automatically convert it to JSON for you
+   When using fetch, you'll need `JSON.stringify` to manually convert JS → JSON
+4. Axios will automatically detect what data you're appending and set the headers for you
+   When using fetch, you'll need to specify headers manually
+
+> <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211227192917115.png" alt="image-20211227192917115" style="zoom:80%;" />
+
+#### When fetch is better 
+
+1. Fetch lets you access the raw JSON response data when your request does not throw an error
+
+- Axios does not allow this since it auto-parses the response into JS for you
+- Fortunately you can access the response if your request throws an error
+  Just use `catch(err) console.log(err.response)`
+
+2. Fetch is built into JS while Axios is a dependency 
+
+
+
+#### Overriding Axios Default Headers
+
+- I just mentioned that Axios will automatically set headers so you don't have to
+- If you absolutely must override its headers with ones you specify yourself, just add a 3rd argument to the Axios method
+
+![image-20211227204141518](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211227204141518.png)
+
+
+
+### then() chains + Async Await
+
+#### Async Await: Demonstrate Advantages Part 1
+
+Perform a simple fetch operation with Axios and fetch()
+Handle errors with try/catch in case we feed the method a bad URL
+
+with Axios
+
+```js
+const axiosGET = async function (url) {
+  try {
+    const response = await axios.get(url);
+    // Code beyond this point gets ignored if an error occurs
+    console.log(response.data);
+  } catch (error) {
+    console.error(error);
+    console.log(err.response);
+  }
+};
+```
+
+with fetch()
+
+```js
+const fetchGET = async function (url) {
+  try {
+    const jsonResponse = await fetch(url);
+    console.log(jsonResponse)
+      
+    // Must manually throw an error if something goes wrong
+    if(!jsonResponse.ok) throw new Error(jsonResponse.statusText)
+      
+    // Must manually parse the response into JS to use properly
+    const parsed= await jsonResponse.json();
+    console.log(parsed)
+      
+  } catch (error) {
+    console.error(error);
+  }
+};
+```
+
+#### then() Chains
+
+We still maintain the benefits of Axios while then chaining
+
+EXAMPLE: GET request from a mock API
+
+```JS
+const url= "https://reqres.in/api/users/2";
+const axiosGET = function (url) {
+  axios.get(url)
+    .then((response) => {
+      console.log(response) // check status codes/headers in here
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.error(error);
+      console.log(err.response);
+    });
+};
+axiosGET(url);
+```
+
+![image-20211227175953195](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211227175953195.png)
+
+
+
+### Every HTTP Request with Axios
+
+We'll be using async await throughout this lesson since its modern and more convenient
+
+> Mock API we use for testing:  https://reqres.in/
+>
+> It tells you what responses you get based on the type of request you make
+> The request url is "https://reqres.in/" + "something else"
+
+#### GET
+
+```js
+const axiosGET = async function (url) {
+  try {
+    const response = await axios.get(url);
+    // Code beyond this point gets ignored if an error occurs
+    console.log(response);
+    console.log(response.data);
+  } catch (error) {
+    console.error(error);
+    console.log(err.response);
+  }
+};
+```
+
+#### POST
+
+- The second arg for `axios.post()` is a JS object which automatically gets converted to JSON
+- Make sure the syntax in that object is in fact JavaScript, and not JSON (common mistake)
+
+```js
+const axiosPOST = async function (url) {
+  try {
+    const response = await axios.post(url, {
+      name: "morpheus", // JS object here
+      job: "leader",
+    });
+    // Code beyond this point gets ignored if an error occurs
+    console.log(response)
+    console.log(response.data);
+  } catch (err) {
+    console.error(err);
+    console.log(err.response); // error response body (more info about error inside)
+  }
+};
+```
+
+#### DELETE
+
+```JS
+const axiosDELETE = async function (url) {
+  try {
+    const response = await axios.delete(url, {
+      name: "morpheus",
+      job: "zion resident"
+    });
+    // Code beyond this point gets ignored if an error occurs
+    console.log(response)
+    console.log(response.data);
+  } catch (err) {
+    console.error(err);
+    console.log(err.response); // error response body (more info about error inside)
+  }
+};
+```
+
+#### PUT
+
+```js
+const axiosPUT = async function (url) {
+  try {
+    const response = await axios.put(url, {
+      name: "morpheus",
+      job: "zion resident"
+    });
+    // Code beyond this point gets ignored if an error occurs
+    console.log(response)
+    console.log(response.data);
+  } catch (err) {
+    console.error(err);
+    console.log(err.response); // error response body (more info about error inside)
+  }
+};
+```
+
+
+
+#### PATCH
+
+```js
+const axiosPATCH = async function (url) {
+  try {
+    const response = await axios.patch(url, {
+      name: "morpheus",
+      job: "zion resident"
+    });
+    // Code beyond this point gets ignored if an error occurs
+    console.log(response)
+    console.log(response.data);
+  } catch (err) {
+    console.error(err);
+    console.log(err.response); // error response body (more info about error inside)
+  }
+};
+```
+
+
 
 # ====== FUNCTIONAL CODING ======
 

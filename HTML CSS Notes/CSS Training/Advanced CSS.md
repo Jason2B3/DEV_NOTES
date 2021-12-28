@@ -4436,7 +4436,7 @@ https://codepen.io/jason2b3/pen/PoJYpWP
 
 
 
-# ======Findings ======
+# =========  Findings  =========
 
 # Guidelines for Responsive Design
 
@@ -4595,6 +4595,61 @@ If your answer is yes, use pixels
 ```
 
 
+
+### Mixin Disabling: Imitating add Styles via Classes in SCSS
+
+When using JS, we can add a class to an element in order to impose styles that are given to that class ahead of time in CSS
+
+> SCSS if/else statements refresher: 
+> https://sass-lang.com/documentation/at-rules/control/if
+
+#### Procedure
+
+1. Create a mixin that imposes certain styles, and give it a parameter 
+2. Use if/else in SCSS to make it so the styles imposed change depending on parameter values
+3. Call your mixin in your SCSS code, but feed it a parameter value that determines what it'll do
+
+EXAMPLE:
+
+_globalHelpers.scss
+
+```scss
+@mixin formBorderShadow($bool) {
+  // Applies a border/shadow
+  @if $bool {
+    border: 1.5px solid black;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+    background-color: white;
+  } 
+  // Removes a border/shadow if one is already applied
+  @else {
+    border:0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+```
+
+signup.module.scss
+
+```scss
+.container {
+  // Set border/shadow on small screens
+  @include formBorderShadow(true);
+  // Remove it on larger screens
+  @media (min-width: 1000px) {
+	@include formBorderShadow(false);
+  }
+} 
+```
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211225184050971.png" alt="image-20211225184050971" style="zoom:50%;" /> 	<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211225184109545.png" alt="image-20211225184109545" style="zoom:50%;" />
+
+#### When this is Needed Most
+
+When working with React or Next, we aren't supposed tp rely on low level JS often
+This helps us avoid adding classes via JS by offering the same utility using a different method
 
 # Responsive Coding
 
