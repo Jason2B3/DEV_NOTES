@@ -3960,7 +3960,7 @@ import { useState, createContext, useContext } from "react"; // import useContex
 const AAA = createContext();
 export const useCustomContext = () => useContext(AAA) // export custom hook
 
-export default function AuthContextProvider(props) {
+export default function GlobalContextProvider(props) {
   const [count, setCount] = useState(0);
   const increaseCount = () => setCount(count + 1);
   const decreaseCount = () => setCount(count - 1);
@@ -3988,12 +3988,12 @@ function Counter() {
 index.js
 
 ```react
-import AuthContextProvider from "PATH-TO-CONTEXT-FILE"	// grab the default import
+import GlobalContextProvider from "PATH-TO-CONTEXT-FILE"// grab the default import
 
 ReactDOM.render(
-  <AuthContextProvider>
+  <GlobalContextProvider>
     <App />		// wrap the App component with your default import tags
-  </AuthContextProvider>
+  </GlobalContextProvider>
   ,document.getElementById('root')
 );
 ```
@@ -4328,7 +4328,7 @@ Use React Router to make SPA's that transition between pages real smoothly
 
 With React router, we can add multiple pages with different URL's to our single page applications
 
-### What Routing is + Setup
+### Routing Explanation & Setup
 
 Being able to change the URL of your site is important for many reasons
 
@@ -4841,13 +4841,22 @@ There's a slightly faster way to render components based on what path is typed o
 
 Long Syntax
 
-```html
-<Route path="/welcome">
-	<Welcome />
-</Route>
+```react
+import { Route, Switch, Redirect } from "react-router-dom";
+import Welcome from "./pages/Welcome"; // imported component
+
+function App() {
+  return (
+    <>
+      <Switch>
+        <Route path="/" exact redirect={Welcome} />
+      </Switch>
+    </>
+  );
+}
 ```
 
-Short Syntax
+Shorter Syntax
 
 ```html
 <Route path="/welcome" component={Welcome} />

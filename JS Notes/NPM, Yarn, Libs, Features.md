@@ -1966,7 +1966,7 @@ FULL CODEPEN: https://codepen.io/NFuego24-7/pen/MWbWPxG?editors=0110
 
 
 
-### Sliding Menus, Navbars, & Burger Icons
+### Accordions, Navbars, Offcanvas, & Burger Icons
 
 The comments in the codepens explain how you can customize aspects of the feature for your own projects
 
@@ -1977,7 +1977,7 @@ The comments in the codepens explain how you can customize aspects of the featur
 - This burger icon can be customized simply by editing a few SCSS variables I created
 - The animation to turn the burger to an X should work if you adjust variable values properly
 
-#### Drop Down Menu
+#### Accordion
 
 > https://codepen.io/jason2b3/pen/QWqdoew
 
@@ -1985,7 +1985,7 @@ The comments in the codepens explain how you can customize aspects of the featur
 - Instead, you can use JS to dynamically assign classes when an element is clicked
   That class being added can be allowed to trigger the animation instead of a checkbox 
 
-#### Sliding Navbar Menus
+#### Offcanvas: Sliding Navbar Menus
 
 LEFT → RIGHT
 

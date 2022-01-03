@@ -171,8 +171,6 @@ We're analyzing the Academind premade template in this lesson
 - Most of our development time will be spent inside the src folder
 - index.js is the first JS file that gets executed whenever this page gets loaded
 
-
-
 #### Our package.json
 
 - When we followed 1 of 2 procedures to get our starter files ready, we downloaded several 3rd party libraries which will be used across our projects. 
@@ -822,6 +820,17 @@ Plus, we add on any other classes we specify at the reusable wrapper locations
 Feel free to include other JSX content (even extra custom components) to the wrapper you create
 
 ![image-20210927001513903](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210927001513903.png)
+
+### Running a Live Preview
+
+#### Procedure
+
+1. Make sure you have premade scripts set in your package.json
+
+![image-20211228040137623](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211228040137623.png)
+
+2. Run `npm run dev` for a live server-esque preview during development
+3. Use `npm run build` to help you condense and optimize everything when it's time for production and your work is done 
 
 ### General Tips
 

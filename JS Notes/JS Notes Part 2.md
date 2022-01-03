@@ -6013,6 +6013,7 @@ const axiosGET = async function (url) {
 #### POST
 
 - The second arg for `axios.post()` is a JS object which automatically gets converted to JSON
+  This is the body KVP that fetch has
 - Make sure the syntax in that object is in fact JavaScript, and not JSON (common mistake)
 
 ```js
@@ -6090,6 +6091,13 @@ const axiosPATCH = async function (url) {
   }
 };
 ```
+
+#### Attaching Headers
+
+Oftentimes you'll need specific data in order to make certain API calls- and you'll attach them in the header section of your request
+
+- Axios creates headers automatically, so you'll have to override them
+- Specify headers as argument 2 in GET requests, and argument 3 in others
 
 
 

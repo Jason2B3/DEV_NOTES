@@ -1580,7 +1580,7 @@ Create Read Update Delete	(each operation has a dedicated http method)
 
 
 
-### How Data Changes and Looks in Firebase
+### How Data Changes & looks in Firebase
 
 DESCRIPTION OF EACH TEST:
 
@@ -3821,8 +3821,6 @@ AuthForm.js	(inside the component function)
   };
 ```
 
-
-
 #### Fail Tests
 
 We must handle errors a bit differently by parsing the returned object regardless of the request outcome
@@ -4420,6 +4418,94 @@ OBJECTIVE 3: Only use a token if there is a remaining duration for that token
   Please checkout the commit I specified above, since it is too long to place here
 
 
+
+### Sign in with Facebook, Google... etc (return2)
+
+#### Setup Overview
+
+When you need authentication via a 3rd party providers, the process boils down to 2 main steps
+
+1. Create a project on Firebase and go through some configuration steps
+2. Create a project on Facebook's developer site for example, and go through some configuration steps
+3. Link the 3rd party project to your Firebase one using App ID and App Secret
+
+- Keep in mind the configuration steps will change depending on what you're building
+- To see steps 1-3 in our unichat messenger project, check out this video:
+  https://youtu.be/Bv9Js3QLOLY?list=PLV2XyUzUBmk-Z92D47xt6RmY0A7AiQW3u&t=646
+
+#### Context API Authentication
+
+BROAD SUMMARY:
+Use context API to create a function that you can call inside of regular React page files
+
+- This function should return a variable that will equal a falsy if the person is trying to access a page while not sgned in
+- Based on the value of that variable, you can force people out of webpages when logged off
+- We're performing page protection on the client-side while using React. 
+  If we were using Next, we'd have the option to protect pages using server-side rendering
+
+AuthContext.js 			(name not important)
+
+```react
+import React, { useState, useEffect, useContext } from "react";
+import { useHistory } from "react-router-dom";
+import { auth } from "../firebase";
+
+// Create Context
+const AuthContext = React.createContext();
+// Create a function we can use to reference the above context
+export const useAuth = () => useContext(AuthContext);
+
+export const AuthProvider = ({ children }) => {
+  let history = useHistory();
+  // Set a loading state and specific user state
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  
+  // Run whenever we visit a new page or the user data from Firebase auth changes
+  useEffect(() => {
+    // Grab the user data from Firebase auth and save it to a useState variable
+    auth.onAuthStateChanged((user) => {
+      setUser(user); // "user" is the user data (saved to a stateful variable)
+      setLoading(false); // set the loading state to false since we are done here
+      // Push to /chats only if we have a logged in user
+      if(user) history.push("/chats"); 
+    });
+    console.log('checking auth status')
+  }, [user, history]);
+  const value = { user }; // place the Firebase user data inside an object
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+};
+```
+
+index.js
+
+```react
+import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./state-management/AuthContext"; // authentication context
+import "./index.css";
+import App from "./components/App";
+
+ReactDOM.render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </BrowserRouter>
+  </React.StrictMode>,
+  document.getElementById("root")
+);
+```
+
+Regular React page files:
+
+```js
+
+```
 
 
 
