@@ -1,320 +1,6 @@
-# Basics
-
-### Installation & Importing Components
-
-#### Install Procedure
-
-1. Start your project with create-react-app, or the Next.js equivalent
-2. Go into the project's index.html file 1in the public folder and add the font < link > below
-
-```html
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-```
-
-3. Install MUI in your project
-
-```
-npm install @material-ui/core			v4
-npm i @mui/material						v5
-```
-
-4. If you intend on using the MUI icons library, install this
-
-```
-npm install @material-ui/icons		npm or yarn install (pick one)
-yarn add @material-ui/icons
-```
-
-BE AWARE:
-The course I'm taking to learn MUI is based on v4, but v5 has been released as of late 2021
-There will be a few breaking changes that you'll need to address later
-
-#### Importing Components
-
-There are 2 ways to import a component over to whichever JS file you're writing React in
-
-1. Default import (slightly more performant)
-
-```react
-import Typography from "material-ui/core/Typography"
-```
-
-2. Destructure import
-
-```react
-import { Typography } from "material-ui/core"
-```
-
-WARNING:
-The above examples are for v4, so whenever you use a feature, just refer to the docs for the correct import line when you eventually start using v5
-
-### Typography
-
-When using MUI, you won't need to use text-based tags like `<p> <h1>`... etc
-Instead, you'll be using the Typography component
-
-#### Variant & Component Props
-
-MUI styles JSX elements using props. 
-When it comes to typography, we'll be using the variant and component props
-
-VARIANT:
-What the typography element will be styled like
-
-- If `variant="h3"`, the typography element will be styled like an `<h3>`
-- If there is no specified component prop, the JSX produced my MUI will automatically be an `<h3>`
-
-COMPONENT:
-The JSX produced from the typography element
-
-- If `component="h5"`, then JSX produced from the typography element will be an `<h5>`
-- If `variant="h3"` and `component="h4"`, the result will be an `<h4>` tag styled like an `<h3>`
-
-ALL VARIANT POSSIBILITIES: (set to body1 if unspecified)
-
-![image-20220101182840082](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220101182840082.png)	![image-20220101182848373](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220101182848373.png)
-
-#### Typography tags
-
-The default JSX element produced when you use `<Typography>` is the simple `<p>` tag
-
-EXAMPLE 1: Style a red h1 styled like an h5
-
-```REACT
-  <div>
-      <Typography variant="h5" component="h1" color="secondary" align="center">
-        An h1 that appears like an h5
-      </Typography> {/* we are using theme colors to color the header */}
-      <Typography>
-        My default state is a paragraph. Insert random para here
-      </Typography>
-  </div>
-```
-
-![image-20220101181728573](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220101181728573.png)
-
-
-
-#### Wrapping, Coloring, Truncation...
-
-EXAMPLE 2: Truncate the paragraph so it doesn't wrap. Let it trail off with ellipses
-
-```react
-    <div>
-      <Typography variant="h5" component="h1" color="secondary" align="center">
-        An h1 that appears like an h5
-      </Typography>
-      <Typography noWrap>
-        Same paragraph as before
-      </Typography>
-    </div>
-```
-
-![image-20220101182555808](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220101182555808.png)
-
-------
-
-COLORING EXPLAINED:
-Similar to Bootstrap, MUI uses a theme palette to assign default colors to the components we'll be designing with it. 
-
-#### What is the Component API?
-
-You may have noticed in the examples given how we customize the typography tag further using props we didn't explain yet
-
-- Every component has a dedicated API page which tells you how to further customize it with props
-- Just go to the component page in the docs, then look for an API link at the bottom
-  Or follow the links I'll be providing at the end of each component lesson
-
-> v4 section: https://v4.mui.com/components/typography/
-> API: https://mui.com/api/typography/ 
-
-MAIN OPTIONS:
-
-Color: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220101183742284.png" alt="image-20220101183742284" style="zoom:67%;" /> 		Text-align: ![image-20220102015006376](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102015006376.png)
-
 
 
 # Themes & Custom Styling
-
-### Impose Custom CSS Styles (makeStyles hook- v4 only)
-
-When working with MUI, we have plenty of premade styling options available for each component
-If you want to override certain aspects of the styling, use the makeStyles hook
-
-#### Demo & Explanation
-
-React page file:
-
-```react
-import React from "react";
-import { Button, makeStyles } from "@material-ui/core"; // 1. Import makeStyles
-
-// 2. Declare a function that calls the makeStyles hook
-const useStyles = makeStyles({
-  // Object parameter. keys=classNames + applied CSS styles must be in camelCase
-  btn: {
-    fontSize: 30, // another way to adjust size would be width or height
-    backgroundColor: "pink",
-    // Can apply pseudo selectors too
-    "&:hover": {
-      backgroundColor: "purple",
-    },
-  },
-});
-
-export default function Notes() {
-  const classes = useStyles(); // 3. Initialize the makeStyles function
-  // 4. Use the classes you set up in your JSX
-  return (
-    <Button variant="contained" color="primary" className={classes.btn}>
-      SECONDARY BUTTON
-    </Button>
-  );
-}
-```
-
-Certainly not a default option: ![image-20220102193855046](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102193855046.png)
-
-Keep in mind that whatever MUI styles you didn't override will still be in effect
-Ex. With the button above we still have shadows applied and the ripple effects are active
-
-#### Using Default Theme Object Values in your Classes
-
-You can incorporate values from the default theme into your classes
-
-- Reference them directly by using the theme argument in the makeStyles hook
-  Don't copy paste them from the default `theme` object in the docs
-- You change your use of the makeStyles hook a bit
-  Now, you place a function inside with a theme parameter that returns an object full of CSS styles
-
-EXAMPLE: 	
-
-1. Apply the default theme object border radius X 8 
-2. Apply the default theme object padding X 3
-
-Check the docs:       ![image-20220102221338473](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102221338473.png)
-
-React page file
-
-```react
-const useStyles = makeStyles((theme) => {
-  return {
-    btn: {
-      fontSize: 30,
-      backgroundColor: "pink",
-      // Apply the default_borderRadius X 8, and the default padding X 5
-      borderRadius: theme.shape.borderRadius * 8,
-      padding: theme.spacing(5), // x5 looks different b/c spacing= f e() in docs
-      "&:hover": {
-        backgroundColor: "red",
-      },
-    },
-  };
-});
-
-export default function Notes() {
-  const classes = useStyles();
-  return (
-    <>
-      <Button variant="contained" color="primary">
-        Primary button
-      </Button>
-      <Button variant="contained" color="secondary" className={classes.btn}>
-        Secondary button
-      </Button>
-    </>
-  );
-}
-```
-
-![image-20220102221505786](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102221505786.png)
-
-#### makeStyles with Parameters
-
-- You can add conditional CSS to the object you return from makeStyles
-- Combining this with React props/states means that you can apply classes to several elements, but only add specific styles to those that meet your conditions
-
-EXAMPLE:  https://youtu.be/6BkqRkw0Lwc?list=PL4cUxeGkcC9gjxLvV4VEkZ6H6H4yWuS58&t=270
-
-React page file
-
-```react
-// 1. Import makeStyles
-import { Button, makeStyles, ThemeProvider } from "@material-ui/core";
-
-// 2. Declare a function that calls the makeStyles hook
-const useStyles = makeStyles((theme) => {
-  return {
-    btn: {
-      // These styles get applied to all elements with "btn" class no matter what
-      backgroundColor: "pink",
-      borderRadius: theme.shape.borderRadius * 8, // default radius X8
-
-      // Apply the fontSize conditionally, based on a prop value
-      fontSize: (props) => {
-        if (props.num === 10) return 5; 
-        else return 28
-        // return value can a number or string depending on what we're styling
-      }, 
-    },
-  };
-});
-
-export default function Notes(props) {
-  // 3. Initialize useStyles with a new variable and then use it in JSX
-  const classes = useStyles(props);
-  return (
-    <>
-      <Button variant="contained" color="primary">
-        Primary button
-      </Button>
-      <Button variant="contained" color="secondary" className={classes.btn}>
-        Secondary button
-      </Button>
-    </>
-  );
-}
-```
-
-Since `props.num` equals a falsy due to not existing, the secondary button fontSize is set to 28
-
-![image-20220103002927061](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220103002927061.png)
-
-
-
-### makeStyles Replacement in v5 (return2)
-
-The makeStyles hook was apparently removed in v5
-
-```
-If someone is following this tutorial with v5, instead of makeStyle you can just create object with styles ( style={your styles} ) and then use sx property(  sx={style} ). Thing to remember is that sx doesnt work with primitive elements so you have to replace div with something else( like <Box> )
-```
-
-https://dev.to/atonchev/material-ui-5-the-easiest-way-to-migrate-from-makestyles-to-emotion-1i9l
-
-### Default Theme Object Explained
-
-#### Default Color Palette
-
-- By now you've probably noticed that we can only change the color of components via props if we use pre-set color names like "primary" or "secondary"- just like in Bootstrap
-- If you look in the MUI default theme object, you can sift through the KVP's and eventually find what the default values for all the default colors are
-
-DEFAULT COLOR NAMES AND THEIR SHADES: 
-(one small part of the default theme object)
-
-![image-20220102050129757](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102050129757.png) ![image-20220102050142856](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102050142856.png) ![image-20220102050202288](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102050202288.png)
-
-To reach the above KVP's...
-
-![image-20220102051038764](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102051038764.png)
-
-#### Doc Links
-
-> Default Theme Object:
-> https://v4.mui.com/customization/default-theme/#default-theme
-
-- If you want to change what some of the default values in the object are, you can override KVP's 
-- You can use this to change the default colors, or do any number of other things as well
 
 ### Custom Themes: New Color Palette
 
@@ -738,9 +424,66 @@ This was an extremely simple example. Real projects will require...
 - A more sophisticated way of toggling themes
   Perhaps a switch or an icon button
 
+
+
+### Global Overrides (learn if needed)
+
+If configuration variables are not pwoerful enough to customize a component the way you want, then MUI provides a feature that may be able to help
+
+- You can potentially change **every single style** injected by Material-UI into the DOM
+- Ex. Disable ripple on every element instead of disabling it on every component individually
+
+Try these links and save em when you're done, please:
+
+https://v4.mui.com/customization/globals/#default-props
+
+https://v4.mui.com/customization/components/
+
+https://www.youtube.com/watch?v=mu8-u7V7Z8s&ab_channel=Headway
+
+Using CSS Modules + MUI (or you can use makeStyles instead)
+https://mui.com/styles/advanced/#css-injection-order
+https://stackoverflow.com/questions/53065983/can-i-override-material-ui-with-css-modules-in-create-react-app-v2
+
 # Layouts
 
-### Grid System
+### MUI Breakpoints & Media Queries
+
+#### Default Breakpoints
+
+Each breakpoint (a key) matches with a fixed screen width in pixels:
+
+| key  | viewport width (px) in v4 | viewport width (px) in v5 |
+| ---- | ------------------------- | ------------------------- |
+| xs   | 0 - 600                   | 0 - 600                   |
+| sm   | 600 - 960                 | 600 - 960                 |
+| md   | 960 - 1280                | 960 - 1200                |
+| lg   | 1280 - 1920               | 1200 - 1536               |
+| xl   | 1920 - infinity           | 1536 - infinity           |
+
+#### Changing Default Breakpoints
+
+The breakpoints are part of the default theme object
+
+- They can be edited by following the same procedure as when you created new color palettes in the "Themes and Custom Stylings" chapter
+- You can even choose to give the breakpoints new names altogether
+
+![image-20220103213640872](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220103213640872.png)
+
+
+
+#### Media Queries
+
+
+
+
+
+### Containers & Spacing (return2)
+
+### MUI Grid System
+
+MUI has its own grid system based on flexbox that helps you create layouts
+Feel free to use it or even regular CSS grid since the 2 don't interfere with each other at all
 
 ### Layout Component
 
@@ -965,7 +708,43 @@ MAIN OPTIONS FOR BUTTONS:
 
 
 
-### Text Fields
+### Text Fields: < Input >
+
+Its important to know what styling options we have for text fields
+They're key to building forms that convey information in a clear manner
+
+#### Relevant Props
+
+| PROP         | WHAT IT DOES TO THE INPUT FIELD                              | VALUE  |
+| ------------ | ------------------------------------------------------------ | ------ |
+| error        | turns the field and its associated text red                  | bool   |
+| helperText   | places small text right below it                             | string |
+| label        | places small text inside the input field but on the upper left side only<br />(looks a bit different depending on the variant value) | string |
+| defaultValue | adds placeholder text                                        | string |
+
+![image-20220103181842654](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220103181842654.png)
+
+#### CONTINUE FROM HERE
+
+Use these links, but the v5 versions
+
+https://v4.mui.com/components/text-fields/#components
+
+https://v4.mui.com/api/text-field/
+
+#### Types of Input Fields
+
+#### Demo Project
+
+
+
+#### Links
+
+TextField is composed of several subcomponents from MUI
+https://v4.mui.com/components/text-fields/#components
+
+Change Focus Color from blue to something else
+https://v4.mui.com/components/text-fields/#color
 
 ### Radio Buttons
 
@@ -987,7 +766,16 @@ MAIN OPTIONS FOR BUTTONS:
 
 
 
+# v5 Topics
 
+### List
+
+- makeStyles replacement
+  They have a dedicated section for how styling works in v5
+- Box component
+- sx
+- The new breakpoints
+- 
 
 
 

@@ -113,6 +113,8 @@ You must have Node.js installed
 
 ```
 npx create-next-app			→ 	answer prompts and then a new folder appears
+OR
+yarn create next-app
 ```
 
 3. Run `git init` in the new folder that was just produced
@@ -120,6 +122,8 @@ npx create-next-app			→ 	answer prompts and then a new folder appears
 
 ```
 npm run dev
+OR 
+yarn run dev
 ```
 
 #### The pre-made NPM Commands

@@ -131,6 +131,8 @@ PROCEDURE:
 ```
 cd ~/Desktop								// move to desktop 
 npx create-react-app <my-app-name>			// create and name your project
+OR
+yarn create react-app <my-app-name>
 ——————————————————————————————————————————————————————
 ** open new folder in VSCode => open terminal **
 npm start						// open live preview (keep on during development)

@@ -4320,7 +4320,7 @@ Use this image to help remind you of how Redux works in general
 
 
 
-# ====== REACT ROUTER ======
+# ====== REACT ROUTER v5 ======
 
 Use React Router to make SPA's that transition between pages real smoothly
 
@@ -4328,7 +4328,7 @@ Use React Router to make SPA's that transition between pages real smoothly
 
 With React router, we can add multiple pages with different URL's to our single page applications
 
-### Routing Explanation & Setup
+### Routing Explained + Installation
 
 Being able to change the URL of your site is important for many reasons
 
@@ -4338,7 +4338,8 @@ Being able to change the URL of your site is important for many reasons
 #### Setup
 
 ```
-npm install react-router-dom
+npm install react-router-dom	// pick one
+yarn add react-router-dom
 ```
 
 index.js
@@ -4754,6 +4755,12 @@ In this lesson we won't be showing the code for many components that aren't 100%
 
 #### Paths without Switch or Exact
 
+Import line
+
+```js
+import { Route, Switch, Redirect } from "react-router-dom";
+```
+
 App.js return section		![image-20210912200855308](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210912200855308.png)
 
 What happens if we enter the following URL's into our search bar?
@@ -4860,6 +4867,27 @@ Shorter Syntax
 
 ```html
 <Route path="/welcome" component={Welcome} />
+```
+
+
+
+### Breaking Changes in v6
+
+#### < Switch > removed
+
+Replace it with Routes tags that accept an element attribute that should lead to the component you wish to render
+
+```react
+import Home from "./pages/Home.js";
+import { Route, Routes } from "react-router-dom";
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+    </Routes>
+  );
+}
 ```
 
 
