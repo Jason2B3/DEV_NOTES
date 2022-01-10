@@ -2374,18 +2374,16 @@ Your image may end up being cropped when you let the browser select the width or
 
 Demo: https://codepen.io/NFuego24-7/pen/JjRyzvW
 
-
-
 #### Pre-made Size Values
 
 ```css
-background-size: contain; 	/* Ensures the whole img is visible in the container*/
+background-size: contain 	/* Ensures the whole img is visible in the container*/
 ```
 
 Use contain when you want to make sure 100% of the photo is visible, even if you need to leave some white empty space on your page. Works great when your photo's much larger than the viewport. Then it just sizes it down
 
 ```css
-background-size: cover;		/*Makes img fill the entire container via crop/zoom*/
+background-size: cover		/*Makes img fill the entire container via crop/zoom*/
 ```
 
 Use cover when you want no white space on your element block or page. The photo will fill it up 100% vertically and horizontally, even if it must crop things out or zoom in.
@@ -2860,7 +2858,7 @@ background-image: radial-gradient( at top left, black, blue 70%, purple);
 
 
 
-### 1-color Gradients
+### 1-color Gradients & Transparent Filters
 
 Sometimes we'd like to have an image that starts off looking normal, then eventually fades into a certain color on the top/bottom/left/right side
 
@@ -2868,7 +2866,7 @@ Sometimes we'd like to have an image that starts off looking normal, then eventu
 >
 > The image you work with does not have to repeat
 
-#### Procedure
+#### 1 Color Gradients
 
 > DISCLAIMER:
 > This only works when you're working with a background image
@@ -2902,6 +2900,21 @@ Adjust the second rgba to change the gradient color
 Lowering the second rgba percentage will start the gradient sooner
 
 > TEST: https://codepen.io/jason2b3/pen/vYJPdmP
+
+#### Transparent Filters
+
+We can gimmick our way into producing a 1 color filter by pairing 2 gradients using the same color code
+
+EXAMPLE: Produce a transparent black filter
+
+```css
+background: linear-gradient(
+    rgba(0, 0, 0, 0.4),
+    rgba(0, 0, 0, 0.4) ), 
+    url('/images/b.jpg')
+```
+
+![image-20220110052647355](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220110052647355.png)
 
 ### Stacking Multiple Backgrounds
 

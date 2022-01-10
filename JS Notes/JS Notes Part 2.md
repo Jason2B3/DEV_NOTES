@@ -3347,6 +3347,55 @@ setTimeout(() => {
 
 [REST APIs vs GraphQL APIs (academind.com)](https://academind.com/tutorials/rest-vs-graphql/)
 
+
+
+### API Endpoints: Practical Guide
+
+To use API's properly, you should understand the basics of how endpoints work
+
+#### Parts of the Endpoint
+
+STEM:
+An API will have a string that starts off every single endpoint it has available- I call it the stem
+After the stem, add query parameters to narrow down your search
+
+QUERY PARAMETERS:
+
+- These are KVP's you place in a string
+- Place a `?` before the first one, then an `&` in between it and any new ones
+
+API KEYS IN THE REQUEST:
+Not all API's are usable right away- some require a sign up process that gives you an API key if you finish it successfully
+
+- The API key is what gives your project permission to access API endpoints, and should be kept private at all costs- so place it in a .env file in your project files
+- When making a request, attach the following KVP in your request header
+  `Authorization: Bearer <API-KEY-HERE>`
+
+#### Testing Endpoints with Online Tools
+
+Use postman in the browser to test out API calls without having to explicitly write code for it first
+Afterwards, view the JSON fullscreen using another tools
+
+1. Make requests with Postman:					https://web.postman.co/
+2. View formatted JSON responses: 			http://jsonviewer.stack.hu/
+
+#### Demo
+
+API ENDPOINT EXAMPLE:
+
+```
+STEM:
+https://api.yelp.com/v3/businesses/search
+
+QUERY PARAMETER FORMULA
+https://api.yelp.com/v3/businesses/search?<queryParameter>&<queryParameter>
+
+WORKING EXAMPLE: Searches Yelp API based on current location
+https://api.yelp.com/v3/businesses/search?latitude=83.8530=443&longitude=-21.434973
+```
+
+
+
 # AsyncJS: fetch() + then() Chains
 
 We'll be learning all about the fetch API to extract data from 3rd party services- and promise chaining + error handling is required to do this effectively.
@@ -5857,6 +5906,8 @@ I already know fetch(), but I'll learn it since it's still popular
 > TUTORIAL: 
 > https://www.youtube.com/watch?v=qM4G1Ai2ZpE
 
+
+
 ### Installation & Advantages over fetch()
 
 #### Install
@@ -5904,8 +5955,6 @@ In POST requests...
   Just use `catch(err) console.log(err.response)`
 
 2. Fetch is built into JS while Axios is a dependency 
-
-
 
 #### Overriding Axios Default Headers
 

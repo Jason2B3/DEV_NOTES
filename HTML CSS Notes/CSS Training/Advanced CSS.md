@@ -2218,8 +2218,6 @@ When you create something using grid, you should have a general idea for
 You shouldn't explicitly state the width of every single column you create in grid. 
 
 - Let the width be decided by the grid item content by using `grid-template-columns: auto` for one width value or even multiple
-- When you could this with fractional units, arranging items becomes much easier
-  You'll see what I mean in the next subsection
 
 #### fr units for Spacing
 

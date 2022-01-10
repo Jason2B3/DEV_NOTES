@@ -1,15 +1,15 @@
-```
+# ========== GENERAL ==========
 
-```
 
-# Basics
+
+# Basics + Core Concepts
 
 ### Installation
 
 #### Install Procedure
 
 1. Build your initial project with create-react-app, or the Next.js equivalent
-2. Go into the project's index.html file in the public folder and add these to the header
+2. Go into the project's index.html file in the public folder and add these to the header to implement MUI's default Roboto font and enable its icon library
 
 ```html
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"/>
@@ -49,8 +49,8 @@ Afterwards, your tools will need to be properly implemented into your files
 
 #### MUI with React
 
-> Download the zip file off the following branch: `MUI_reactBoiler`
-> https://github.com/Jason2B3/mui5_learn/tree/MUI_reactBoiler
+> Download the zip file off the following branch:
+> https://github.com/Jason2B3/mui5_learn/tree/updated_v5_starter
 
 CONFIGURED TOOLS: 
 They must be applied in the following nesting order within index.js or App.js
@@ -58,6 +58,7 @@ They must be applied in the following nesting order within index.js or App.js
 1. Context API
 2. MUI Theme Provider
 3. React Router 
+4. Theme provider set up and ready to be used in conjunction with Context API
 
 #### MUI with Next (return2)
 
@@ -222,11 +223,168 @@ export default function Home() {
 
 
 
-# Themes & Custom Styling
+### MUI Breakpoints & Media Queries 
+
+Each breakpoint (a key) matches with a fixed screen width in pixels
+See the breakpoints KVP in the [default themes object](https://mui.com/customization/default-theme/#main-content) to verify the following chart
+
+#### Default Breakpoints Chart
+
+V5 CHART:
+
+| key  | start point | dedicated zones |
+| ---- | ----------- | --------------- |
+| xs   | 0           | 0 - 600         |
+| sm   | 600         | 600 - 900       |
+| md   | 960         | 900 - 1200      |
+| lg   | 1280        | 1200 - 1536     |
+| xl   | 1920        | 1536 - infinity |
+
+#### Changing Default Breakpoints
+
+The breakpoints are part of the default theme object
+
+- They can be edited by following the similar procedure as when you created new color palettes in the "Themes and Custom Stylings" chapter
+- You can even choose to give the breakpoints new names altogether, but I'd avoid it to maintain consistency with the documentation
+
+REMEMBER!
+
+- When redefining breakpoints, redefine every single one
+- You're overriding the entire object, so if you only type out1 new breakpoint, that'll now be the only one in effect since the others have been deleted
+
+------
+
+MUI_themes.js
+
+```react
+import { createTheme } from "@mui/material/styles";
+import { indigo, teal } from "@mui/material/colors";
+
+const newBreakpoints = {
+  values: { xs: 600, sm: 900, md: 1200, lg: 1500, xl: 1800 },
+}; // good to define them outside, sine you'll likely reuse them in every theme
+
+export const customThemes = {
+  //^ STANDARD LIGHT THEME
+  light: createTheme({
+    breakpoints: newBreakpoints,
+  }),
+  //^ DARK THEME
+  dark: createTheme({
+    palette: {
+      mode: "dark", // enable dark mode and let MUI make its automated changes
+    },
+    // Must define every single breakpoint, since we're overriding the entire object
+    breakpoints: newBreakpoints,
+  }),
+};
+```
+
+App.js
+
+```react
+// Step 1. Create a theme using imported color objects from MUI
+import { createTheme, ThemeProvider } from "@material-ui/core";
+// Protip, use VSC suggestions to get the import lines for color objects
+import { customThemes } from "../WHEREVER THE FILE ABOVE IS"
+
+// Step 2: Wrap ThemeProvider tags around all components in App.js
+function App() {
+  // IRL, we'd select a theme to use based on state values using Context API
+  // For this example, I'll just pick one
+  return (
+    <ThemeProvider theme={customThemes.light}>
+        <Switch>Whatever else is sandwhiched in the middle here</Switch>
+    </ThemeProvider>
+  );
+}
+```
+
+#### Breakpoint Methods: Media Query Equivalents
+
+You'll be using these snippets of CSS when you customize your components
+
+MOBILE FIRST METHOD:	essentially just `@media (min-width: 600px)`
+
+```scss
+// Apply change at all viewports above sm (600px)
+[theme.breakpoints.up("sm")]: { color: "black" }
+```
+
+DESKTOP FIRST METHOD:
+
+```scss
+// Apply change at all viewport widths below sm (600px)
+[theme.breakpoints.down("sm")]: { color: "black" }
+```
+
+ZONE METHODS
+
+```SCSS
+// Apply changes in the sm zone only (600 - 900px)
+[theme.breakpoints.only("sm")]: { color: "black" }
+// Apply change in the md zone only (900 - 1200px)
+[theme.breakpoints.only("md")]: { color: "black" }
+
+// Apply changes from the start of sm zone until the start lg (600 - 1200px)
+[theme.breakpoints.between("sm", "lg")]: { color: "black" }
+```
+
+#### Advice for the Breakpoint Methods
+
+WHEN YOU CAN USE THEM:
+There are probably more places, but I know of these 2 at the moment
+
+- When building custom components with styled()
+- When styling with sx props
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220107025759717.png" alt="image-20220107025759717" style="zoom:80%;" /> 			<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220107025611342.png" alt="image-20220107025611342" style="zoom:80%;" />
+
+PRO-TIP #2:
+If you need to style media queries with regular pixel widths, you can
+I don't know if this mixes well if you use breakpoint 
+
+![image-20220107004700710](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220107004700710.png)
+
+
+
+#### Doc Links
+
+Check out the breakpoints in the default theme object.
+Look under `themeObject.breakpoints.values` 
+
+> Default theme object: 
+> https://mui.com/customization/default-theme/#main-content
+>
+> Breakpoint method explanations:		(I tested them all and made better notes though)
+> https://mui.com/customization/breakpoints/#api
+
+
+
+
+
+### 1rem = 10px trick in MUI **
+
+
 
 ### All Customization Options in v5 **
 
-#### Options List 
+#### Chart
+
+The options are ordered in terms of how widespread the changes will be after using that option
+
+| OPTION                   | METHOD         | WHAT IT DOES                                                 |
+| ------------------------ | -------------- | ------------------------------------------------------------ |
+| one off customization    | sx, makeStyles | applies styles to individual MUI components via the sx prop or class names (makeStyles) |
+| reusable style overrides | styled()       | creates a reusable component that you can apply custom styles on |
+| global theme variation   | createTheme()  | changes the default theme object so you can edit its values to better suit your design-wants |
+| global CSS override      |                |                                                              |
+|                          |                |                                                              |
+
+I neglected to include "Dynamic Variation", due to how similar it is to "Reusable Style Overrides"
+It gives that method more functionality, and would be in spot #3
+
+#### List 
 
 > SOURCE:
 > https://mui.com/customization/how-to-customize/#1-one-off-customization
@@ -246,155 +404,576 @@ We won't likely learn all of these unless we run into scenarios when they're req
 - Just option 2 with the added benefit of making style overrides dynamic
 - This means we make our stylings change depending on other factors like state
 
+4. Global Theme variation
+
+- This is when we edit the default theme object or create/use new themes altogether
+- We can change all sorts of things with this- color palettes, fonts, spacing values...etc
+
 4. Global CSS Overrides
 
 
 
-### Custom CSS in v4: makeStyles Hook
+# Using Next.js over React
 
-When working with MUI, we have plenty of premade styling options available for each component
-If you want to override certain aspects of the styling, use the makeStyles hook
+### Setup Differences
 
-#### Demo & Explanation
 
-React page file:
+
+
+
+# ======= CUSTOMIZATION =======
+
+
+
+# Global Theme Variation + Global Overrides: createTheme()
+
+Method 4 of 5 for customization, as listed by the MUI docs
+https://mui.com/customization/how-to-customize/#4-global-theme-variation
+
+### Custom Themes: New Color Palette
+
+In the previous lesson we learned about the default theme object. 
+Lets override certain KVP's in that object to set up a new default-color palette for our components
+
+#### Prerequisite knowledge
+
+Verify facts [here](https://mui.com/customization/default-theme/#:~:text=explore%20the%20default%20theme%20object%3A)
+
+| Question                                   | Answer                                            |
+| ------------------------------------------ | ------------------------------------------------- |
+| name all color objects in the theme object | primary, secondary, error, warning, info, success |
+| list shades for each color object          | light, main, dark                                 |
+
+![image-20220102171611897](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102171611897.png)
+
+#### Method 1: Override with Hex Codes
+
+We can use hex codes to change the colors in MUI's theme palette.
+You have 2 choices for how you want to do this:
+
+OPTION A: Override the main shade only (recommended)
+
+- MUI will use a formula to select the light and dark shades for you
+- It will also automatically change the text color of components to better contrast the main shade
+  Ex. If you specify a main shade of yellow, the text will be auto-set to black
+
+![image-20220102172424643](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102172424643.png) ![image-20220102172642531](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102172642531.png)
+
+OPTION B:  Override all 3 shades- light, main, and dark
+
+- You can specify each shade to be any color you want
+  The light and dark shades can even be completely different colors than the main
+
+- MUI will auto-set the text color of components when the main shade is used, but it won't on the light and dark shades (see above 2 images)
+
+------
+
+DEMO:
+
+If you want a tool to help you set primary and secondary themes, [use this](https://v4.mui.com/customization/color/#playground)
+You can see what the colors look like next to each other
+
+App.js or index.js
 
 ```react
-import React from "react";
-import { Button, makeStyles } from "@material-ui/core"; // 1. Import makeStyles
-
-// 2. Declare a function that calls the makeStyles hook
-const useStyles = makeStyles({
-  // Object parameter. keys=classNames + applied CSS styles must be in camelCase
-  btn: {
-    fontSize: 30, // another way to adjust size would be width or height
-    backgroundColor: "pink",
-    // Can apply pseudo selectors too
-    "&:hover": {
-      backgroundColor: "purple",
+// Step 1: Create a new theme
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+const theme = createTheme({
+  palette: {
+    // OPTION A Demo: Specify main shade only
+    primary: {
+      main: '#00897b', // changed to a foresty green
+      // Since we left light and dark unspecified, MUI will set them automatically
     },
+    // OPTION B Demo: Specify all shades
+    secondary: {
+      main: '#ffb333', // orange
+      light: '#303f9f', // dark blue (not really a shade of orange but whatever)
+      dark: '#512da8' // violet (not really a shade of orange but whatever)
+    }
   },
 });
 
-export default function Notes() {
-  const classes = useStyles(); // 3. Initialize the makeStyles function
-  // 4. Use the classes you set up in your JSX
+// Step 2: Wrap ThemeProvider tags around all components in App.js
+function App() {
   return (
-    <Button variant="contained" color="primary" className={classes.btn}>
-      SECONDARY BUTTON
-    </Button>
+    <ThemeProvider theme={theme}>
+        <Switch>Whatever else is sandwhiched in the middle here</Switch>
+    </ThemeProvider>
   );
 }
 ```
 
-Certainly not a default option: ![image-20220102193855046](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102193855046.png)
+react page file
 
-Keep in mind that whatever MUI styles you didn't override will still be in effect
-Ex. With the button above we still have shadows applied and the ripple effects are active
+```react
+      <Button variant="contained" color="primary">
+        Primary button
+      </Button>
+      <Button variant="contained" color="secondary">
+        Secondary button
+      </Button>
+```
 
-#### Using Default Theme Object Values in your Classes
+END RESULT:
 
-You can incorporate values from the default theme into your classes
+Default Color Palette: ![image-20220102165148522](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102165148522.png) 		
 
-- Reference them directly by using the theme argument in the makeStyles hook
-  Don't copy paste them from the default `theme` object in the docs
-- You change your use of the makeStyles hook a bit
-  Now, you place a function inside with a theme parameter that returns an object full of CSS styles
+New palette: ![image-20220102170359055](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102170359055.png)
 
-EXAMPLE: 	
+Hover primary button: ![image-20220102170426970](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102170426970.png)
 
-1. Apply the default theme object border radius X 8 
-2. Apply the default theme object padding X 3
+Hovering secondary button:  ![image-20220102170446898](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102170446898.png)
 
-Check the docs:       ![image-20220102221338473](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102221338473.png)
+RESULT DISCUSSION
+
+- When you hover a button, the dark shade gets used
+  When the button is left idle, the main shade gets used
+- MUI automatically set the component text color for our new main shades
+  The primary button got white text while the secondary one got black text
+- Notice how the black text looks too dark in contrast to the dark shade 
+  MUI did not automatically set the component text color for our dark shade
+
+#### Method 2: Override with Color Objects
+
+Instead of hex codes, you can use color objects to override the default palette colors
+You don't have to specify any shades at all, since MUI already has them pre-defined per color object
+
+PROCEDURE:
+
+1. Pick MUI's color objects [here](https://v4.mui.com/customization/color/#color-palette)
+2. Assign a color object to primary, secondary, error, warning, info, or success (directly)
+
+- MUI will choose the light/dark/main shades for you automatically
+- The syntax is a little different than method one's (less nesting)
+
+3. Wrap ThemeProvider tags around App.js or index.js just like in method 1
+
+```react
+import { indigo, teal } from "@mui/material/colors";
+
+//^ Define your custom MUI themes here
+const theme = createTheme({
+  palette: {
+    primary: indigo,
+    secondary: teal,
+  },
+});
+```
+
+------
+
+DEMO FOR M2:
+
+App.js
+
+```react
+// Step 1. Create a theme using imported color objects from MUI
+import { createTheme, ThemeProvider } from "@material-ui/core";
+// Protip, use VSC suggestions to get the import lines for color objects
+import { lightGreen } from "@material-ui/core/colors";
+import { orange } from "@material-ui/core/colors";
+
+const theme = createTheme({
+  palette: {
+    primary: lightGreen,
+    secondary: orange,
+  },
+});
+
+// Step 2: Wrap ThemeProvider tags around all components in App.js
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+        <Switch>Whatever else is sandwhiched in the middle here</Switch>
+    </ThemeProvider>
+  );
+}
+```
 
 React page file
 
 ```react
-const useStyles = makeStyles((theme) => {
-  return {
-    btn: {
-      fontSize: 30,
-      backgroundColor: "pink",
-      // Apply the default_borderRadius X 8, and the default padding X 5
-      borderRadius: theme.shape.borderRadius * 8,
-      padding: theme.spacing(5), // x5 looks different b/c spacing= f e() in docs
-      "&:hover": {
-        backgroundColor: "red",
+      <Button variant="contained" color="primary">
+        Primary button
+      </Button>
+      <Button variant="contained" color="secondary">
+        Secondary button
+      </Button>
+```
+
+![image-20220102190835543](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102190835543.png)
+
+#### Doc Links + Best Methods
+
+PREFERRED METHODS:
+With these 2 strats, MUI will do most of the work by selecting dark/light shades while making sure the text colors inside components contrast nicely
+
+1. Method 1 while specifying the main shade only
+   Use when you have an exact color you'd like to style with
+2. Method 2 
+   Use if MUI color objects suffice for what you're making
+
+DOC LINKS:
+
+> Method 1 Color Selector Tool:  
+> https://mui.com/customization/color/#playground
+>
+> Method 2 color objects:  
+> https://mui.com/customization/color/#color-palette
+
+
+
+### Custom Themes: New Fonts
+
+You can do more than just override default colors in MUI. 
+Now, we're going to learn how to apply different Google Fonts
+
+#### Location in the Default Theme Object
+
+Go to the default theme object [here](https://v4.mui.com/customization/default-theme/#explore), and click on the nested typography object
+Each typography variant is styled using an object whose KVP's we can edit/override
+
+Images from v5:
+
+> ![image-20220102192220410](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102192220410.png) ![image-20220102192249341](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102192249341.png) ![image-20220102192301545](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102192301545.png)
+
+Let's look at how h1 is styled:	 ![image-20220102192530551](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102192530551.png)
+
+#### Apply new Font to all Components
+
+PROCEDURE:
+
+1. Grab the @import line for your desired font in Google Fonts
+   There's a slightly different way to do this using `<link>` instead (not explained here)
+2. Place the @import line at the top of index.css
+3. Use createTheme to create a theme, then wrap ThemeProvider tags around all the components inside that file's JSX
+
+------
+
+PROCEDURE IN ACTION:
+
+src/index.css
+
+```css
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Quicksand:wght@300;400;500;600;700&display=swap');
+```
+
+App.js 
+
+```react
+// Step 1: Create a new theme
+import { createTheme, ThemeProvider } from "@material-ui/core";
+
+const theme = createTheme({
+  typography: {
+    // Change main site font
+    fontFamily: "Josefin Sans", // grab name from Google Fonts
+    // Make all the font weights a tad heavier
+    fontWeightLight: 700,
+    fontWeightRegular: 700,
+    fontWeightMedium: 700,
+    fontWeightBold: 700,
+  },
+});
+
+// Step 2: Wrap ThemeProvider tags around all components in App.js
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+        <Switch>Whatever else is sandwhiched in the middle here</Switch>
+    </ThemeProvider>
+  );
+}
+```
+
+
+
+### Themes with Conditional Logic
+
+You have the ability to create themes while adding conditional logic to set values
+
+- All you have to do is use `createTheme()` inside of the React component function, underneath the values the conditions will be based on
+
+> Remember, createMuiTheme is outdated. Just use createTheme instead
+>
+> ![image-20220103025822380](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220103025822380.png)
+
+
+
+### Dark Mode: Explained 
+
+> Source: https://www.youtube.com/watch?v=H_PO_GY4xXU&ab_channel=AnthonySistilli
+
+MUI actually provides 2 default theme object color palettes, not one
+
+- The 2 available palettes are `mode: light`  and `mode: dark` in v4 (changes in v5)
+- The light mode is the default palette that MUI applies, but it can be toggled to dark easily
+  Creating a nice looking dark mode requires a bit more customization than that however
+
+#### What enabling Dark Mode does on its own
+
+The following colors are altered by toggling dark mode on
+
+- Background color, paper element background color, divider colors
+- Text colors and their shades (primary, secondary, and disabled)
+- When you toggle the dark theme on, only a few colors actually get changed
+  The primary, secondary, error, warning, info, & success colors in the default palette remain the same
+
+> Source: https://mui.com/customization/dark-mode/#main-content
+>
+> ![image-20220105182655718](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220105182655718.png)
+
+#### Visual Demo (no code)
+
+React page file
+
+```react
+      <Typography variant="h3" component="h1" align="center">
+        This is my app!
+      </Typography>
+      <Button
+        variant="contained"
+        color="primary"
+      >
+        Primary button
+      </Button>
+      <Button variant="contained" color="secondary">
+        Secondary button
+      </Button>
+```
+
+Light theme enabled (default)
+
+> ![image-20220103052708007](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220103052708007.png)
+
+Dark theme enabled 
+
+> ![image-20220103052732718](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220103052732718.png)
+
+EXPLANTION:
+
+- h1 does not have a specified color, so it uses `text.primary` which equals `rgba(0,0,0, 0.87)`
+  MUI will change this automatically when dark mode's applied
+- The buttons use primary/secondary colors
+  MUI won't modify these when dark mode's applied
+
+![image-20220103040213804](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220103040213804.png)
+
+#### What we must Add to Dark Mode
+
+If you read the previous subsection, you know that toggling dark mode only changes a few things
+This means that to make a dark theme look nice, we'll have to...
+
+1. Enable dark mode, and let MUI make its automated changes we just described
+2. Change some of the 7 palette colors so that elements do actually look different when dark mode's enabled
+
+USEFUL TOOLS:
+
+| tool               | how it helps                                                 |
+| ------------------ | ------------------------------------------------------------ |
+| createTheme method | need it to create multiple new themes<br />light (default), dark, and more if you want |
+| Context API        | Create a function that toggles dark mode on- the API will let you do this from any component file |
+| localStorage API   | Save the latest theme chosen by the user in localStorage so it stays applied when they visit again. Rely on useEffect or useMemo to auto select their latest choice on startup |
+
+
+
+### Dark Mode: Execution
+
+#### Objective
+
+1. Enable dark mode for your application via button press
+2. Change palette colors at the same time- stick to primary and secondary for this example
+3. Set things up in a way where we can use 3 themes or more (no toggle)
+
+REMAINING MAJOR FEATURE
+
+- We should incorporate localStorage to remember previously selected theme preferences, but I'll save that for a real project 
+- If we don't simply reloading the page will snap your site back to light theme since it decides on your theme based on state which will reset
+
+> ![image-20220105190346451](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220105190346451.png) ![image-20220105190356389](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220105190356389.png)
+>
+
+#### Procedure
+
+> Just look at the files in this repo- the pictures above are enough to show what this site does
+> https://github.com/Jason2B3/mui5_learn/tree/updated_v5_starter
+>
+> Sandbox
+> https://codesandbox.io/s/5st09
+
+------
+
+1. Set up the context API with useState variables 
+   Make a theme and a method to change the theme available to all components
+
+state-management/globalContext.js
+
+```react
+import { useState, createContext, useContext } from "react"; // import useContext
+const AAA = createContext();
+export const useGlobalContext = () => useContext(AAA) // export custom hook
+
+export default function GlobalContextAPIProvider(props) {
+  const [theme, setTheme] = useState("light");
+  const distribution = { theme, setTheme };
+  return <AAA.Provider value={distribution}>{props.children}</AAA.Provider>;
+}
+```
+
+2. Create a component that changes the theme state variable via user inputs
+
+pages/Home.js
+
+![image-20220105185925696](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220105185925696.png)
+
+3. In App.js, decide on what theme to use via the stateful theme variable
+
+- The key to this is creating a theme inside the React component, underneath that variable
+- Also, use the `<CssBaseline>` component, so enabling dark mode actually does something
+  It won't otherwise
+
+App.js
+
+```react
+import { createTheme, ThemeProvider } from "@material-ui/core";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import { useCustomContext } from "./state-management/globalContext";
+
+function App() {
+  const { theme } = useCustomContext(); // from context file
+  // Define all themes below (or shift this into another file, whatever)
+  const lightTheme = createTheme({}); 
+  const darkTheme = createTheme({
+    palette: {
+      type: "dark",
+      // Change the palette colors as well (2/7 to keep this ex. short)
+      primary: {
+        main: "#FFA500", // yellow
+      },
+      secondary: {
+        main: "#e389b9", // pink
       },
     },
-  };
-});
-
-export default function Notes() {
-  const classes = useStyles();
+  });
+  // Decide what theme to use based on the theme variable from context API
+  let selectedTheme;
+  if (theme === "lightTheme") selectedTheme = lightTheme;
+  if (theme === "darkTheme") selectedTheme = darkTheme;
   return (
-    <>
-      <Button variant="contained" color="primary">
-        Primary button
-      </Button>
-      <Button variant="contained" color="secondary" className={classes.btn}>
-        Secondary button
-      </Button>
-    </>
+    <ThemeProvider theme={selectedTheme}>
+      <CssBaseline> {/* Necessary for dark mode toggle to work */}
+        <Switch>Whatever else is in here</Switch>
+      </CssBaseline>
+    </ThemeProvider>
   );
 }
 ```
 
-![image-20220102221505786](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102221505786.png)
+#### In Future Projects
 
-#### makeStyles with Parameters
+This was an extremely simple example. Real projects will require...
 
-- You can add conditional CSS to the object you return from makeStyles
-- Combining this with React props/states means that you can apply classes to several elements, but only add specific styles to those that meet your conditions
-
-EXAMPLE:  https://youtu.be/6BkqRkw0Lwc?list=PL4cUxeGkcC9gjxLvV4VEkZ6H6H4yWuS58&t=270
-
-React page file
+- More consideration for the new palette colors you set
+  Contrast ratios, accessibility... etc (UI designer stuff)
+- A more sophisticated way of toggling themes
+  Perhaps a switch or an icon button
 
 ```react
-// 1. Import makeStyles
-import { Button, makeStyles, ThemeProvider } from "@material-ui/core";
+import "./App.css";
+import Home from "./pages/Home.js";
+import { useGlobalContext } from "./state-management/globalContext";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { BrowserRouter } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
+import { indigo, teal } from "@mui/material/colors";
+import { CssBaseline } from '@mui/material';
 
-// 2. Declare a function that calls the makeStyles hook
-const useStyles = makeStyles((theme) => {
-  return {
-    btn: {
-      // These styles get applied to all elements with "btn" class no matter what
-      backgroundColor: "pink",
-      borderRadius: theme.shape.borderRadius * 8, // default radius X8
-
-      // Apply the fontSize conditionally, based on a prop value
-      fontSize: (props) => {
-        if (props.num === 10) return 5; 
-        else return 28
-        // return value can a number or string depending on what we're styling
-      }, 
-    },
-  };
+//^ Define your custom MUI themes here or below the App function
+const darkTheme = createTheme({
+  palette: {
+    mode: "dark", // enable dark mode and let MUI make its automated changes
+    primary: indigo,
+    secondary: teal,
+  },
 });
+const lightTheme = createTheme({}); // default theme untouched
 
-export default function Notes(props) {
-  // 3. Initialize useStyles with a new variable and then use it in JSX
-  const classes = useStyles(props);
+export default function App() {
+  // Decide what theme to use based on ContextAPI's theme variable string
+  let selectedTheme;
+  const { theme } = useGlobalContext();
+  if (theme === "light") selectedTheme = lightTheme;
+  if (theme === "dark") selectedTheme = darkTheme;
   return (
-    <>
-      <Button variant="contained" color="primary">
-        Primary button
-      </Button>
-      <Button variant="contained" color="secondary" className={classes.btn}>
-        Secondary button
-      </Button>
-    </>
+    <ThemeProvider theme={selectedTheme}>
+      <BrowserRouter>
+        <CssBaseline> {/* MUST INCLUDE for dark theme to work */}
+          <Routes>
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </CssBaseline>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 ```
 
-Since `props.num` equals a falsy due to not existing, the secondary button fontSize is set to 28
-
-![image-20220103002927061](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220103002927061.png)
 
 
+### Global CSS Overrides
+
+This technique will affect every single instance of the element whose properties you override
+
+#### Procedure
+
+Go to wherever your themes are set up and add the following:
+
+```react
+import { createTheme } from "@mui/material/styles";
+
+export const customThemes = {
+  //^ STANDARD LIGHT THEME
+  light: createTheme({
+    components: {
+      // This will affect everything nested inside the CssBaseline tags
+      MuiCssBaseline: {
+        styleOverrides: `
+          h1 {
+            background: red;
+          }
+        `,
+      },
+      // Disable ripple on all Buttons (must use the exact component name)
+      MuiButtonBase: {
+        defaultProps: { disableRipple: true },
+      },
+    },
+  }),
+
+};
+```
+
+Relation to CssBaseline:
+
+- If you have your themes set up properly, you'll have a `<CssBaseline>` set up as a wrapper somewhere in your project
+- Will usually be App.js or index.js, where it'll affect all your project components
+- You'll need it in order to make `MuiCssBaseline: { }` in your global styling to have an effect
+
+![image-20220107054749386](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220107054749386.png)
+
+#### Doc Links
+
+> Global Overrides:
+> https://mui.com/customization/how-to-customize/#5-global-css-override
+>
+> Disable ripple: 
+> https://mui.com/getting-started/faq/#how-can-i-disable-the-ripple-effect-globally
+
+# One off Customization: sx
+
+Method 1 of 5 for customization, as listed by the MUI docs
+https://mui.com/customization/how-to-customize/#1-one-off-customization
 
 ### Box , sx, Custom System Properties List
 
@@ -646,6 +1225,414 @@ export default function Home() {
 
 
 
+### Media Queries & Accessing theme object with sx
+
+If you need to style for non idle states, you'll have to 
+
+#### Media Queries + Accessing the Object
+
+To work with media queries based on MUI breakpoints, you'll have to access the theme object
+You're free to use the object's values to help style other things as well
+
+HOW SX LOOKS WHEN YOU DON'T NEED THEME OBJECT:
+All you need to feed `sx={ }` is an object
+
+```react
+	  <Button
+        variant="contained"
+        sx={width: '400px'}
+      >
+        Hiya!
+      </Button>
+```
+
+HOW SX LOOKS WHEN YOU NEED THEME OBJECT
+Feed `sx={ }` a function that returns an object instead
+This'll happen anytime you use media queries involving MUI breakpoints
+
+```react
+	  <Button
+        variant="contained"
+        sx={(theme) => {
+          console.log(theme) // log the theme object to help visualize my claims
+          return ({
+            width: '400px',
+            [theme.breakpoints.up("md")]: {
+              color: "black",
+            },
+          })
+        }}
+      >
+        Hiya!
+      </Button>
+/*You may want to define sx's function elsewhere since this clutters the JSX a ton*/
+```
+
+![image-20220107031704558](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220107031704558.png) ![image-20220107032433430](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220107032433430.png)
+
+![image-20220107031403129](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220107031403129.png)
+
+#### Non idle States
+
+As long as you write your CSS in JS, you can style for non idle states using sx
+
+```react
+      <Button
+        variant="contained"
+        sx={{
+          "&:hover": {
+            color: "black",
+          },
+        }}
+      >
+        Hiya!
+      </Button>
+```
+
+![image-20220107032659370](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220107032659370.png) ![image-20220107032711865](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220107032711865.png)
+
+ONE CAVEAT TO KEEP IN MIND:
+Remember, MUI doesn't support all CSS pseudo-classes
+
+- Whenever they don't, you'll have to use a state class- all of which are listed [here](https://mui.com/customization/how-to-customize/#:~:text=you%20can%20rely%20on%20the%20following%20global%20class%20names%20generated%20by%20mui%3A)
+- We learned about state-classes in the "Reusable Style Overrides" chapter
+  Check out that lesson if you need a review. 
+
+
+
+
+
+# Reusable style Overrides: styled()
+
+PREREQUISITE SKILLS:
+Before we can create custom styled MUI components that we can reuse across our projects, we need to learn a few things first
+
+
+
+### Pre-req 1: Targeting MUI component class names
+
+#### How many Elements Generated?
+
+MUI components can either produce one HTML element, or multiple in some cases
+
+EXAMPLE 1: 
+An unstyled typography tag will produce a single `<p>` element 
+
+```react
+<Typography>Read only</Typography>
+```
+
+![image-20220106015216417](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106015216417.png)
+
+EXAMPLE 2:
+A Rating tag produces multiple elements (it's a more complex web-feature)
+
+```react
+<Rating name="read-only" readOnly />
+```
+
+![image-20220106015601314](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106015601314.png)
+
+WHY IS THIS RELEVANT?
+
+- There will be times when MUI does not provide a default way to style a component the way you want
+- Complex component styling may require you to target specific elements using their class names
+
+#### Targeting Class Names
+
+MUI applies global class names to its components using a consistent formula:
+
+```
+GLOBAL DOM CLASS: (inspect component in dev tools)
+[hash]-Mui[Component name]-[slot name]
+
+CLASS TO TARGET IN CSS:
+Mui[Component name]-[slot name]
+```
+
+PROCEDURE
+
+1. Inspect an MUI element using the dev tools, then extract `[Component name]-[slot name]`
+2. Build your targetable class using what I just mentioned above
+3. Style MUI components with that, after you understand state classes and the 1 rule to never break
+   (Read the next 2 subsections)
+
+LAST RESORT: 
+Sometimes you'll have trouble finding what the exact class name you should target is
+
+- Go into the MUI components' API page then head down to the CSS section
+- They have a chart filled with Global classes. One of them will be the one you're looking for
+
+Test them one by one when styling the component with sx to see if it changes something
+The description will give hints as to what that class targets- some will obviously not be what you need
+
+![image-20220106020525263](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106020525263.png)
+
+#### Challenge
+
+We have an MUI rating component set up
+
+- It produces the row of stars, not the "Controlled" text
+- We inspected the MUI component using dev tools and found out it produces multiple elements, as you can see in the image below
+
+GOAL:
+Make the stars much larger, but do so by targeting the correct global class and styling it with sx
+
+![image-20220106021656881](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106021656881.png) <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106015601314.png" alt="image-20220106015601314" style="zoom: 80%;" />
+
+We've set up our Rating component so that targeting the correct class name will result in bigger stars
+
+pages/Home.js
+
+```react
+import { Typography, Stack, Rating } from "@mui/material";
+
+export default function Home() {
+  return (
+    <Stack sx={{ width: "100vw" }} alignItems="center">
+      <Typography component="legend" sx={{ m: 3 }}>
+        Controlled
+      </Typography>
+      <Rating
+        name="simple-controlled"
+        sx={{
+          width: "100vw",       
+          "& .CORRECT-CLASS-HERE": {
+            fontSize: "6rem",
+          },
+              
+        }}
+      />
+    </Stack>
+  );
+}
+```
+
+#### Solution + Thought Process
+
+OUR EXACT STEPS FOR FINDING OUR TARGETABLE CLASS:
+
+1. Inspect the star in the dev tools, and see if the class produced on hover is what we're looking for
+   FYI, it wasn't
+
+> ![image-20220106022839481](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106022839481.png)
+>
+> ATTEMPT 1: 
+> DOM class:  [hash]-Mui[Rating]-[label]
+> Targetable class: MuiRating-label
+>
+> Tested it in our sx styling prop, and it did not work
+
+2. Look into the dev tools' Element or Inspector tab
+
+- That last class was attached to a container element holding other elements 
+- One of its children must have the class name we're after
+
+> ![image-20220106020914664](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106020914664.png)
+
+3. Tried styling with .MuiRating-icon and it turned out to be correct
+
+```react
+      <Rating
+        name="simple-controlled"
+        sx={{
+          "& .MuiRating-icon": {
+            fontSize: "6rem",
+          },
+        }}
+      />
+```
+
+![image-20220106023543158](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106023543158.png)
+
+#### Sources 
+
+> Useful article: 
+> https://react.school/material-ui/styling
+>
+> Official docs explanation for this lesson: (not descriptive enough)
+> https://mui.com/customization/how-to-customize/#overriding-nested-component-styles
+
+
+
+### Pre-req 2: MUI state classes
+
+In the previous lesson we learned how to target elements using MUI global classes
+This helps you edit the CSS of MUI components when they're left idle.
+
+What if you wanted to style elements when they're in certain states?
+Ex. Hovered over, focused, disabled, selected...etc
+
+#### What are they?
+
+In order to style MUI components via global classes when they're in these states, you need 1 of 2 things
+
+1. A regular CSS pseudo-class
+
+```css
+.Button:disabled {
+  color: white;
+}
+/* But sometimes, you can't use a CSS pseudo-class, 
+The state may not exist in the MUI web specifications. Resort to #2 in this case */
+```
+
+2. An MUI custom state class- MUI's pseudo-class equivalent 
+
+![image-20220106035411445](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106035411445.png) ![image-20220106035427126](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106035427126.png)
+
+#### Major rule for state classes
+
+You must never style these pseudo classes directly under any circumstances
+Make sure that if you use them, you connect them to a specific MUI component
+
+> ![image-20220106035601022](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106035601022.png)
+>
+> We learned about how to get Global classes like .MuiOutlinedInput-root in the previous lesson
+
+#### Links
+
+> State class subsection in docs (find a list of all of them [here](https://mui.com/customization/how-to-customize/#:~:text=you%20can%20rely%20on%20the%20following%20global%20class%20names%20generated%20by%20mui%3A))
+> https://mui.com/customization/how-to-customize/#state-classes
+
+
+
+### Reusable Custom MUI Components
+
+#### Challenge Description
+
+Create this unconventional-looking slider
+
+When Idle:			 ![image-20220106194755322](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106194755322.png) 								
+
+On hover:			  ![image-20220106195946035](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106195946035.png) 
+
+When active or focus-visible:  ![image-20220106194806967](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106194806967.png)
+
+SPECIFIC STYLING WANTS:
+
+1. Width as 20vw, and the color should use the main shade from the color palette's secondary object
+
+2. On hover, the thumb part of the slider should show a medium shadow
+   Color this shadow a transparent black
+3. When active or focus-visible, the shadow should be bigger
+
+#### Solution
+
+READ THIS FIRST
+
+- Keep in mind that we place the CustomSlider variable outside of the main component function, to keep things looking simple
+- If we placed it inside, we might be able to customize its appearance using props 
+  (haven't tested it yet)
+
+custom-components/CustomSlider.js
+
+```REACT
+import React from "react";
+//   prettier-ignore
+import { styled, experimental_sx as sx} from '@mui/system';
+import { Slider } from "@mui/material"; // WILL PUT INTO THE STYLED FUNCTION
+
+const ModdedSlider = styled(Slider)(({ theme }) => {
+  // Place JS logic here, if you need it
+  return {
+    // style changes when idle
+    width: "20vw",
+    color: theme.palette.warning.main, // path to a color in the theme object
+    // style changes when in certain states
+    "& .MuiSlider-thumb": {
+      // Regular pseudo class
+      "&:hover": {
+        boxShadow: `0px 0px 0px 14px rgba(0,0,0,0.1)`,
+      },
+      // MUI state classes
+      "&.Mui-focusVisible, &.Mui-active": {
+        boxShadow: `0px 0px 0px 28px rgba(0,0,0,0.1)`,
+      },
+    },
+    // MEDIA QUERY: regular viewport width
+    // No real purpose for this color change- just tossing in media queries 
+    [theme.breakpoints.only("780px")]: {
+      color: "red",
+    },
+  };
+});
+
+export default function CustomSlider(props) {
+  //  sx styling only works on this slider in here, not where its called
+  return (
+    <ModdedSlider
+      defaultValue={50}
+      aria-label="Default"
+      valueLabelDisplay="auto"
+      sx={{ mt: 5 }}
+    />
+  );
+}
+```
+
+pages/Home.js
+
+```react
+import CustomSlider from "../custom-components/CustomSlider";
+export default function Home() {
+  return <CustomSlider />
+}
+```
+
+#### Styling differences compared to sx
+
+1. Using styled() does not let you use shortcuts like `mb` for margin-bottom (sx only)
+2. Style definitions vary slightly
+
+![image-20220106214851941](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106214851941.png) ![image-20220106214902466](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106214902466.png)
+
+#### Using sx instead of styled()
+
+You can perform the same operations using sx styling instead of styled() if you want. 
+Personally, I haven't figured out how it works yet
+
+> LINKS:
+> https://mui.com/system/styled/#how-can-i-use-the-sx-syntax-with-the-styled-utility
+> https://mui.com/system/styled/#sx-provides-more-shortcuts-than-styled
+
+
+
+### Reusable Custom Primitive Elements with MUI styles
+
+#### Why bother?
+
+- You can take primitive elements like `<button>` or `<div>` for example, then create customized versions of them using MUI's theme object
+- This way, editing the theme object will also dynamically change the appearance of these custom elements as well
+
+#### Procedure
+
+The procedure is the exact same as the one shown in the previous lesson's example, with one key difference
+
+- Instead of feeding an MUI component into the styled() argument, feed a regular element instead
+- You'll have the same options as if you were customizing an MUI component instead
+
+Custom MUI component:
+
+![image-20220106212218862](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106212218862.png)
+
+Custom Primitive Element:
+
+```react
+const MyThemeComponent = styled('div')(({ theme }) => ({ ... and so on
+```
+
+EXAMPLE:
+https://mui.com/system/styled/#using-the-theme
+
+![image-20220106212329723](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220106212329723.png)
+
+
+
+# ===== Layouts & Components ====
+
+
+
 # Layouts
 
 ### Container Component
@@ -727,46 +1714,6 @@ Tutorial
 
 
 
-
-
-### MUI Breakpoints & Media Queries **
-
-#### Default Breakpoints
-
-Each breakpoint (a key) matches with a fixed screen width in pixels:
-
-| key  | viewport width (px) in v4 | viewport width (px) in v5 |
-| ---- | ------------------------- | ------------------------- |
-| xs   | 0 - 600                   | 0 - 600                   |
-| sm   | 600 - 960                 | 600 - 900                 |
-| md   | 960 - 1280                | 900 - 1200                |
-| lg   | 1280 - 1920               | 1200 - 1536               |
-| xl   | 1920 - infinity           | 1536 - infinity           |
-
-#### Changing Default Breakpoints
-
-The breakpoints are part of the default theme object
-
-- They can be edited by following the same procedure as when you created new color palettes in the "Themes and Custom Stylings" chapter
-- You can even choose to give the breakpoints new names altogether
-
-![image-20220103213640872](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220103213640872.png)
-
-
-
-#### Media Queries
-
-#### Doc Links
-
-Check out the breakpoints in the default theme object.
-Look under `themeObject.breakpoints.values` 
-
-> Default theme object: https://mui.com/customization/default-theme/#main-content
->
-> 
-
-
-
 ### Stack Component
 
 #### What it does
@@ -822,6 +1769,95 @@ Docs
 Relevant part of API
 
 ![image-20220105002354128](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220105002354128.png)
+
+
+
+### MUI Grid System
+
+MUI has its own grid system based on flexbox that helps you create layouts
+Feel free to use it or even regular CSS grid since the 2 don't interfere with each other at all
+
+
+
+### MUI with Regular CSS Grid 
+
+You're free to use typical CSS grid to create your webpage layouts if you prefer it over MUI
+
+#### Differences
+
+CSS Grid in MUI projects isn't much different than with regular CSS. 
+You just apply what you already know in a different way
+
+1. Use MUI components like `<Box>` to produce a parent container
+
+- You need to be able to style with MUI, and you can't using primitive elements
+- Fortunately, you can make divs, sections, or any other kind of element using `<Box>`
+
+2. Add the same CSS Grid code you would normally use, just in a JS object instead
+
+#### Mosaic Design Practice
+
+> OBJECTIVE 																  RESULT:
+>
+> <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211124210506912.png" alt="image-20211124210506912" style="zoom: 62%;" /> 				 ![image-20220108030246813](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220108030246813.png)
+
+pages/Home.js
+
+```react
+import { Box, Container } from "@mui/material";
+
+const styles = {
+  container: {
+    display: "grid",
+    padding: '30px',
+    gridTemplateRows: "repeat(8, 1fr)",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    // Create an 8x3 grid & use template areas to keep our inline sx styling short
+    gridTemplateAreas: `
+    "a1 a2 a2"
+    "a1 a2 a2"
+    "a3 a2 a2"
+    "a3 a4 a5"
+    "a6 a6 a5"
+    "a6 a6 a5"
+    "a7 a7 a8"
+    "a7 a7 a8"`,
+    height: "400px",
+    width:"400px",
+    textAlign: "center",
+    backgroundColor: "#DEDEDE",
+    gap: "10px"
+  }
+};
+
+export default function Home() {
+  return (
+    <Container sx={styles.container}>
+      <Box sx={{ bgcolor: "lime", gridArea: "a1" }}>1</Box>
+      <Box sx={{ bgcolor: "#4998e4", gridArea: "a2" }}>2</Box>
+      <Box sx={{ bgcolor: "lime", gridArea: "a3" }}>3</Box>
+      <Box sx={{ bgcolor: "#4998e4", gridArea: "a4" }}>4</Box>
+      <Box sx={{ bgcolor: "lime", gridArea: "a5" }}>5</Box>
+      <Box sx={{ bgcolor: "#4998e4", gridArea: "a6" }}>6</Box>
+      <Box sx={{ bgcolor: "lime", gridArea: "a7" }}>7</Box>
+      <Box sx={{ bgcolor: "#4998e4", gridArea: "a8" }}>8</Box>
+    </Container>
+  );
+}
+```
+
+#### Doc Links
+
+> MUI + Regular CSS Grid: 
+> https://mui.com/system/grid/#grid-template-areas
+
+
+
+### Masonry CSS
+
+
+
+
 
 # Components
 
@@ -908,6 +1944,441 @@ MAIN OPTIONS:
 
 Color: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220101183742284.png" alt="image-20220101183742284" style="zoom:67%;" /> 		Text-align: ![image-20220102015006376](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102015006376.png)
 
+### Material Icons
+
+BEFORE WE BEGIN:
+You need to install the MUI icons library to use it- since it's not part of the core package as of v4
+
+```
+npm install @mui/icons-material				// pick one
+yarn add @mui/icons-material
+```
+
+#### Importing Icons Procedure
+
+1. Browse all available icons [here](https://mui.com/components/material-icons/)
+
+- You have several options for how you want the icon to look (filled, outlined..etc)
+- Once you decide, click on it and copy the import line so you can use it in your JS files
+
+2. Paste the import line into your JS file, then use it as a regular JSX component
+3. Feel free to style it using props
+
+#### Styling Icons: Size / Color
+
+- By default, you're restricted to using MUI's palette colors when it comes to decorating the icons
+- MUI provides 4 pre-set sizes for icons
+
+EXAMPLE: 
+
+```react
+import { Button, Container } from '@mui/material';
+import AddBoxIcon from "@material-ui/icons/AddBox";
+
+export default function Notes() {
+  return (
+    <Container>
+      <AddBoxIcon fontSize="large" color='error'/>
+      <AddBoxIcon fontSize="medium" color='secondary'/>
+      <AddBoxIcon fontSize="small" color='primary'/>
+    </Container>
+  );
+}
+```
+
+![image-20220102013726354](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102013726354.png)
+
+#### Doc Links
+
+> Component: https://mui.com/components/icons/#main-content
+> API: https://mui.com/api/icon/
+> Icon Library:  https://mui.com/components/material-icons/
+
+MAIN OPTIONS:		 ![image-20220102014726691](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102014726691.png) ![image-20220102014741553](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102014741553.png)
+
+
+
+### 3rd Party SVG's 
+
+I came up with this way of implementing SVG's into React myself
+
+#### Procedure
+
+1. Create a react component in a separate file that returns the SVG you want to display
+
+- Make sure you can feed prop values to decide on a color, width, and height
+- Remember to only specify width OR height to maintain the aspect ratio
+
+2. Import it to your React page file then use it in the JSX
+
+ONE MINOR ISSUE WITH SOME SVG's:
+
+- Some SVG's have maximum dimensions that don't let them grow larger just by adjusting width/height- that'll just increase the container dimensions. 
+- Makes no sense because SVG's are supposedly scalable, but hey... whatever
+
+#### Demo
+
+Instagram.js
+
+```react
+import React from "react";
+
+export default function Building(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="-100.7682 -167.947 873.3244 1007.682"
+      width={props.width || ""}
+      height={props.height || ""}
+    >
+      <g fill="#100f0d">
+        <path fill={props.color || "black"} d="M335.895 />
+        <path fill={props.color || "black"} d="M335.895 />
+      </g>
+    </svg>
+  );
+}
+```
+
+react page file
+
+```react
+import Building from "../svgs/Instagram";
+export default function Notes() {
+  return (
+    <>
+      <Instagram color={"blue"} width={"240px"} />
+    </>
+  );
+}
+```
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102030928186.png" alt="image-20220102030928186" style="zoom:50%;" />
+
+
+
+### Buttons
+
+#### Types
+
+MUI lets you build several kinds of buttons that each have distinct appearances, hover effects, press animations, customization options... etc (only a few shown here)
+
+![image-20220101202215994](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220101202215994.png)
+
+You have the freedom to customize these buttons or even create elaborate "complex" buttons as well, using the ButtonBase tool MUI provides
+
+![image-20220101202419390](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220101202419390.png)
+
+#### Examples & Sizing
+
+EXAMPLE 1: Create regular buttons
+
+```react
+<Button variant="contained" color="primary" disableElevation>
+	Disabled elevation/ drop shadow
+</Button>
+<Button variant="outlined">
+	Outlined button
+</Button>
+```
+
+![image-20220101210551971](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220101210551971.png)
+
+EXAMPLE 2: 
+Create 3 buttons, but choose between the 3 sizes MUI offers
+Keep in mind there's no difference between a medium size and the default size buttons
+
+```react
+      <Button variant="outlined" size="small">
+        Small Outlined button
+      </Button>
+      <Button variant="outlined" size="medium">
+        Medium Outlined button
+      </Button>
+      <Button variant="outlined" size="large">
+        Large Outlined button
+      </Button>
+```
+
+![image-20220101211442266](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220101211442266.png)
+
+#### Icon Buttons
+
+MUI provides a streamlined way to implement its icons into button components
+
+ICON-ONLY BUTTONS: [docs](https://mui.com/components/buttons/#icon-button)
+Place an icon tag inside an `<IconButton>` container
+
+```react
+<IconButton aria-label="bookmark">
+    <BookmarkIcon fontSize="large" color='primary'/>
+</IconButton>
+```
+
+LABELLED ICON-BUTTONS:
+
+```react
+      <Button variant="outlined" color="secondary" startIcon={<DeleteIcon />}>
+        Delete
+      </Button>
+      <Button variant="contained" color="primary" endIcon={<SendIcon />}>
+        Send
+      </Button>
+```
+
+![image-20220102022026422](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102022026422.png)
+
+#### Button Groups
+
+You can use MUI to style button groups
+
+- They are buttons all bunched into a `<ButtonGroup>` element that get styled differently than if regular buttons were nested inside an element normally
+- They can go horizontal, vertical, or even have different applications like a drop down menu
+
+![image-20220101212121468](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220101212121468.png)
+
+#### Doc Links
+
+Buttons:
+
+> Component: https://mui.com/components/buttons/#main-content
+> API:  https://mui.com/api/button/#main-content
+
+Button Groups:
+
+> Component: https://mui.com/components/button-group/#main-content
+> API: https://mui.com/api/button-group/
+
+MAIN OPTIONS FOR BUTTONS:
+
+![image-20220102022133441](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102022133441.png)
+
+![image-20220102022209087](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102022209087.png)
+
+![image-20220102022229883](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102022229883.png)
+
+
+
+### Text Fields: < Input > **
+
+Its important to know what styling options we have for text fields
+They're key to building forms that convey information in a clear manner
+
+#### Relevant Props
+
+| PROP         | WHAT IT DOES TO THE INPUT FIELD                              | VALUE  |
+| ------------ | ------------------------------------------------------------ | ------ |
+| error        | turns the field and its associated text red                  | bool   |
+| helperText   | places small text right below it                             | string |
+| label        | places small text inside the input field but on the upper left side only<br />(looks a bit different depending on the variant value) | string |
+| defaultValue | adds placeholder text                                        | string |
+
+![image-20220103181842654](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220103181842654.png)
+
+#### CONTINUE FROM HERE
+
+Use these links, but the v5 versions
+
+https://v4.mui.com/components/text-fields/#components
+
+https://v4.mui.com/api/text-field/
+
+#### Types of Input Fields
+
+#### Demo Project
+
+
+
+#### Links
+
+TextField is composed of several subcomponents from MUI
+https://v4.mui.com/components/text-fields/#components
+
+Change Focus Color from blue to something else
+https://v4.mui.com/components/text-fields/#color
+
+
+
+### Radio Buttons **
+
+### JSON Server **
+
+### Card Component **
+
+### Permanent Drawer **
+
+### Lists & List-items **
+
+### App Bars **
+
+### Avatars **
+
+
+
+### Customized Components (ongoing)
+
+#### MUI Treasury
+
+People sometimes upload their own custom components so other people can use them
+https://mui-treasury.com/components/
+
+# Legacy Styling
+
+
+
+### Custom CSS in v4: makeStyles Hook
+
+When working with MUI, we have plenty of premade styling options available for each component
+If you want to override certain aspects of the styling, use the makeStyles hook
+
+#### Demo & Explanation
+
+React page file:
+
+```react
+import React from "react";
+import { Button, makeStyles } from "@material-ui/core"; // 1. Import makeStyles
+
+// 2. Declare a function that calls the makeStyles hook
+const useStyles = makeStyles({
+  // Object parameter. keys=classNames + applied CSS styles must be in camelCase
+  btn: {
+    fontSize: 30, // another way to adjust size would be width or height
+    backgroundColor: "pink",
+    // Can apply pseudo selectors too
+    "&:hover": {
+      backgroundColor: "purple",
+    },
+  },
+});
+
+export default function Notes() {
+  const classes = useStyles(); // 3. Initialize the makeStyles function
+  // 4. Use the classes you set up in your JSX
+  return (
+    <Button variant="contained" color="primary" className={classes.btn}>
+      SECONDARY BUTTON
+    </Button>
+  );
+}
+```
+
+Certainly not a default option: ![image-20220102193855046](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102193855046.png)
+
+Keep in mind that whatever MUI styles you didn't override will still be in effect
+Ex. With the button above we still have shadows applied and the ripple effects are active
+
+#### Using Default Theme Object Values in your Classes
+
+You can incorporate values from the default theme into your classes
+
+- Reference them directly by using the theme argument in the makeStyles hook
+  Don't copy paste them from the default `theme` object in the docs
+- You change your use of the makeStyles hook a bit
+  Now, you place a function inside with a theme parameter that returns an object full of CSS styles
+
+EXAMPLE: 	
+
+1. Apply the default theme object border radius X 8 
+2. Apply the default theme object padding X 3
+
+Check the docs:       ![image-20220102221338473](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102221338473.png)
+
+React page file
+
+```react
+const useStyles = makeStyles((theme) => {
+  return {
+    btn: {
+      fontSize: 30,
+      backgroundColor: "pink",
+      // Apply the default_borderRadius X 8, and the default padding X 5
+      borderRadius: theme.shape.borderRadius * 8,
+      padding: theme.spacing(5), // x5 looks different b/c spacing= f e() in docs
+      "&:hover": {
+        backgroundColor: "red",
+      },
+    },
+  };
+});
+
+export default function Notes() {
+  const classes = useStyles();
+  return (
+    <>
+      <Button variant="contained" color="primary">
+        Primary button
+      </Button>
+      <Button variant="contained" color="secondary" className={classes.btn}>
+        Secondary button
+      </Button>
+    </>
+  );
+}
+```
+
+![image-20220102221505786](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102221505786.png)
+
+#### makeStyles with Parameters
+
+- You can add conditional CSS to the object you return from makeStyles
+- Combining this with React props/states means that you can apply classes to several elements, but only add specific styles to those that meet your conditions
+
+EXAMPLE:  https://youtu.be/6BkqRkw0Lwc?list=PL4cUxeGkcC9gjxLvV4VEkZ6H6H4yWuS58&t=270
+
+React page file
+
+```react
+// 1. Import makeStyles
+import { Button, makeStyles, ThemeProvider } from "@material-ui/core";
+
+// 2. Declare a function that calls the makeStyles hook
+const useStyles = makeStyles((theme) => {
+  return {
+    btn: {
+      // These styles get applied to all elements with "btn" class no matter what
+      backgroundColor: "pink",
+      borderRadius: theme.shape.borderRadius * 8, // default radius X8
+
+      // Apply the fontSize conditionally, based on a prop value
+      fontSize: (props) => {
+        if (props.num === 10) return 5; 
+        else return 28
+        // return value can a number or string depending on what we're styling
+      }, 
+    },
+  };
+});
+
+export default function Notes(props) {
+  // 3. Initialize useStyles with a new variable and then use it in JSX
+  const classes = useStyles(props);
+  return (
+    <>
+      <Button variant="contained" color="primary">
+        Primary button
+      </Button>
+      <Button variant="contained" color="secondary" className={classes.btn}>
+        Secondary button
+      </Button>
+    </>
+  );
+}
+```
+
+Since `props.num` equals a falsy due to not existing, the secondary button fontSize is set to 28
+
+![image-20220103002927061](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220103002927061.png)
+
+
+
+# Styling Class-based React: createStyles()
+
+MUI was around before React hooks became the default way to create components. 
+MUI can style class based components using the createStyles() hook
+
+https://www.youtube.com/watch?v=aKwrocqk0Kc&list=PL33SAjAaBtxnwqPmrfTiJO5rPKC2MlIZN&index=9
+
 
 
 # Learn More
@@ -922,5 +2393,7 @@ Color: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-
 
 
 
-
+Using CSS Modules + MUI (or you can use makeStyles instead)
+https://mui.com/styles/advanced/#css-injection-order
+https://stackoverflow.com/questions/53065983/can-i-override-material-ui-with-css-modules-in-create-react-app-v2
 
