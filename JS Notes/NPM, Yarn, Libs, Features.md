@@ -2425,26 +2425,11 @@ Application tab -> Storage -> Local Storage -> localhost: 3000
 
 
 
+### Encrypting and Decrypting
+
+https://classify-web.herokuapp.com/#/api
 
 
-### time-based
-
-#### timer-stopwatch
-
-PURPOSES
-
-1. Create a countdown from a specified time
-2. Create a stopwatch
-
-INSTRUCTIONS: https://openbase.com/js/timer-stopwatch
-PROJECTS: Check premades for "stopwatch and timer" for how to implement both
-
-#### date-fns (RETURN)
-
-JavaScript in general does not have many great functions for working with dates. 
-
-- Oftentimes, you're forced to create your own complex functions to switch between formats. 
-- date-fns gives you more functions to perform operations, all while being more lightweight than the industry standard: moment.js
 
 ### math-based
 

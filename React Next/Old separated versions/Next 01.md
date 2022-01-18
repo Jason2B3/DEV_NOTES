@@ -1309,7 +1309,7 @@ SSG and SSR will help your SEO issues- but CSR has its place when building certa
 
 pages/index.js:	![image-20211002061648359](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211002061648359.png) ![image-20211002063919497](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211002063919497.png)
 
-> Viewed Page Source (what the search engine bots recieve)
+> Viewed Page Source (what the search engine bots receive)
 >
 > ![image-20211002062059678](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211002062059678.png)
 
@@ -1651,7 +1651,7 @@ import { putFB, getFB } from "../helpers/httpRequests";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function Indy() {
-  const [display, setDisplay] = useState(undefined); // strts as undefined
+  const [display, setDisplay] = useState(undefined); // starts as undefined
   const inputRef = useRef();
   useEffect(() => {
     get(); // http fetching occurs in this helper function
@@ -1661,6 +1661,7 @@ export default function Indy() {
     const parsedResponse = await getFB();
     setDisplay(parsedResponse);
   }; // remember, useEffect runs after this code on the root level of the comp ƒ()
+    
   const putHandler = async () => {
     const inputVal = inputRef.current.value;
     await putFB({ 1: inputVal }); // needs a ref
@@ -1693,6 +1694,16 @@ import React, { useEffect, useRef, useState } from "react";
 import classes from "./index.module.css";
 import { putFB, getFB } from "../helpers/httpRequests";
 
+// SSG BELOW
+export async function getStaticProps(context){
+  // context parameter gives this new utilities not shown here
+  let responseData= await getFB()
+  return { 
+  	props: { display: responseData }, 
+  	revalidate: 2 // refresh data every 60 seconds, 
+  };
+}
+
 function index(props) { // props fed to component function by getStaticProps()
   const inputRef = useRef();
   const putHandler = async () => {
@@ -1712,16 +1723,6 @@ function index(props) { // props fed to component function by getStaticProps()
   );
 }
 export default index;
-
-// SSG BELOW
-export async function getStaticProps(context){
-  // context parameter gives this new utilities not shown here
-  let responseData= await getFB()
-  return { 
-  	props: { display: responseData }, 
-  	revalidate: 2 // refresh data every 60 seconds, 
-  };
-}
 ```
 
 #### Method C: SSR
@@ -1734,6 +1735,15 @@ pages/index.js
 import React, { useEffect, useRef, useState } from "react";
 import classes from "./index.module.css";
 import { putFB, getFB } from "../helpers/httpRequests";
+
+// SSR BELOW
+export async function getServerSideProps(context){
+  // context parameter gives this new utilities not shown here
+  let responseData= await getFB()
+  return { 
+  	props: { display: responseData }, 
+  };
+}
 
 function index(props) {
   const inputRef = useRef();
@@ -1754,14 +1764,6 @@ function index(props) {
   );
 }
 export default index;
-// SSR BELOW
-export async function getServerSideProps(context){
-  // context parameter gives this new utilities not shown here
-  let responseData= await getFB()
-  return { 
-  	props: { display: responseData }, 
-  };
-}
 ```
 
 #### Outcome with All Methods
@@ -1774,14 +1776,18 @@ export async function getServerSideProps(context){
 
 ### Choose which Pre-rendering Method to Use (FINALE)
 
-SSR:
+#### SSR:
 
 - When you need request or response object data to perform actions
   Ex. Authentication requires knowing what headers and cookies are attached to the request object
 - When you're building a dynamic page with personalized data that must be fetched from some backend
 - When the data on your webpages changes very often and you need to update the data rendered every time someone makes a new URL request by visiting your site
 
-SSG or ISR: When the above does not apply, default to using this
+#### SSG or ISR: 
+
+When the above does not apply, default to using this
+
+
 
 # Static Site Generation (SSG) + Incremental Static Regeneration (ISR)
 
@@ -1861,6 +1867,8 @@ You can generate static HTML documents that come inside premade and nicely-style
 - Alternatively, you can create these static pages yourself
 - This is what we'll be doing whilst training our Next.js skills
 
+
+
 ### How ISR Works: Theory
 
 This method gives you the speed benefits of SSG and combines it with the flexibility of SSR
@@ -1932,6 +1940,8 @@ CONS:
 - The people already viewing the webpage before data changes will view an outdated version of our webpage, until they reload or visit the page again
 - The first requests to pages not statically generated already may take a while
 
+
+
 ### getStaticProps
 
 #### Purpose
@@ -1969,6 +1979,7 @@ pages/index.js
 
 ```react
 import React, { useEffect, useState } from "react";
+
 export default function HomePage(props) {
   const [json, setJson] = useState(null);
   const fetchSomethin = async () => {

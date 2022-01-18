@@ -250,7 +250,7 @@ The breakpoints are part of the default theme object
 REMEMBER!
 
 - When redefining breakpoints, redefine every single one
-- You're overriding the entire object, so if you only type out1 new breakpoint, that'll now be the only one in effect since the others have been deleted
+- You're overriding the entire object, so if you only type out 1 new breakpoint, that'll now be the only one in effect since the others have been deleted
 
 ------
 
@@ -346,6 +346,10 @@ I don't know if this mixes well if you use breakpoint
 
 ![image-20220107004700710](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220107004700710.png)
 
+```
+["@media (min-width: 500px)"]: {}
+```
+
 
 
 #### Doc Links
@@ -367,7 +371,7 @@ Look under `themeObject.breakpoints.values`
 
 
 
-### All Customization Options in v5 **
+### All Customization Options in v5
 
 #### Chart
 
@@ -378,38 +382,18 @@ The options are ordered in terms of how widespread the changes will be after usi
 | one off customization    | sx, makeStyles | applies styles to individual MUI components via the sx prop or class names (makeStyles) |
 | reusable style overrides | styled()       | creates a reusable component that you can apply custom styles on |
 | global theme variation   | createTheme()  | changes the default theme object so you can edit its values to better suit your design-wants |
-| global CSS override      |                |                                                              |
+| global CSS override      | theme object   | Changes aspects of CSS to a component throughout your project |
 |                          |                |                                                              |
 
 I neglected to include "Dynamic Variation", due to how similar it is to "Reusable Style Overrides"
 It gives that method more functionality, and would be in spot #3
 
-#### List 
+#### Doc Links
 
 > SOURCE:
 > https://mui.com/customization/how-to-customize/#1-one-off-customization
 
-We won't likely learn all of these unless we run into scenarios when they're required
 
-1. One-off-customization
-
-- Simplest form of this is to style via the sx prop
-- Though there are more ways to target elements than just using the sx prop. 
-
-2. Reusable style overrides
-   We create reusable components with the same custom styling 
-
-3. Dynamic Variation (4 ways to implement this in total)
-
-- Just option 2 with the added benefit of making style overrides dynamic
-- This means we make our stylings change depending on other factors like state
-
-4. Global Theme variation
-
-- This is when we edit the default theme object or create/use new themes altogether
-- We can change all sorts of things with this- color palettes, fonts, spacing values...etc
-
-4. Global CSS Overrides
 
 
 
@@ -921,9 +905,111 @@ export default function App() {
 
 
 
-### Global CSS Overrides
+# Global CSS Overrides
 
-This technique will affect every single instance of the element whose properties you override
+Sometimes we'd like an MUI component to look a certain way without being forced to create our own custom components- we want every instance of it to be customized no matter what
+
+### Understanding how a Visual Aspect must be Overridden 
+
+MUI lets you edit a component's appearance via props- but these options are limited
+
+#### What Props can/can't Edit
+
+To find out what props can edit in a component, check out its API page
+
+EXAMPLE: 
+Button Component API page: 	https://mui.com/api/button/#props
+
+- We can change the color, size, and ripple via props
+- We have no options for changing the letter spacing though
+  This is an unorthodox thing to change, so MUI devs didn't make this an option to edit via props
+
+#### Relation to Global Overrides
+
+Imagine if we wanted our buttons to look like this throughout our whole project:
+
+1. No ripple (must edit with props)
+2. Longer letter spacing (must edit with sx styling or makestyles)
+
+If we had 20 buttons, we'd need to implement these changes manually multiple times over
+Or.. we can just perform a Global CSS Override
+
+#### Override techniques Differ
+
+- Global CSS Overrides are a little different depending on how visual aspects are changed
+- If we can edit a visual aspect via props, then a Global override on that will be different than an override on something we'd need to edit using CSS
+
+| how we control a visual aspect       | how to perform global override | example                                                      |
+| ------------------------------------ | ------------------------------ | ------------------------------------------------------------ |
+| MUI component props                  | override the default props     | button ripple is controlled by props                         |
+| Overriding CSS with sx or makeStyles | override global styles         | button's letter spacing is not controlled by props- so we must override CSS |
+
+
+
+### Overriding: Default Component Props & Global Styles
+
+> Follow examples along with:
+> Verify claims using [Button API page](https://mui.com/api/button/#props) and [Container API page](https://mui.com/api/container/#props)
+
+#### Finding the Component Name
+
+Before we start, you need to find out what a component's official theme object name is
+Check the API page for a component
+
+Button:		  ![image-20220115234253163](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220115234253163.png)
+
+Container:	 ![image-20220115234236585](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220115234236585.png)
+
+#### Demo Explanation
+
+We're going to change the Button and Container components
+
+LIST OF DEFAULT PROPS TO OVERRIDE:
+
+| Default styles that I dislike       | edited via props | default prop: __ by default |
+| ----------------------------------- | ---------------- | --------------------------- |
+| Buttons ripple                      | yes              | `disableRipple: false`      |
+| Container has 24px inline padding   | yes              | `disableGutters: false`     |
+| Container has a default white color | no               | N/A                         |
+
+#### Overriding Example
+
+THEME OBJECT: (boiler plate and setup for theme provider not shown)
+
+```react
+export const customThemes = {
+  //^ for standard light theme in this ex.
+  light: createTheme({
+    components: {
+        
+      // DEFAULT PROP: Disable button ripple
+      MuiButtonBase: { 
+        defaultProps: { disableRipple: true } 
+      },
+       
+      MuiContainer: {
+        // DEFAULT PROP: Remove Container's default padding
+        defaultProps: { disableGutters: true },
+        // GLOBAL STYLES: override all MuiContainer background colors
+        styleOverrides: { root: { backgroundColor: "gray" } },
+      },
+        
+    },
+  }),
+};
+```
+
+#### Doc Links
+
+> Overriding Default Props
+> https://mui.com/customization/theme-components/#default-props
+>
+> Overriding Global Styles
+> https://mui.com/customization/theme-components/#global-style-overrides
+
+
+
+### Alt way for Global Style Overrides (unexplored)
 
 #### Procedure
 
@@ -940,11 +1026,11 @@ export const customThemes = {
       MuiCssBaseline: {
         styleOverrides: `
           h1 {
-            background: red;
+            margin-bottom: 1.875rem;
           }
         `,
       },
-      // Disable ripple on all Buttons (must use the exact component name)
+      // Disable ripple on all Buttons (must use the exact component name, on API pg)
       MuiButtonBase: {
         defaultProps: { disableRipple: true },
       },
@@ -964,11 +1050,15 @@ Relation to CssBaseline:
 
 #### Doc Links
 
+> Overriding Default Props
+>
 > Global Overrides:
 > https://mui.com/customization/how-to-customize/#5-global-css-override
 >
 > Disable ripple: 
 > https://mui.com/getting-started/faq/#how-can-i-disable-the-ripple-effect-globally
+
+
 
 # One off Customization: sx
 
@@ -1298,7 +1388,18 @@ Remember, MUI doesn't support all CSS pseudo-classes
 - We learned about state-classes in the "Reusable Style Overrides" chapter
   Check out that lesson if you need a review. 
 
+#### Fast Access
 
+There are some properties you can style with sx that don't require you to use a function
+
+- For example, you can adjust margin and padding using integers that'll automatically reference the theme object. 
+- A value of 1 for margin or padding= 8px
+
+EXAMPLE: Margin right 8px
+
+```react
+<ArrowDropDownIcon sx={{mr:1}}/>
+```
 
 
 
@@ -2199,19 +2300,72 @@ https://v4.mui.com/components/text-fields/#color
 
 
 
-### Radio Buttons **
+### DIRECTORY
 
-### JSON Server **
+#### Features List
 
-### Card Component **
+| Site Feature                    | MUI component name | Doc Link                                       |
+| ------------------------------- | ------------------ | ---------------------------------------------- |
+| Modal                           | Dialog             | https://mui.com/components/dialogs/            |
+| Horizontal/Vertical Divider     | Divider            | https://mui.com/components/dividers/           |
+| Loading Spinner                 | Progress           | https://mui.com/components/progress/           |
+| Checkbox lists, scrolling menus | List               | https://mui.com/components/lists/#main-content |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
+|                                 |                    |                                                |
 
-### Permanent Drawer **
+### New Features you've never Seen
 
-### Lists & List-items **
+#### Breadcrumbs
 
-### App Bars **
+#### Skeleton- for lazy loading
 
-### Avatars **
+Creates a skeleton outline for the content that hasn't yet loaded
+Is better than rendering nothing- and eases frustration by indicating progress
+
+![image-20220110191026686](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220110191026686.png)
+
+#### Snackbar- Mini Notifications
+
+Produce a simple notification that disappears after a few seconds
+
+![image-20220110191157953](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220110191157953.png)
+
+#### Menu- Drop down menus with animation
+
+> https://mui.com/components/menus/#selected-menu
+
+Hit dashboard to make the following unordered list appear
+
+![image-20220111042723639](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220111042723639.png)
+
+#### Select- Drop down menu with preselcted options
+
+Excellent for forms
+
+![image-20220116033225020](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220116033225020.png)
 
 
 
@@ -2221,6 +2375,8 @@ https://v4.mui.com/components/text-fields/#color
 
 People sometimes upload their own custom components so other people can use them
 https://mui-treasury.com/components/
+
+
 
 # Legacy Styling
 
@@ -2380,20 +2536,4 @@ MUI can style class based components using the createStyles() hook
 https://www.youtube.com/watch?v=aKwrocqk0Kc&list=PL33SAjAaBtxnwqPmrfTiJO5rPKC2MlIZN&index=9
 
 
-
-# Learn More
-
-### New Topics
-
-#### Styling
-
-1. Custom variants
-   https://stackoverflow.com/questions/69550535/mui-v5-seperate-styling-from-component-file
-2. Learn all 4 main customization options in v5- styled reusable components mainly
-
-
-
-Using CSS Modules + MUI (or you can use makeStyles instead)
-https://mui.com/styles/advanced/#css-injection-order
-https://stackoverflow.com/questions/53065983/can-i-override-material-ui-with-css-modules-in-create-react-app-v2
 

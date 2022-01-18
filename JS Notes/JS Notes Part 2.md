@@ -7090,6 +7090,27 @@ function sum(a){
 sum(1)(2,3)  //OUTPUT: 6
 ```
 
+#### NodeJS Axios Example
+
+```js
+var axios = require("axios").default;
+
+var options = {
+  method: 'GET',
+  url: 'https://wft-geo-db.p.rapidapi.com/v1/geo/adminDivisions',
+  headers: {
+    'x-rapidapi-host': 'wft-geo-db.p.rapidapi.com',
+    'x-rapidapi-key': 'SIGN-UP-FOR-KEY'
+  }
+};
+
+axios.request(options).then(function (response) {
+	console.log(response.data);
+}).catch(function (error) {
+	console.error(error);
+});
+```
+
 
 
 # =========== MISC ===========

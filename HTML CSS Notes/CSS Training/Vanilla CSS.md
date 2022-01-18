@@ -829,6 +829,16 @@ Direct selectors that do not use combinators typically let webpages perform bett
 
 
 
+### Box Shadow
+
+#### Explanation
+
+![image-20220112033330486](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220112033330486.png)
+
+EXAMPLE:
+
+![image-20220112033349190](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220112033349190.png)
+
 ### Developer Tools
 
 > Peek inside the developer tools if you want to see what CSS changes are applied to each element. Click on an element in the new dev tools window, and then the style tab should show you the style changes. Any crossed out lines indicate overriding
@@ -4542,7 +4552,7 @@ https://codepen.io/NFuego24-7/pen/ExgGXMa?editors=0100
 
 <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210115194553341.png" alt="image-20210115194553341" style="zoom:50%;" />
 
-
+/
 
 ### Providing Validation Feedback Manually
 

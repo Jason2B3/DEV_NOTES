@@ -2047,9 +2047,9 @@ The syntax you saw used earlier relies on an arrow function that uses an "implie
 If you want to have more complex operations taking place inside your map function, get rid of the implied return and add curly braces
 
 ```js
-      {meals.map((i, index) => {
+      {meals.map((el, index) => {
         console.log(0)
-        return <ListItem name={i.name} descrip={i.descrip} />
+        return <ListItem name={el.name} descrip={el.descrip} />
       })}
 ```
 
