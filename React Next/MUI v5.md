@@ -2361,13 +2361,15 @@ Hit dashboard to make the following unordered list appear
 
 ![image-20220111042723639](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220111042723639.png)
 
-#### Select- Drop down menu with preselcted options
+#### Select- Drop down menu with preselected options
 
 Excellent for forms
 
 ![image-20220116033225020](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220116033225020.png)
 
+#### Radio Buttons- Select one in List
 
+![image-20220123091354875](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220123091354875.png)
 
 ### Customized Components (ongoing)
 

@@ -1736,7 +1736,7 @@ The ExpenseForm.js module is directly after App.js in our component tree branch
 We couldn't make the mistake of trying to skip something if we tried
 It doesn't matter since passing data up twice just has you repeating the process 1 more time
 
-———————————————————————s———————————————————————————————
+——————————————————————————————————————————————————————
 App.js
 
 ```react
@@ -4086,7 +4086,7 @@ function App() {
 
 #### Returning Multi-KVP State Objects in reducerFn
 
-When using useReducer, you likely have a state object with several JVP's inside
+When using useReducer, you likely have a state object with several KVP's inside
 
 - When updating those KVP values inside the reducer function, you need to return a slightly altered state object that contains all the KVP's that were there initially
 - Return the state object as it was, then override one KVP
@@ -4897,6 +4897,8 @@ If you haven't noticed, useEffect + useReducer + functional syntax helps us get 
 - `emailState` and `passwordState` are stateful useReducer variables
   `formIsValid` is a useState variable
 - We use their `isValid` properties of `emailState` and `passwordState` to set the value of `formIsValid`
+
+
 
 ### Immediate Updating in Functional React
 

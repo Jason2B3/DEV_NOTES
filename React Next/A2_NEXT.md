@@ -8,7 +8,7 @@
 
 
 
-# ========== BASICS ==========
+# ========== BAS ICS ==========
 
 Next.js is a framework built on top of React, which gives it extra powers (like SASS does for CSS)
 You can build large scale production ready React apps with it, all while improving SEO

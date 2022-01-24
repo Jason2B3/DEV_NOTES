@@ -3257,6 +3257,67 @@ const Auth = () => {
   // ...rest is excluded for brevity
 ```
 
+#### REMINDER: Payload applied automatically
+
+If you submit a value while dispatching in a React component file, it will automatically end up in action.payload
+
+ONE VALUE FOR PAYLOAD:
+
+React file
+
+```react
+const dispatch = useDispatch();
+const chooseState = (inp) => dispatch(usaDenialActions.selectState(inp));
+// do not need to type "payload" here
+```
+
+Redux slice file
+
+```js
+const usaDenialSlice = createSlice({
+  name: "locationDenialUS", // expected built-in KVP
+  initialState,
+  reducers: {
+    // Enables menu 2, updates menu 2's cityList, updates chosenState variable
+    selectState: (state, action) => {
+      // inp is inside payload by default
+      state.chosenState = action.payload; // use the 1 payload value
+      state.cityList = yelpCitiesUS[action.payload];
+      state.menu2Disabled = false;
+    },
+  },
+});
+```
+
+2+ VALUES FOR PAYLOAD
+
+React file
+
+```react
+const dispatch = useDispatch();
+const chooseState = (inp, inp2) => 
+	dispatch(usaDenialActions.selectState({inp1, inp2}));
+// do not need to type "payload" here
+```
+
+Redux slice file
+
+```js
+const usaDenialSlice = createSlice({
+  name: "locationDenialUS", // expected built-in KVP
+  initialState,
+  reducers: {
+    // Enables menu 2, updates menu 2's cityList, updates chosenState variable
+    selectState: (state, action) => {
+      // inp is inside payload by default
+      state.chosenState = action.payload.inp1; // use payload kvp 1
+      state.cityList = yelpCitiesUS[action.payload.inp2]; // use payload kvp 2
+      state.menu2Disabled = false;
+    },
+  },
+});
+```
+
 
 
 # Redux Toolkit: Asynchronous Code and Side-effects
