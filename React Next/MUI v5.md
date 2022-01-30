@@ -1403,6 +1403,138 @@ EXAMPLE: Margin right 8px
 
 
 
+### JS Mixins- hideBefore / hideAfter
+
+You can create JS files that harbor objects with certain sets of styles you intend on reusing
+Dump them in your sx styling objects using the spread operator
+
+#### Demo
+
+If you look inside the JS file with the mixins inside, you'll notice the KVP's inside the main mix object are what hold the stylings
+
+- You can code styles for other pseudo selector states live `:hover` 
+- Can also create conditional mixins by making a function that returns an object instead, through the use of a parameter
+
+styleMixins.js
+
+```js
+export const mix = {
+  flexRow: {
+    display: "flex",
+    alignItems: "center",
+  },
+  flexColumn: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  hoverShadow: {
+    // Can use pseudo selectors as well
+    "&:hover": {
+      boxShadow: `rgba(28, 28, 28, 0.08) 0px 4px 8px`,
+    },
+  },
+  // We're using a consistent margin size for distancing our components
+  regMargin: (side) => {
+    const marginMagnitude = "1.0rem";
+    if (side === "m") return { margin: marginMagnitude };
+    if (side === "mt") return { marginTop: marginMagnitude };
+    if (side === "mb") return { marginBottom: marginMagnitude };
+    if (side === "ml") return { marginLeft: marginMagnitude };
+    if (side === "mr") return { marginRight: marginMagnitude };
+    if (side === "mx") return { marginInline: marginMagnitude };
+    if (side === "my") return { marginBlock: marginMagnitude };
+    if (side === "!top") {
+      return {
+        marginInline: marginMagnitude,
+        marginBottom: marginMagnitude,
+      };
+    }
+    if (side === "!bottom") {
+      return {
+        marginInline: marginMagnitude,
+        marginTop: marginMagnitude,
+      };
+    }
+  },
+}
+```
+
+In React files using MUI
+(this works with inline sx or sx whose content is outside the JSX)
+
+```REACT
+		  <Box sx={{ ...mix.flexRow, ...mix.regMargin("mb") }}>
+            <Typography color="secondary" variant="h3" sx={{ fontWeight: 600 }}>
+              Location Permissions Denied
+            </Typography>
+          </Box>
+```
+
+#### hideBefore / hideAfter 
+
+With this reusable mixin, you can make it so elements disappear before or after a certain breakpoint
+This breakpoint is set using inline JSX and can equal anything
+
+styleMixins.js
+
+```js
+export const mix = {
+  hideAfter: (breakpoint) => {
+    return {
+      [`@media (min-width: ${breakpoint}px)`]: {
+        display: "none",
+      },
+    };
+  },
+  hideBefore: (breakpoint) => {
+    return {
+      display: "none",
+      [`@media (min-width: ${breakpoint}px)`]: {
+        display: "block",
+      },
+    };
+  },
+}
+```
+
+React file
+
+```react
+<Box sx={{...mix.hideBefore(400)}}></Box>
+```
+
+#### hideBeforeBP / hideAfterBP
+
+Same as the mixin from the previous subsection, with 1 difference- it uses default theme object BP's to decide when to show and hide components instead of hardcoded pixel values
+
+Mixin file
+
+```react
+export const mix = {
+  hideAfterBP: (BPname, theme) => {
+    return {
+      [theme.breakpoints.up(BPname)]: { display: "none" },
+    };
+  },
+  hideBeforeBP: (BPname, theme) => {
+    return {
+      [theme.breakpoints.down(BPname)]: { display: "none" },
+    };
+  },
+}
+```
+
+React page file
+
+```react
+<Box sx={(theme) => {
+    return {...mix.hideAfterBP("sm", theme) }    
+}}></Box>
+```
+
+
+
 # Reusable style Overrides: styled()
 
 PREREQUISITE SKILLS:
@@ -2276,27 +2408,9 @@ They're key to building forms that convey information in a clear manner
 
 ![image-20220103181842654](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220103181842654.png)
 
-#### CONTINUE FROM HERE
-
-Use these links, but the v5 versions
-
-https://v4.mui.com/components/text-fields/#components
-
-https://v4.mui.com/api/text-field/
-
-#### Types of Input Fields
-
-#### Demo Project
 
 
 
-#### Links
-
-TextField is composed of several subcomponents from MUI
-https://v4.mui.com/components/text-fields/#components
-
-Change Focus Color from blue to something else
-https://v4.mui.com/components/text-fields/#color
 
 
 
@@ -2304,39 +2418,47 @@ https://v4.mui.com/components/text-fields/#color
 
 #### Features List
 
-| Site Feature                    | MUI component name | Doc Link                                       |
-| ------------------------------- | ------------------ | ---------------------------------------------- |
-| Modal                           | Dialog             | https://mui.com/components/dialogs/            |
-| Horizontal/Vertical Divider     | Divider            | https://mui.com/components/dividers/           |
-| Loading Spinner                 | Progress           | https://mui.com/components/progress/           |
-| Checkbox lists, scrolling menus | List               | https://mui.com/components/lists/#main-content |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
-|                                 |                    |                                                |
+| Site Feature                                | MUI component name  | Doc Link                                        |
+| ------------------------------------------- | ------------------- | ----------------------------------------------- |
+| Modal                                       | Dialog              | https://mui.com/components/dialogs/             |
+| Horizontal/Vertical Divider                 | Divider             | https://mui.com/components/dividers/            |
+| Loading Spinner                             | Progress            | https://mui.com/components/progress/            |
+| Checkbox lists, scrolling menus             | List                | https://mui.com/components/lists/#main-content  |
+| Backdrop                                    | Backdrop            | https://mui.com/components/backdrop/            |
+| Do something after you click off an element | Click away listener | https://mui.com/components/click-away-listener/ |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
+|                                             |                     |                                                 |
 
 ### New Features you've never Seen
+
+#### App Bar (Navbar in MUI)
+
+![image-20220129145954797](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220129145954797.png)
+
+#### Drawer (sliding nav)
+
+![image-20220129150254986](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220129150254986.png)
 
 #### Breadcrumbs
 
@@ -2371,6 +2493,26 @@ Excellent for forms
 
 ![image-20220123091354875](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220123091354875.png)
 
+#### Chips: Rounded Button-like Components
+
+![image-20220126164215273](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220126164215273.png) ![image-20220126164231274](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220126164231274.png)
+
+![image-20220126164257428](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220126164257428.png)
+
+#### Badges- Ex. Icon with # of notifs
+
+![image-20220126164359499](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220126164359499.png)
+
+#### Alerts- Render UI messages with colors
+
+![image-20220126164543671](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220126164543671.png)
+
+#### Tooltip- Hover text
+
+Hovering over components will render a message near your cursor
+
+![image-20220126164945157](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220126164945157.png)
+
 ### Customized Components (ongoing)
 
 #### MUI Treasury
@@ -2379,6 +2521,104 @@ People sometimes upload their own custom components so other people can use them
 https://mui-treasury.com/components/
 
 
+
+# Personal Custom Components
+
+### Conditional line break 
+
+Create a `<br/>` that appears or disappears before/after a certain breakpoint that you can specify right away using inline styling
+
+ConditionalBreak.js
+
+```react
+import React from "react";
+import { Box } from "@mui/material";
+export const breakBefore = function (pxBreakpoint) {
+  return (
+    <Box
+      component="br"
+      sx={{
+        [`@media (min-width: ${pxBreakpoint}px)`]: {
+          display: "none",
+        },
+      }}
+    />
+  );
+};
+export const breakAfter = (pxBreakpoint) => {
+  return (
+    <Box
+      component="br"
+      sx={{
+        display: "none",
+        [`@media (min-width: ${pxBreakpoint}px)`]: {
+          display: "block",
+        },
+      }}
+    />
+  );
+};
+
+```
+
+### Layout Container
+
+If you have a website where the main content is centered and you have nothing on the sides, reuse this component whenever you get the chance
+
+- This container spans 100vw on mobile screens, but applies some L/R margins
+- It then caps at a certain size on larger screens (1200 in this case, but you can adjust it)
+
+![image-20220125104817044](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220125104817044.png)
+
+![image-20220125104708126](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220125104708126.png)
+
+LayoutContainer.js
+
+```react
+import React from "react";
+import { Container, Box } from "@mui/material";
+import { mix } from "../../styles/styleMixins";
+
+function LayoutContainer(props) {
+  // This will have 16px inline padding on mobile screens
+  // On desktop screens, the main content will max out at 1200px (padding will still be there but not affect much)
+  // The point of having a parent Box set to 100vw is so we can apply a background color across the entire viewport
+  return (
+    <Box
+      sx={{
+        width: "100vw",
+        background: props.bg || "white",
+      }}
+    >
+      <Box
+        sx={{
+          width: "100%",
+    	  maxWidth: "1232px", // 1200 after padding
+    	  margin: "auto",
+    	  paddingInline: "1rem", // shaves 16px per left and right side
+          marginTop: props.marginAbove || "0px",
+          px: 0,
+        }}
+      >
+        {props.children}
+      </Box>
+    </Box>
+  );
+}
+
+export default LayoutContainer;
+```
+
+
+
+# ====== ONLY IF NECESSARY ====== 
+
+# Styling Class-based React: createStyles()
+
+MUI was around before React hooks became the default way to create components. 
+MUI can style class based components using the createStyles() hook
+
+https://www.youtube.com/watch?v=aKwrocqk0Kc&list=PL33SAjAaBtxnwqPmrfTiJO5rPKC2MlIZN&index=9
 
 # Legacy Styling
 
@@ -2527,15 +2767,4 @@ export default function Notes(props) {
 Since `props.num` equals a falsy due to not existing, the secondary button fontSize is set to 28
 
 ![image-20220103002927061](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220103002927061.png)
-
-
-
-# Styling Class-based React: createStyles()
-
-MUI was around before React hooks became the default way to create components. 
-MUI can style class based components using the createStyles() hook
-
-https://www.youtube.com/watch?v=aKwrocqk0Kc&list=PL33SAjAaBtxnwqPmrfTiJO5rPKC2MlIZN&index=9
-
-
 

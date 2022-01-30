@@ -976,6 +976,8 @@ export default Button;
 2. The p tag nested within `<MainWrapper>` is blue 
    Because of our `& .nestedPara {}` selector
 
+
+
 ### How many Styled Components can we Make?
 
 - When using React Normally, you'll likely create 1 component per JS file then reuse it wherever
@@ -3373,7 +3375,7 @@ Now that we know how to generate action objects, we can dispatch actions in Redu
 const doAddToDoItem = payload => ({ type: 'TODO_ADDED', payload }) // action creator
 
 store.dispatch(doAddToDoItem('be awesome today')) 
-// dispatch action eith the obj generated
+// dispatch action with the obj generated
 ```
 
 Redux has built in tools that let us make this process even easier since this pattern is so common

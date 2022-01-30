@@ -1,7 +1,3 @@
-### Project 2: Monstercat Site for the YT Guy  (HTML/CSS/JS)
-
-
-
 
 
 ### Project 3: Game Price Compare Tool (Jamstack/React)
@@ -31,13 +27,6 @@ Rellax.js basics: https://www.youtube.com/watch?v=aAxt0Z7IXIo
 ### Project 5: Unomi Chat Translator App (Fullstack)
 
 
-
-### Project 5: Brochure Website for a restaurant or business
-
-#### Requirements
-
-1. Search engine optimization
-2. 
 
 
 
