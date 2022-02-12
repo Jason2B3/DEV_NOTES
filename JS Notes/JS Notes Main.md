@@ -17,7 +17,8 @@ Something that cannot be changed. Describes variables defined using const
 When JS does something automatically and behind the scenes without notice
 
 <u>NaN:</u>
-A "not-a-number" value that appears when a math function fails. Try subtracting a string from a number in the console and see what happens
+A "not-a-number" value that appears when a math function fails. 
+Try subtracting a string from a number in the console and see what happens
 
 <u>ECMAScript:</u>
 A standard for scripting languages such as JavaScript
@@ -21202,6 +21203,7 @@ We'll be using async await throughout this lesson since its modern and more conv
 #### GET
 
 ```js
+import axios from "axios"; // PLACE ATOP EVERY FRONT END FILE
 const axiosGET = async function (url) {
   try {
     const response = await axios.get(url);
@@ -21222,6 +21224,7 @@ const axiosGET = async function (url) {
 - Make sure the syntax in that object is in fact JavaScript, and not JSON (common mistake)
 
 ```js
+import axios from "axios"; // PLACE ATOP EVERY FRONT END FILE
 const axiosPOST = async function (url) {
   try {
     const response = await axios.post(url, {
@@ -21241,6 +21244,7 @@ const axiosPOST = async function (url) {
 #### DELETE
 
 ```JS
+import axios from "axios"; // PLACE ATOP EVERY FRONT END FILE
 const axiosDELETE = async function (url) {
   try {
     const response = await axios.delete(url, {
@@ -21260,6 +21264,7 @@ const axiosDELETE = async function (url) {
 #### PUT
 
 ```js
+import axios from "axios"; // PLACE ATOP EVERY FRONT END FILE
 const axiosPUT = async function (url) {
   try {
     const response = await axios.put(url, {
@@ -21281,6 +21286,7 @@ const axiosPUT = async function (url) {
 #### PATCH
 
 ```js
+import axios from "axios"; // PLACE ATOP EVERY FRONT END FILE
 const axiosPATCH = async function (url) {
   try {
     const response = await axios.patch(url, {
@@ -21318,7 +21324,107 @@ EXAMPLE: Make a POST request with a body payload
 
 
 
+### NextJS: Error Handling via the Response Object
 
+Th key to error handling with axios is accessing the response object that cayused an error to be thrown in the first place
+
+- If we don't use the response object for error handling, we'll need to handle all types of errors with just one course of action in our catch block
+- This is fine if our API route only checks for 1 thing, but we have greater control with this method when we need it
+
+#### Viewing the Response Object
+
+In this demo...
+
+We call an API route that returns error codes when conditions are not met
+The error message changes depending on what the problem was
+
+API Route
+
+![image-20220207162221505](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220207162221505.png)
+
+Front End file
+
+```js
+    try {
+      // Request a new account
+      await axios.post("/api/auth/signupP2", {
+        submittedPIN: typedPIN, // the pin we type in this pg's form
+        hashedPIN, // a hashed version of the correct PIN we emailed
+        expiryDatePIN,
+        email: pendingEmail, // email submitted in /signup
+        password, // password submitted in /signup
+      });
+    } catch (error) {
+      console.log(error.response);
+    }
+```
+
+![image-20220207162247994](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220207162247994.png)
+
+We can render different things on the front end when `error.response.data.message` equals "PIN has expired" or "Invalid PIN"
+
+#### Coding for Multiple Errors
+
+PREMISE
+
+- In API routes we'll often code try catch blocks that throw an error if something goes wrong
+  We can code actions in the front end when that type of error occurs
+- If something outside of a catch block causes the API route to fail, we can still code actions for that in the Front end
+
+#### Demo: Multiple Error Actions
+
+BACKEND: (small snippet)
+
+- We return an error response in the catch block when SendGrid email requesting fails
+- However if something goes wrong connecting to MongoDB, the API route fails regardless of no catch block (we might have other processes which could feasibly fail in the rest of the route)
+
+![image-20220211122733445](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220211122733445.png)
+
+FRONT END: (small snippet)
+
+- We send a request to an API route in the front end
+- Render an error based on the response object, which is different depending on whether the API route's error occured inside a catch block or not (see statusText)
+- In the front end catch block, try to code actions for every possible error that could take place
+
+![image-20220211124841386](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220211124841386.png)
+
+If MongoDB fails , the response object looks like this since the error is uncaught
+
+![image-20220211124437895](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220211124437895.png)
+
+If Sendgrid fails, the response object looks like this
+
+![image-20220211124719598](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220211124719598.png)
+
+#### Coding Actions for Any Possible Error
+
+It's impossible to anticipate every single thing that could go wrong inside API routes
+
+Instead, use if/else blocks to code actions for certain errors, then just go with a generic error action for everything else
+
+```react
+	try {
+      await axios.post("/api/auth/signupP1", {
+        email: typedEmail,
+        password: typedPassword,
+      });
+    } catch (error) {
+      console.log(error.response);
+      if(error.response.statusText=== "Internal Server Error"){
+          // Coding actions for API route errors not in a catch block
+          alert("Something has gone wrong");
+          return
+      }
+      else if(error.response.data.message=== "SendGrid API failure"){
+        // Coding actions for an error we placed in an API route catch block
+        alert("SendGrid failed")    
+      }
+      else {
+          // Generic error action for anything else we haven't anticipated
+          alert("Miscillaneous error encountered")
+      }
+    }
+```
 
 
 

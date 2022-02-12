@@ -787,7 +787,7 @@ In some situations we would rather not use a link to take us to a new page
   (Synonym to imperative)
 - Use the .push method on a variable created with useRouter to get us on a new route/page
 
-#### What Imperative/Programmatic Navigation Means
+#### Imperative vs Programmatic Navigation 
 
 It simply means that we take users to another page as a result of the users doing something OTHER than clicking a link.
 
@@ -1563,18 +1563,6 @@ export async function getServerSideProps(context) {
   return {props: {data: data}} // return props 
 } // search this URL to view whats inside this dummy hosted JSON file
 ```
-
-
-
-### Data Fetching Security Concerns
-
-#### What you Should and Shouldn't Do
-
-| make http requests in...             | using Firebase | using local files or your own backend API |
-| ------------------------------------ | -------------- | ----------------------------------------- |
-| the client-side                      | acceptable     |                                           |
-| getStaticProps or getServerSideProps | acceptable     |                                           |
-|                                      |                |                                           |
 
 
 
@@ -5005,7 +4993,7 @@ ALL OBJECTIVES OUTLINED:
 
 |        | when                                                         | action                                                       |
 | ------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| CREATE | Send feedback button pressed                                 | add a new document whose fields are based on the input fields<br />(if the email is not in the database collection already) |
+| CREATE | Send feedback button gets pressed                            | add a new document whose fields are based on the input fields<br />(if the email is not in the database collection already) |
 | READ   | On startup                                                   | display the associated document's contents                   |
 | UPDATE | Send feedback button's pressed with an existing email typed in the field | change the "comment" field for that document                 |
 | DELETE | Remove feedback button's pressed with an existing email typed in the field | remove the document from the database                        |
@@ -5179,7 +5167,7 @@ CATCH:
 The catch block contains code you want executed if your desired actions fail
 Each one should do 3 things:
 
-1. Close the database client session
+1. Close the database client session with `client.close()`
 2. Enact ` res.status(500).json({ message: "Operation failed!" });` or something similar
 3. End the function execution with `return`
 
@@ -5314,6 +5302,31 @@ export async function connectToDatabase() {
   return client;
 } // no error handling used here yet (fyi)
 ```
+
+
+
+### Make Multiple Changes to a Document
+
+#### Demo
+
+![image-20220208112012841](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220208112012841.png)
+
+![image-20220208112119589](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220208112119589.png)
+
+Snippet of code that did this
+
+```react
+  await db.collection("users").updateOne(
+    { email: "jasonxtuyotech@gmail.com" },
+    {
+      // All changes are placed in this object
+      $set: { accountStatus: "verified" }, // change value of this field
+      $unset: { hashedVerifyPIN: "", pinExpiryDate: "" }, // remove 2 fields
+    }
+  );
+```
+
+
 
 
 
@@ -5559,7 +5572,7 @@ DB_USER=Jason
 DB_PASSWORD=V1 345
 ```
 
-CHANGING .ENV VARIABLE VALUES
+#### Changing .env values
 
 - The values will remain the same after they're declared, even if you change their values in `.env.local` while in development mode
 - To reset their values, shut off the `npm run dev` session, edit the variable values in `.env.local`, then run `npm run dev` once more
@@ -5769,7 +5782,19 @@ To keep things brief, I'll simply list each of these reserved routes as of late 
 /api/auth/csrf
 ```
 
+### NextAuth: Useful Links in Docs
 
+> Setup:  
+> https://next-auth.js.org/
+>
+> How to protect front and backend with authentication blocks: 
+> https://next-auth.js.org/getting-started/example
+>
+> List of official Providers and Links to them (credentials, 3rd party, email magic link)
+> https://next-auth.js.org/providers/overview
+>
+> Custom Pages: (no default sign in pages)
+> https://next-auth.js.org/configuration/pages
 
 # Sending Emails
 
@@ -6089,7 +6114,8 @@ Let's learn how to log users in on the client side and the server side
 ```react
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
-import { verifyPassword } from "../../../helpers/auth";
+// compares normal password to hashed version
+import { verifyPassword } from "../../../helpers/auth"; 
 import { connectToDatabase } from "../../../helpers/db";
 
 export default NextAuth({
@@ -6118,7 +6144,7 @@ export default NextAuth({
         // Compare the login attempt password to the encrypted one in MongoDB
         const isValid = await verifyPassword(
           credentials.password, // from input field
-          user.password // encrypted version stored in MongoDB
+          user.password // hashed version stored in MongoDB
         );
         // If the passwords do not match, throw an error and close the db session
         if (!isValid) {
@@ -6138,7 +6164,7 @@ export default NextAuth({
 
 #### Front End Code
 
-components/auth/auth-form.js 	(what matters)
+components/auth/auth-form.js 	(what matters inside)
 
 ```react
   async function submitHandler(e) {
@@ -6176,7 +6202,7 @@ EXAMPLE: Credentials provider with email/password
 import { signIn } from 'next-auth/client';
 
 const result= await signIn('credentials',{
-    redirect: false,
+    redirect: false,  // will prevent a page redirect if something goes wrong
     email: enteredEmail, 		// will equal credentials.email in the backend
     password: enteredPassword,  // will equal credentials.password in the backend
 })
@@ -6400,7 +6426,9 @@ Find them in the devtools: 	Application tab → cookies → select your domain
 To maintain our login status, we must check whether a valid JWT token exists in that location
 We could do this manually, but NextAuth has a dedicated method for this; `useSession()`
 
-#### useSession() Explained
+#### useSession() Explained (v4)
+
+> https://next-auth.js.org/getting-started/client#usesession
 
 ![image-20211027202445523](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211027202445523.png)
 
@@ -6408,40 +6436,11 @@ We could do this manually, but NextAuth has a dedicated method for this; `useSes
 import { useSession } from "next-auth/client";
 
 // inside a comp function...
-const [session, loading] = useSession();
-console.log("session:", session);
-console.log("loading:", loading);
+const { data: session, status } = useSession()
 ```
 
-session: Describes the active session
-loading: Tells us whether Next.js is currently logging in or not (Boolean)
+![image-20220208173802596](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220208173802596.png)
 
-VALUES DEPENDING ON DIFFERENT LOGIN STATES:
-
-> When not logged in:  	![image-20211027155026862](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211027155026862.png) 	
->
-> When logged in:   	 ![image-20211027035027662](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211027035027662.png)
-
-Extra details:
-
-- The email KVP inside the user object is the email that we're currently logged in with
-- The expiration date will be prolonged automatically so long as the user is active on the webpage
-
-#### Conditional JSX based on useSession
-
-Consider useSession like an auth-version of useState. 
-Render JSX conditionally based on the values of `session` and `loading`
-
-COMMON PATTERNS I'VE NOTICED:
-
-| scenario                                                     | session   | loading | if condition              |
-| ------------------------------------------------------------ | --------- | ------- | ------------------------- |
-| not logged in                                                | undefined | false   | `if(!session)`            |
-| logged in                                                    | object    | false   | `if(session && !loading)` |
-| logged in and you visit a new page<br />infinite loading bug | undefined | true    | use getSession instead    |
-
-- Take these with a grain of salt- I could be wrong about them
-- You should test what these values end up being while logged on/off on each page anyway
 
 #### signOut()
 
@@ -6460,7 +6459,9 @@ const logoutHandler = () => signOut();
 // this will be assigned to the logout button you see in one of the next photos
 ```
 
-#### Demo
+#### Demo (V3)
+
+> useSession was different back in v3 (it's much easier to use now)
 
 Make the following changes to the navbar
 
@@ -6546,7 +6547,8 @@ Route protection is when you deliberately render different content or redirect t
 
 #### Demo: Route Protection with getSession
 
-> https://github.com/Jason2B3/auth-chap13			commit n225 part 2	
+> https://github.com/Jason2B3/auth-chap13									commit n225 part 2	
+> https://next-auth.js.org/getting-started/client#example-1		Example fr/ docs
 
 /components/profile/user-profile
 
@@ -6802,7 +6804,7 @@ It should include a return line like this at the end:
 
 ![image-20211028124208497](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211028124208497.png)
 
-This allows us to access the currently logged in email from the session object returned by getSession()while we work on backend code for API routes or pre-render functions
+This allows us to access the currently logged in email from the session object returned by getSession() while we work on backend code for API routes or pre-render functions
 
 IN OUR BACKEND CODE:
 
@@ -6825,6 +6827,7 @@ pages/api/user/change-password
 import { getSession } from "next-auth/client";
 import { connectToDatabase } from "../../../helpers/db";
 import { encrypt, verifyPassword } from "../../../helpers/auth"; // encrytion FN's
+
 export default async function handler(req, res) {
   // Only let this run if a user makes a PATCH request
   if (req.method !== "PATCH") return;
@@ -6914,18 +6917,6 @@ The enteredEmail and enteredPassword are what's typed in the "Your Email" and "Y
 
 
 
-### Forgot Password 
-
-#### Approach
-
-If the user tries to log in and forgot their password, send them an email containing the old one
-
-#### Alt
-
-Alternatively, you could send them a link to reset their password instead- 
-
-
-
 ### New Features to Implement
 
 1. Switch email option
@@ -6985,6 +6976,8 @@ SOURCES:
 #### Logged In Time
 
 The amount of time you're logged in for is managed by the providers you choose to log in with
+
+
 
 ### Client ID's and Secrets for .env.local
 
@@ -7379,7 +7372,633 @@ SENDGRID_API_KEY=SG.3s9ccLxLSWGSvsgnQZitWg.s_HXqNfctX0ayovpfyPMaEyiyOecR6KaYrPsy
    Do more than just check for @ symbols
 2. Find a library that checks password strength and implement it
 
+# ==== LIBRARIES + API's ====
 
+
+
+# General Purpose API's
+
+### Local Storage API
+
+This API lets you save data using the web browser and vanilla JS. 
+
+- Typically, people have used server-side code to accomplish this (PHP). 
+- Local Storage API stores specifically to the domain and protocol being used
+  This is usually not recommended due to the security risks
+
+WHEN TO USE:
+Use to store small amounts of user data that are harmless if public
+Ex. Save display settings like themes, other UI settings or preferences
+
+HOW DATA IS STORED:
+Data is saved inside the domain's local Storage object (LSO) in the form of KVP's
+
+- Both the key and value are saved as strings- a limitation we'll overcome later
+- The order in which you add KVP's is preserved
+- JS will convert the KVP value to a string, even if you feed the parameter as a number 
+
+#### Syntax
+
+| action                 | code                                                         |
+| ---------------------- | ------------------------------------------------------------ |
+| add a KVP              | `localStorage.setItem('myCat', 'Tom');`<br /> updates value if the KVP exists already |
+| access an existing KVP | `const cat = localStorage.getItem('myCat');`<br /> equals null if it does not exist |
+|                        |                                                              |
+| delete a KVP           | `localStorage.removeItem('myCat');`<br /> if used on a non existent KVP, it does nothing |
+| delete all KVP's       | `localStorage.clear();`                                      |
+
+IMPORTANT: 
+
+- If you save a KVP to a variable, it remains even after you clear out the entire LSO, or that 1 KVP
+- Look at the entire LSO with `console.dir(localStorage)`
+
+EXAMPLE 1: Save a few gamer friends' names and mains to a KVP
+
+```JS
+localStorage.setItem('Yoh','Sheik')
+let a= localStorage.getItem("Yoh")
+
+console.log(a) 		//OUTPUT: "Sheik"
+localStorage.clear();
+console.log(a) 		//OUTPUT: "Sheik" (remains after the clear)
+
+console.log(localStorage.getItem("Yoh")) //OUTPUT: null
+```
+
+#### Extra Methods
+
+`.key` Method && `.length` Method
+
+Grab the key part of the KVP using an index number- remember the KVP order's saved
+
+```js
+localStorage.setItem('Yoh','Sheik')
+localStorage.setItem('Anai','Mario')
+localStorage.setItem('Kalm','Ganon')
+localStorage.setItem('Chrimm','Diddy')
+
+console.log(localStorage.key(0)) //OUTPUT: "Chrimm"
+console.log(localStorage.key(1)) //OUTPUT: "Kalm"
+console.log(localStorage.key(2)) //OUTPUT: "Anai"
+console.log(localStorage.key(3)) //OUTPUT: "Yoh"
+console.log(localStorage.length) //OUTPUT: 4
+```
+
+The LSO considers the most recent addition to the object as index 0's KVP
+This method is fairly useful for when you want to loop over a few of your KVP's
+
+#### Storing Objects in LSO
+
+We're forced to save everything in the local storage API as a string, and that can be problematic when we want to save other objects or arrays
+
+We'll need to use JSON commands to convert arrays/objects to strings for storage, then convert them back once we call upon them
+
+```js
+function setItem_Custom(keyName, obj){
+  let obj_converted = JSON.stringify(obj); // turn object to string
+  localStorage.setItem(keyName, obj_converted); 
+    // store obj string (looks odd in storage)
+}
+function getItem_Custom(keyStr){
+  return JSON.parse(localStorage.getItem(keyStr)); 
+    // return your object in its rgeular non-string form
+}
+```
+
+Test Drive 1: This alone will not save things upon reload
+
+```js
+let objec = { ben: 'gay', clear: 'eyes' };
+let arrayOne = [0, 1, 2, 3, 'IV'];
+
+setItemV2("myObject", objec)
+console.log(getItemV2("myObject")) 
+
+setItemV2("myArray", arrayOne)
+console.log(getItemV2("myArray")) 
+```
+
+![image-20210508025316734](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210508025316734.png)
+
+#### Main Example: Store Info on Reload
+
+![image-20210508154636092](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210508154636092.png)
+
+```js
+const add = document.getElementById("add");
+const clear = document.getElementById("clear");
+const score = document.getElementById("score");
+
+//# ON STARTUP: Display the stored count and log the storage 
+console.log(localStorage);
+displayCount(); // display count on startup (from storage)
+
+function displayCount() {
+  if (localStorage.getItem("myScore") === null) score.textContent = 0;
+  else score.textContent = localStorage.getItem("myScore");
+}
+
+clear.addEventListener("click", (e) => {
+  localStorage.clear(); // clear storage
+  score.textContent = 0; // set counter to 0
+  console.log(localStorage);
+});
+
+add.addEventListener("click", (e) => {
+  let count = localStorage.getItem("myScore"); // may or may not exist
+  if (!count) localStorage.setItem("myScore", "0"); // if it doesn't, set equal to 0
+
+  let oneUp = Number(localStorage.getItem("myScore")) + 1; // increment
+  localStorage.setItem("myScore", oneUp); // coerced back to string form
+
+  score.textContent = oneUp; // display the new score
+  console.log(localStorage);
+});
+```
+
+TEST IT OUT: https://jsfiddle.net/JasonXtuyotech/cf0a4dmx/
+
+ON STARTUP:
+
+We use the `displayCount()` function which will display 1 of 2 things
+
+- If storage is holding a "myScore" KVP, it'll display that
+  If it doesn't have one, it'll display 0
+- It is CRUCIAL that we don't use a global variable for the counter.
+  It will get redefined after every page reload, so use storage KVP's instead
+
+CLEAR BUTTON: Clears the local storage and sets the display counter to 0
+
+ADD BUTTON:
+
+- If no "myScore" KVP exist in storage, it creates one and sets the value to "0"
+- We increment the myScore KVP value up by 1 (switch between strings and numbers)
+- Shows the "myScore" value on the display
+
+#### List of Issues and Limitations
+
+1. Can only store strings, and JSON workarounds are pretty unpleasant
+2. Even with JSON workarounds, you still can't store dates or functions
+   These are the same limitations we deal with when deep cloning with vanilla JS
+3. Is really bad for storing large amounts of data, or anything private
+   The info saved with localStorage is not encrypted at all
+4. Slows down site performance and doesn't mix well with extensions on Chrome apparently
+
+JSON will not successfully store the following...
+
+- Date, null, NaN, functions, undefined, Infinity, RegExps, Maps, Sets, Blobs, FileLists, ImageDatas, sparse Arrays, Typed Arrays or other complex types within your object
+
+DEMONSTRATION OF DATA LOSS:
+
+This method will lose any JS values that have no equivalent in JSON. Behold 
+
+```js
+let obj = {
+  a: null,
+  b: NaN,		//turns to null
+  c: Infinity,	//turns to null
+  d: undefined,	// DISAPPEARS
+  e: function () {},	//DISAPPEARS
+  f: Number,			//DISAPPEARS
+  g: false,
+  h: 12,
+  i: 'mages',
+  j: [1, 2, 3, 4],
+  k: { 0: 'roserade', 1: 'leavanny' },
+};
+
+let deepClone = JSON.parse(JSON.stringify(obj));
+console.log(deepClone);
+```
+
+![image-20210323091944594](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210323091944594.png)
+
+#### View Storage in Dev Tools
+
+You can view or even clear out the local storage from the dev tools
+Be careful though- clearing it out is permanent
+
+```
+Application tab -> Storage -> Local Storage -> localhost: 3000
+```
+
+![image-20210810020058344](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210810020058344.png)
+
+
+
+
+
+### Encrypting and Decrypting
+
+https://classify-web.herokuapp.com/#/api
+
+
+
+### math-based
+
+#### Fractional
+
+Use to convert decimals into fractions delivered in string form. (Like 1.5 into 1 1/2)
+Can perform mathematical operations: add, subtract, divide, multiply...etc
+
+INSTALL:
+
+```js
+npm i fractional 	// installs as a dependency
+//—————————————————————————[ go into JS file]—————————————————————————————
+var Fraction = require('fractional').Fraction
+```
+
+EXAMPLE:
+
+```js
+let numA= 4.5 // convert this to 4 1/2
+let numB= new Fraction(num).toString() // "4 1/2"
+
+// this does not permanently mutate the original number
+```
+
+GENERAL SYNTAX:
+
+```js
+// Create a new fraction with the new keyword:
+(new Fraction(7,3)).multiply(new Fraction(1,2)).toString()		// 1 1/6
+(new Fraction(7,3)).divide(new Fraction(1,2)).toString()		// 4 2/3
+(new Fraction(3,10)).add(new Fraction(5,9)).toString()			// 77/90
+(new Fraction(0.25)).add(new Fraction(1,6)).toString()			// 5/12
+(new Fraction(0.35)).subtract(new Fraction(1,4)).toString()		// 1/10
+```
+
+
+
+### Form Libraries
+
+#### Random PIN Generator
+
+> https://www.npmjs.com/package/secure-pin
+
+#### Password Strength Tester	
+
+This determines the strength on a password you submit. 
+Its response object will tell you what's wrong or right with password you feed it
+
+> https://yarnpkg.com/package/tai-password-strength
+> http://tests-always-included.github.io/password-strength/
+
+PREMADE API ROUTE:
+Make a request to this file to check the strength of your password. 
+
+- Need a PW with 8 characters or longer. 
+  Requires an uppercase, lowercase, plus at least 1 symbol. No punctuation allowed
+- If submitted password is found to be unacceptable, it'll throw an error for you
+
+```react
+var taiPasswordStrength = require("tai-password-strength"); 
+
+var strengthTester = new taiPasswordStrength.PasswordStrength();
+
+export default async function handler(req, res) {
+  const passwordToInspect = req.body.password;
+  // Inspect the response and see if our conditions are met
+  let results = strengthTester.check(passwordToInspect);
+  const conditions = {
+    characterDiversity: results.charsetSize >= 80,
+    commonPassword: !results.commonPassword,
+    adequateLength: results.passwordLength >= 8,
+    adequateStrength: results.strengthCode != "VERY_WEAK" || results.strengthCode != "WEAK", // prettier-ignore
+    includesNumber: results.charsets.number === true,
+    includesLowercase: results.charsets.lower === true,
+    includesUppercase: results.charsets.upper === true,
+    includesSymbol: results.charsets.symbol === true,
+    excludesPunctuation: !results.charsets.punctuation,
+  }; // if this object contains a falsy, the password is not acceptable
+  // Check if any of the KVP's in that object equal false
+  let falseInside = Object.values(conditions).includes(false); // Boolean
+  if (falseInside) {
+    // If we have a false in the object, throw an error
+    res.status(422).json({ message: "Invalid password" });
+  } else {
+    // If the object is falsy free, return a success code
+    res.status(200).json({ message: "Valid password" });
+  }
+}
+
+/* Response from our password validation library:
+From this library, check
+charsetSize: 83 or higher
+commonPassword: false
+passwordLength: 8 or higher
+strengthCode: not "VERY_WEAK", not "WEAK". Need it "REASONABLE", "STRONG", or "VERY_STRONG"
+trigraphEntropyBits: (don't care)
+charsets:
+  number: true
+  lower: true
+  upper: true
+  punctuation: false
+  symbol: true
+  other (don't care)
+*/
+```
+
+
+
+#### Email Legitimacy Tester
+
+> https://yarnpkg.com/package/email-validator
+
+This library is not perfect, but it helps weed out blatantly fake emails from being submitted
+It allows some like "jason@hotmail.c0m", but it doesn't need to be 100% accurate
+
+POINT OF USING THIS:
+
+- Email sign ups really should have some sort of verification email sent regardless, or else typos and signing up using emails that don't belong to you will become a thing.
+- Use this as a first line of defense / filter
+
+```react
+var validator = require("email-validator");
+
+export default async function handler(req, res) {
+  const emailToInspect = req.body.email;
+  const validityBoolean = validator.validate(emailToInspect); // returns Boolean
+  if (!validityBoolean) {
+    res.status(422).json({ message: "invalid", response: validityBoolean });
+  } else {
+    res.status(200).json({ message: "valid", response: validityBoolean });
+  }
+}
+```
+
+#### Random Password Generator
+
+> https://yarnpkg.com/package/password-generator
+
+
+
+### Form Validation
+
+#### Check Password Strength
+
+> https://yarnpkg.com/package/tai-password-strength
+> http://tests-always-included.github.io/password-strength/
+
+Make a request to this API route:
+Requirements are 8 chars or more, 1 capital, 1 lower, one symbol, plus no punctuation
+
+```js
+var taiPasswordStrength = require("tai-password-strength"); 
+
+var strengthTester = new taiPasswordStrength.PasswordStrength();
+
+export default async function handler(req, res) {
+  const passwordToInspect = req.body.password;
+  // Inspect the response and see if our conditions are met
+  let results = strengthTester.check(passwordToInspect);
+  const conditions = {
+    characterDiversity: results.charsetSize >= 80,
+    commonPassword: !results.commonPassword,
+    adequateLength: results.passwordLength >= 8,
+    adequateStrength: results.strengthCode != "VERY_WEAK" || results.strengthCode != "WEAK", // prettier-ignore
+    includesNumber: results.charsets.number === true,
+    includesLowercase: results.charsets.lower === true,
+    includesUppercase: results.charsets.upper === true,
+    includesSymbol: results.charsets.symbol === true,
+    excludesPunctuation: !results.charsets.punctuation,
+  }; // if this object contains a falsy, the password is not acceptable
+  // Check if any of the KVP's in that object equal false
+  let falseInside = Object.values(conditions).includes(false); // Boolean
+  if (falseInside) {
+    // If we have a false in the object, throw an error
+    res.status(422).json({ message: "Invalid password" });
+  } else {
+    // If the object is falsy free, return a success code
+    res.status(200).json({ message: "Valid password" });
+  }
+}
+
+/* Response from our password validation library:
+
+On the form, check for
+1. No whitespace
+2. No empty string responses
+
+From this library, check
+charsetSize: 83 or higher
+commonPassword: false
+passwordLength: 8 or higher
+strengthCode: not "VERY_WEAK", not "WEAK". Need it "REASONABLE", "STRONG", or "VERY_STRONG"
+trigraphEntropyBits: (don't care)
+charsets:
+  number: true
+  lower: true
+  upper: true
+  punctuation: false
+  symbol: true
+  other (don't care)
+*/
+```
+
+#### Check Email Validity
+
+> https://yarnpkg.com/package/email-validator
+
+- We want to see if an email users type into a form is blatantly fake
+- This library absolutely does not ensure that the email is legitimate or even ownedb by the person submitting it
+
+```js
+var validator = require("email-validator"); 
+
+export default async function handler(req, res) {
+  const emailToInspect = req.body.email;
+  const validityBoolean = validator.validate(emailToInspect); // returns Boolean
+  if (!validityBoolean) {
+    res.status(422).json({ message: "invalid", response: validityBoolean });
+  } else {
+    res.status(200).json({ message: "valid", response: validityBoolean });
+  }
+}
+```
+
+
+
+# Location API's
+
+### REST Countries: Get Info on Nations
+
+###### Get Info on Countries with a full name:
+
+```
+https://restcountries.eu/rest/v2/name/{name}?fullText=true
+```
+
+###### Get Info on Countries with 3 letter country codes:
+
+```
+https://restcountries.eu/rest/v2/alpha/{code}
+```
+
+Use fetch API to get information on a country using one of these links
+
+More link options here: https://restcountries.eu/
+Example: https://jsfiddle.net/JasonXtuyotech/gLvmu89y/1/
+
+The example's a bit complex, but it shows you how to promise chain while supplying insightful error messages (uses the then() method instead of Async/Await but whatever)
+
+
+
+### Reverse Geolocation: Find a Nation via Coords
+
+SYNTAX: 
+
+```
+https://geocode.xyz/${lat},${long}?geoit=json
+```
+
+This is a Udemy coding Challenge that was explained in more detail in the AsyncJS then() chapter's final lesson
+
+#### EXAMPLE:
+
+We chain promises to the Promise value of the API link
+
+REASON 1: 
+Need to parse this with `.json()` then log the promise value
+
+REASON 2: 
+We add error messages at locations in our promise chain where things can go wrong
+
+```js
+function whereAmI(lat, long) {
+  const request = fetch(`https://geocode.xyz/${lat},${long}?geoit=json`);
+  request
+    .then(response => {
+      if (!response.ok) throw new Error();
+      return response.json();
+      // REJECT: create error object with custom msg
+      // RESOLVE: parse json data
+    })
+    .then(parsedData => {
+      if (!parsedData.country) throw new Error('Invalid coordinates');
+      console.log(parsedData); // obj full of info
+      console.log(`You are in ${parsedData.city}, ${parsedData.country}`);
+    })
+    .catch(errMSG => console.error(errMSG));
+}
+// whereAmI(0, 0); // undefined undefined, if we had no custom error MSG
+whereAmI(52.508, 13.38); // Berlin, Germany
+whereAmI(19.037, 72.873); // Mumbai, India
+whereAmI(-33.933, 18.474); // Cape Town South Africa
+```
+
+Default reload error MSG: ![image-20210515134636861](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210515134636861.png)
+
+Bad coords custom error MSG: ![image-20210515140549836](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210515140549836.png)
+
+Resolved promise example: ![image-20210515141512188](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210515141512188.png)
+
+
+
+# Animation Libraries
+
+### Hover Effects with Hover.css
+
+NO INSTALL METHOD:  [source][https://github.com/IanLunn/Hover#:~:text=it%20applied%20to.-,a.%20copy%20and%20paste%20an%20effect,-If%20you%20plan]
+
+If you only need to use a few animations, you can copy/paste one snippet of this library's CSS to use an animation throughout your project- no install required!
+
+#### Procedure
+
+1. Find which animation you want to use here:
+   http://ianlunn.github.io/Hover/
+2. CTRL F the animation name in this library's hover/css/hover.css doc [here](https://github.com/IanLunn/Hover/blob/master/css/hover.css) 
+   Copy paste the specific animation's snippet into your project
+
+![image-20211206040654466](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211206040654466.png)
+
+3. To apply the "grow" effect in this case, assign a class of `hvr-grow` to an element
+
+# Lodash
+
+### pull Methods: Mutation Versions of Filter Ⓒ
+
+| method              | purpose                                                      |
+| ------------------- | ------------------------------------------------------------ |
+| `_.pull(arr, 1, 2)` | filters out all instances of values from an array<br />The array is argument 1, while filter values are args 2 and etc |
+| `_.pullAll`         | does the same thing as pull<br />accepts an array of filter values instead |
+| `_pullAllBy`        |                                                              |
+| `_.pullAllWith`     |                                                              |
+| `_pullAt`           |                                                              |
+
+———————————————————————————————————————————————————————————————
+
+`_.pull`
+
+```js
+let a1 = [1, 2, 2, 3, 4, 4, 4, 5, 6];
+
+let filtered = _.pull(a1, 2, 4);
+console.log(filtered); //OUTPUT: [ 1, 3, 5, 6 ]
+```
+
+———————————————————————————————————————————————————————————————
+
+`.pullAll`
+
+Can be replaced by using _pull with a spread operator
+
+```js
+let a1 = [1, 2, 2, 3, 4, 4, 4, 5, 6];
+let a2 = [2, 4];
+
+function filterMain(main, filterOut) {
+  _.pullAll(main, filterOut)
+  console.log(main) //OUTPUT: [ 1, 3, 5, 6 ]
+}
+filterMain(a1, a2)
+```
+
+My vanilla JS Equivalent:
+
+```js
+function removeMatches(toBeFiltered, filterArr) {
+  filterArr.forEach((ent) => {
+    toBeFiltered= toBeFiltered.filter((val) => val !== ent);
+  });
+  console.log(toBeFiltered)
+  return toBeFiltered // arr2 get
+}
+removeMatches([5, 2, 1, 4], [1, 3, 2])  //OUTPUT: [ 5, 4 ]
+// remove 1, 3, and 2 from the first array arg
+```
+
+
+
+### Functions of Interest
+
+```
+_.chunk  	 Separate arrays into chunks of X size
+_.random  	 get random value between upper and lower bounds
+_.sample 	 pick a random element from an array
+_.shuffle	 Randomize positioning of array values
+_.times 	 executes the function n times. 
+_.delay		 delays execution of any function for X miliseconds
+
+_.range	 create a range of number b/t 2 values. (complex, should read)
+
+_.sum		 get sum of all array values
+_.pull		 removes all instances of value(s) you specify from an array
+
+_.partition	
+splits an array into 2 using a condition. 
+First array contains values that meet the condition, while the second array houses those that don't
+
+_.startsWith and _.endsWith	
+determines if a string starts or ends with a specified string
+ 
+_.keys function returns an array of the property names of the JavaScript object and the _.values function returns an array of their values. 
+```
+
+https://zetcode.com/javascript/lodash/   
+
+# =========================
 
 # Backburner
 

@@ -1535,6 +1535,20 @@ React page file
 
 
 
+### Advice
+
+#### List of Tips
+
+1. You can specify pixels with integers when styling with sx
+
+```react
+sx={{width: 50, height: 50}}
+// same as ...
+sx={{width: "50px", height: "50px"}}
+```
+
+
+
 # Reusable style Overrides: styled()
 
 PREREQUISITE SKILLS:
@@ -2408,9 +2422,47 @@ They're key to building forms that convey information in a clear manner
 
 ![image-20220103181842654](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220103181842654.png)
 
+#### No Animation Inputs
 
+Maybe you don't want the input field's label text to animate itself moving to the upper left when you focus the input
 
+In this case, use an unstyled input field instead
 
+```react
+import React, { useState, useRef } from "react";
+import StaticInputField from "../src/custom-components/StaticInputField";
+import FormControl, { useFormControl } from "@mui/material/FormControl";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import Box from "@mui/material/Box";
+import FormHelperText from "@mui/material/FormHelperText";
+
+export default function UseFormControl() {
+  const inputRef = useRef(); // access field value with inputRef.current.value
+  return (
+    <>
+      <FormControl sx={styles.formControl}>
+        <Typography align="left" variant="label">
+          User Email:
+        </Typography>
+        <OutlinedInput inputRef={emailRef} placeholder="name@email.com" />
+      </FormControl>
+
+      <FormControl sx={styles.formControl}>
+        <Typography align="left" variant="label">
+          Password:
+        </Typography>
+        <OutlinedInput
+          inputRef={passwordRef}
+          placeholder="Enter password"
+          type="password"
+        />
+      </FormControl>
+    </>
+  );
+}
+```
+
+![image-20220131140940603](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220131140940603.png)
 
 
 
@@ -2455,6 +2507,9 @@ They're key to building forms that convey information in a clear manner
 #### App Bar (Navbar in MUI)
 
 ![image-20220129145954797](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220129145954797.png)
+
+Also check out:
+https://mui.com/components/tabs/#nav-tabs
 
 #### Drawer (sliding nav)
 
@@ -2512,6 +2567,10 @@ Excellent for forms
 Hovering over components will render a message near your cursor
 
 ![image-20220126164945157](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220126164945157.png)
+
+#### Navbars
+
+
 
 ### Customized Components (ongoing)
 
