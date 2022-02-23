@@ -1025,6 +1025,8 @@ FORM SUBMIT
 - Have a button or element dedicated to submission
 - Use a function defined outside the JSX as an event handler for the onSubmit event
 
+
+
 ### S2: The Need for React States
 
 In the previous lesson's demonstration subsection, we learned how to set up a very simple event listener that logs content to the console. 
@@ -7701,6 +7703,11 @@ HOW TO USE ARRAYS IN FIREBASE:
 Custom hooks are regular functions that are allowed to contain stateful logic
 We can use all the built-in react hooks in this function's scope, which cannot be done in regular ones
 
+ONE TRICK TO REMEMBER USE-CASES:
+
+- Sometimes you'll want to create utility functions that use react hooks- but that's not allowed since they only work inside component functions
+- This is when React hooks are used (because they really are just React functions)
+
 ### Creating Configurable React Hooks
 
 What our repo's project looks like at the start:
@@ -8524,6 +8531,42 @@ REMIND OF THE EXCLUDED REDUX CODE IN THIS LESSON
 
 - I've excluded several import lines and all of the Redux store setup, but all I need from you is to get a feel for how this project is coded
 - Dive into the files yourself if you want to understand it intimately, then replicate it when building new projects
+
+
+
+### useWindowSize 
+
+This hook returns viewport size and works on Next.js and React
+
+```react
+import { useState, useEffect } from "react";
+
+export default function useWindowSize() {
+  const [windowSize, setWindowSize] = useState({
+    responsiveWidth: undefined,
+    responsiveHeight: undefined,
+  });
+
+  useEffect(() => {
+    // Only render this code on the client (Next js pre rendering causes problems without this)
+    if (typeof window !== "undefined") {
+      // Handler to call on window resize
+      function handleResize() {
+        setWindowSize({
+          responsiveWidth: window.innerWidth,
+          responsiveHeight: window.innerHeight,
+        });
+      }
+      window.addEventListener("resize", handleResize);
+      handleResize(); // call immediately so state gets updated
+      // Remove listener on cleanup
+      return () => window.removeEventListener("resize", handleResize);
+    }
+  }, []);
+  return windowSize;
+}
+
+```
 
 
 

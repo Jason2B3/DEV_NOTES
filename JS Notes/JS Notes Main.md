@@ -3766,7 +3766,7 @@ EXAMPLE: Multiply all the array elements by 10 and add an exclamation mark
 
 ```js
 const numbers= [10,-1,2,-4];
-let newArray= numbers.map(function(value){
+let newArray= numbers.map((value) => {
   return (value*10)+"!"
 });
 console.log(newArray);
@@ -15588,6 +15588,8 @@ console.log(
 2. There is no clear advantage to using declarations over expressions like the way it is for regular functions (hoisting difference). Both class expressions and declarations  must be declared before they're used
 3. The body of every class is executed in "strict mode" regardless of if you enabled that earlier
 
+
+
 ### Setters/Getters Part 1: How to Use them
 
 You can use setters and getters an any object in JS. Traditional properties are referred to as data properties, while these are called assessor properties
@@ -21309,8 +21311,7 @@ const axiosPATCH = async function (url) {
 
 Oftentimes you'll need specific data in order to make certain API calls- and you'll attach them in the header section of your request
 
-- Axios creates headers automatically, so you'll have to override them if they absolutely must be something other than `headers: { "Content-Type": "application/json" }`
-- Specify headers as argument 2 in GET requests, and argument 3 in others
+#### Attach Body
 
 EXAMPLE: Make a POST request with a body payload
 
@@ -21320,6 +21321,19 @@ EXAMPLE: Make a POST request with a body payload
           latitude: locationInfo.coords.latitude,
           longitude: locationInfo.coords.longitude,
         });
+```
+
+#### Attach Header
+
+- Axios creates headers automatically, so you'll have to override them if they absolutely must be something other than `headers: { "Content-Type": "application/json" }`
+- Specify headers as argument 2 in GET requests, and argument 3 in others
+
+```react
+	const headers = {
+      "Content-Type": "application/json",
+      Authorization: `bearer ${authKey}`,
+    };
+    const restoData = await axios.get(apiString, { headers });
 ```
 
 
@@ -21400,7 +21414,8 @@ If Sendgrid fails, the response object looks like this
 
 It's impossible to anticipate every single thing that could go wrong inside API routes
 
-Instead, use if/else blocks to code actions for certain errors, then just go with a generic error action for everything else
+- Instead, use if/else blocks to code actions for certain errors, then just go with a generic error action for everything else
+- Switch statements work just as well, and without as much boiler plate
 
 ```react
 	try {
@@ -21426,7 +21441,7 @@ Instead, use if/else blocks to code actions for certain errors, then just go wit
     }
 ```
 
-
+![image-20220220133813967](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220220133813967.png)
 
 # ====== FUNCTIONAL CODING ======
 

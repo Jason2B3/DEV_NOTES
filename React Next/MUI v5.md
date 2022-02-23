@@ -1283,7 +1283,7 @@ export default function Home() {
 }
 ```
 
-#### In a separate JS File
+#### In Separate JS File
 
 - Since we're defining our CSS in a JS object anyway, we have the freedom to define it elsewhere and export it to the React file that'll use it
 - This separates the CSS from our react component, which you may want sometimes
@@ -1534,6 +1534,49 @@ React page file
 ```
 
 
+
+### Unauthorized Styling
+
+MUI provides default options for styling components, but sometimes we still want to customize them further
+
+#### Demo
+
+This is the largest size MUI offers for the rating component, but we want the stars bigger
+
+![image-20220218165354940](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220218165354940.png)
+
+PROCEDURE:
+
+1. Check the component API page to see if they have a default opion for what you're trying to do
+   In this case, we can enlarge our stars, just not enough
+
+![image-20220218165718492](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220218165718492.png)
+
+2. Examine this element using the dev tools
+
+- Try adjusting CSS values until you find one that makes the component's stars change size
+- We had an inkling that fontSize would do it since the API page for Rating components will enlarge the stars using a size prop
+
+![image-20220218165550850](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220218165550850.png)
+
+3. Use sx styling to put your changes in motion
+
+```react
+    <Stack spacing={1}>
+      <Rating
+        name="half-rating"
+        defaultValue={0}
+        precision={0.5}
+        sx={{
+          "span.MuiRating-decimal" : {
+            fontSize: "40px"
+          }
+        }}
+      />
+    </Stack>
+```
+
+![image-20220218165932570](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220218165932570.png)
 
 ### Advice
 

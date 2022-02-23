@@ -469,6 +469,20 @@ You can have multiple pages dedicated to this dynamic route as well
 
 ![image-20210926203228500](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210926203228500.png)
 
+#### Query Parameters
+
+You don't have to do anything to the files or folders to inject search parameters into your page URL
+
+We can make our folder names dynamic in Next.js as well- just name them `[something]`
+You can have multiple pages dedicated to this dynamic route as well
+
+| path                      | renders       |
+| ------------------------- | ------------- |
+| /news                     | news/index.js |
+| /news?searchTerm=japanese | news/index.js |
+
+![image-20210926153129825](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210926153129825.png)
+
 ### Catch-all Pages
 
 Dynamic pages allow you to direct users to pages whose HTML files don't have hardcoded names
@@ -1762,18 +1776,66 @@ export default index;
 
 
 
-### Choose which Pre-rendering Method to Use (FINALE)
+### When to Use Static Generation vs Server-side Rendering
+
+#### Overview
+
+|                       | good for                                                     |
+| --------------------- | ------------------------------------------------------------ |
+| Static Generation     | pages that look the same for each user                       |
+| Server Side Rendering | pages that look different on every request due to fetched data, or frequently changing data (like a comment section), or require authentication checks |
+| Client Side Rendering | same pages as SSR (minus the authentication checks)          |
+
+#### SSG or ISR:
+
+Static Generation is the pre-rendering method that generates the HTML at **build time**. 
+The pre-rendered HTML is then *reused* on each request- which makes pages load real fast
+
+- Use when a webpage mostly looks the same for every person that requests it
+- Should not involve dynamically fetched data, like on YouTube or Amazon
+
+MINOR DISCLAIMER
+
+- I'm 99% sure there can be some minor amount of dynamic data involved, like a counter for likes
+  I've seen ISR used in situations like that (check out [Static Pages with Data](https://nextjs.org/docs/basic-features/pages#static-generation-with-data) )
+
+![image-20220216114431424](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220216114431424.png)
 
 #### SSR:
 
-- When you need request or response object data to perform actions
+Server Side Rendering is the pre-rendering method that generates the HTML on **each request**.
+
+- Use when you need request or response object data to perform actions
   Ex. Authentication requires knowing what headers and cookies are attached to the request object
-- When you're building a dynamic page with personalized data that must be fetched from some backend
+- When you're building a dynamic page with personalized data that must be fetched from some backend (Ex. YouTube looks different for everyone based on what the algorithm recommends you)
 - When the data on your webpages changes very often and you need to update the data rendered every time someone makes a new URL request by visiting your site
 
-#### SSG or ISR: 
+![image-20220216114501074](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220216114501074.png)
 
-When the above does not apply, default to using this
+
+
+#### What If I Need to Fetch Data at Request Time?
+
+Static Generation is **not** a good idea if you cannot pre-render a page ahead of a user's request. 
+Maybe your page shows frequently updated data, and the page content changes on every request.
+
+In cases like this, you can try [**Server-side Rendering**](https://nextjs.org/docs/basic-features/pages#server-side-rendering) or skip pre-rendering
+
+![image-20220216120551216](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220216120551216.png)
+
+#### Sources
+
+Just so we're clear, Next.js offers 2 forms of pre-rendering- Static Generation, and Server Side Rendering (we have more than 2 methods to perform pre-rendering however)
+
+> SSG vs SSR
+> https://nextjs.org/learn/basics/data-fetching/two-forms
+>
+> Fetching Data at Request Time:
+> https://nextjs.org/learn/basics/data-fetching/request-time
+> https://nextjs.org/docs/basic-features/pages#static-generation-with-data
+>
+> Static Sites with Data
+> https://nextjs.org/docs/basic-features/pages#static-generation-with-data
 
 
 
@@ -2137,6 +2199,8 @@ Site 2: [Add Your Reaction Here · Issue #1 · chibicode/reactions (github.com)]
 
 <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210928020502154.png" alt="image-20210928020502154" style="zoom:67%;" /> <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210928021759820.png" alt="image-20210928021759820" style="zoom: 67%;" />
 
+
+
 ### Context Parameter & Redirects
 
 > https://github.com/Jason2B3/next-chap5		commit n94 (2 versions)
@@ -2208,7 +2272,7 @@ export async function getStaticProps(context) {
 
 
 
-### Series 1: Dynamic Pages and getStaticPaths
+### Series 1: Pre-render Dynamic Pages via getStaticPaths
 
 #### Dynamic Pages don't Pre-render by Default
 
@@ -2871,6 +2935,19 @@ export default function ProductDetail({ loadedProduct }) {
 
 
 
+### Tips and Lesser Known Facts
+
+#### Nested Components & SSR
+
+SCENARIO:
+Component B is nested inside component A
+Both of them have getServerSideProps 
+
+WHAT HAPPENS:
+The highest level component's getServerSideProps function takes priority- and in this case that would be Component A
+
+
+
 # Client-side Rendering (CSR) 
 
 ### Theory: Rendering Dynamic Webpages with CSR
@@ -2892,7 +2969,7 @@ export default function ProductDetail({ loadedProduct }) {
 
 > <img src="https://dz2cdn1.dzone.com/storage/temp/12844895-1576565677882.png" alt="Client-Side v/s Server-Side Rendering: What to Choose When? - DZone Web Dev" style="zoom: 50%;" />
 >
-> It's the browser's job to render the HTML once it recieves an emty file from the server
+> It's the browser's job to render the HTML once it recieves an empty file from the server
 > This is why the method's referred to as Client-side rendering
 
 #### Client-side Pros and Cons
@@ -2996,9 +3073,23 @@ export default function Indy() {
 }
 ```
 
+#### Advice for Data fetching on Front-end
+
+APPROACH:
+
+1. Create a function that fetches data using an API route, unless fetching on the front end is considered safe (check security rules)
+2. Call that function on startup, and when certain other values change (need useEffect)
+   This will make it so data is fetched only when necessary
+
+From Local-Eats Project (src/page-blocks/search/SearchResults)
+
+![image-20220221220213497](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220221220213497.png)
+
+![image-20220221220233290](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220221220233290.png)
 
 
-### useSWR Hook: Faster CSR-style Data Fetching 
+
+### useSWR Hook: Faster Frontend Data Fetching 
 
 #### Purpose
 
@@ -3073,6 +3164,7 @@ export default function Indy() {
       setReformatted([data, "filler"]);
     }
   }, [data]);
+    
   // Error and pending states handled easily, in that order specifically
   if (error) return <p>Failed to retreive data</p>;
   if (!data) return <LoadingSpinner />;
@@ -3301,6 +3393,8 @@ EXAMPLE: Project from the Combine CSR with SSG/SSR lesson
     console.log("we are running on the server");
   }
 ```
+
+
 
 # ========= DATABASES =========
 
@@ -7371,6 +7465,8 @@ SENDGRID_API_KEY=SG.3s9ccLxLSWGSvsgnQZitWg.s_HXqNfctX0ayovpfyPMaEyiyOecR6KaYrPsy
 1. Find a way to verify if an email input is in fact, a valid email
    Do more than just check for @ symbols
 2. Find a library that checks password strength and implement it
+
+
 
 # ==== LIBRARIES + API's ====
 

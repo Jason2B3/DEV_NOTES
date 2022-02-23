@@ -4233,7 +4233,7 @@ We create new files and place them inside the same store folder as our store-cen
 store/counter.js		(will be used for components/counter.js)
 
 ```REACT
-import {createSlice} from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit"
 
 const initCounter = { cValue: 0, showCounter: true };
 const counterSlice = createSlice({
@@ -5352,6 +5352,14 @@ We are currently loading localhost:3000/quotes?sort=asc
 pathname KVP:  endpoint
 search KVP:  query parameters
 
+#### Multiple Query Parameters
+
+You can pass multiple query parameters into a URL
+
+```
+localhost:3000/items?name=eraser&id=11
+```
+
 
 
 ### window.location
@@ -5573,6 +5581,8 @@ SRC:	 [Udemi Solution](https://github.com/academind/react-complete-guide-code/bl
 
 - You actually do not need useState for this example, and can shorten the solution by not using it
 - That being said, the alternative method proposed by my course is much tougher to follow in my opinion
+
+
 
 ### useRouteMatch: Create Flexible Route Paths (Part 1)
 
