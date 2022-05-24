@@ -2,6 +2,37 @@
 
 # Basics
 
+### Switching b/t Node Versions
+
+#### Switching Versions
+
+> Follow this tutorial and install NVM:
+> [How to update Node.js and NPM to next version ? - GeeksforGeeks](https://www.geeksforgeeks.org/how-to-update-node-js-and-npm-to-next-version/)
+
+Install a new Node version: 
+(does not erase other installed versions)
+
+```
+nvm install {versionNum}
+```
+
+List all Node version installed on your PC
+
+```
+nvm list
+```
+
+![image-20220313223214456](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220313223214456.png)
+
+Switch Node Version to use :
+(Only works when you run this in the Windows Command prompt with Admin privileges)
+
+```
+nvm use {version#}
+```
+
+
+
 ### What Node Helps with
 
 #### How Node allows JS on Backend

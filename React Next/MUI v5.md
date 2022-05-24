@@ -60,7 +60,7 @@ They must be applied in the following nesting order within index.js or App.js
 3. React Router 
 4. Theme provider set up and ready to be used in conjunction with Context API
 
-#### MUI with Next (return2)
+
 
 
 
@@ -399,9 +399,36 @@ It gives that method more functionality, and would be in spot #3
 
 # Using Next.js over React
 
-### Setup Differences
+Setting up Next MUI projects shares similarities with React's process
+There are however, a few differences we must take into account while preparing our project folder
+
+### Setting up Server Side Rendering
+
+#### Why we must Setup SSR
+
+If you want to use getServerSideProps with MUI right out of the box, you may run into a problem:
+
+![image-20220306224559579](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220306224559579.png)
+
+- This is related to MUI using dynamic class name which contain an ID. 
+- The IDs from the server side rendered CSS are not the same as the client side CSS, hence the mismatch error
+- Once we set things up properly, this won't be an issue
+
+> SOURCE: [node.js - React + Material-UI - Warning: Prop className did not match - Stack Overflow](https://stackoverflow.com/questions/50685175/react-material-ui-warning-prop-classname-did-not-match)
+
+#### Procedure
+
+> Explained in the official docs
+> https://mui.com/guides/server-rendering/
+>
+> Explained simply in other article: (tried but did not work the first time)
+> https://dev.to/hajhosein/nextjs-mui-v5-tutorial-2k35#step-five
 
 
+
+### MUI + Next + Typescript
+
+https://dev.to/hajhosein/nextjs-mui-v5-typescript-tutorial-and-starter-3pab
 
 
 
@@ -587,6 +614,25 @@ React page file
 ```
 
 ![image-20220102190835543](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220102190835543.png)
+
+#### New Color Objects
+
+You are free to create more color objects than the default palette contains initially
+
+```js
+const theme = createTheme({
+  palette: {
+      primary: { main: "#1f3c50" }, // dark color near black
+      secondary: { main: "#da3743" }, // near crimson red
+      info: { main: "#4285f4" }, // google blue
+      grayBackground: { main: "#F5F5F5" },
+      unselected: {main: "#F5F5F5"}, // new
+      selected: {main: "rgb(255,215,0)"} // new
+  },
+});
+```
+
+
 
 #### Doc Links + Best Methods
 
@@ -905,9 +951,114 @@ export default function App() {
 
 
 
+### Example of an MUI Theme File
+
+MUI_themes.js from Local Eats project
+
+- We redefine the breakpoints and palette colors
+  Also add additional color objects to the palette
+- This is set up in a way where we can add a dark mode in the same object as the light one
+  Switch between them using React context
+
+```js
+import { createTheme } from "@mui/material/styles";
+
+export const breakpointValues = {
+  xs: 0,
+  sm: 700,
+  md: 1000,
+  lg: 1300,
+  xl: 1636,
+};
+
+export const customThemes = {
+  //^ STANDARD LIGHT THEME
+  light: createTheme({
+    components: {
+      // Disable button ripple- which is controlled as a default prop
+      MuiButtonBase: {
+        defaultProps: { disableRipple: true },
+      },
+      // Remove Container's default padding
+      MuiContainer: {
+        defaultProps: { disableGutters: true },
+      },
+    },
+    palette: {
+      primary: { main: "#1f3c50" }, // dark color near black
+      secondary: { main: "#da3743" }, // near crimson red
+      info: { main: "#4285f4" }, // google blue
+      grayBackground: { main: "#F5F5F5" },
+      unselected: {main: "#F5F5F5"}, // new
+      selected: {main: "rgb(255,215,0)"} // new
+    },
+    breakpoints: {
+      values: breakpointValues,
+    },
+    //^ CHANGE THE HEADER FONT SIZES
+    typography: {
+      // regular fontSize will stay at 14px
+      // Use for the big title on the Homepage
+      h1: {
+        fontFamily: `"Roboto, "Helvetica, "Arial", sans-serif`,
+        fontSize: "3.75rem", // 60px
+        fontWeight: 300,
+        lineHeight: 2.267,
+        letterSpacing: "-0.01562em",
+      },
+      // Use for section headers on the homepage
+      h2: {
+        fontFamily: `"Roboto, "Helvetica, "Arial", sans-serif`,
+        fontSize: "2.25rem", // 36px
+        fontWeight: 400,
+        lineHeight: 1.2,
+        letterSpacing: "-0em",
+        marginBottom: "1.875rem",
+      },
+      // Use for new webpage section headers
+      h3: {
+        fontFamily: `"Roboto, "Helvetica, "Arial", sans-serif`,
+        fontSize: "1.875rem", // 30px
+        fontWeight: 400,
+        lineHeight: 1.167,
+        letterSpacing: "-0em",
+      },
+      h4: {
+        fontFamily: `"Roboto, "Helvetica, "Arial", sans-serif`,
+        fontSize: "1.5rem", // 24px
+        fontWeight: 400,
+        lineHeight: 1.235,
+        letterSpacing: "0.00735em",
+      },
+      // Use for the homepage's expensive/cheap cards
+      h5: {
+        fontFamily: `"Roboto, "Helvetica, "Arial", sans-serif`,
+        fontSize: "1.25rem", // 20px
+        fontWeight: 400,
+        lineHeight: 1.334,
+        letterSpacing: "0em",
+      },
+      // Use for descriptions underneath new section headers
+      h6: {
+        fontFamily: `"Roboto, "Helvetica, "Arial", sans-serif`,
+        fontSize: "1.125rem", // 18px
+        fontWeight: 500,
+        lineHeight: 1.6,
+        letterSpacing: "0.0075em",
+      },
+    },
+  }),
+};
+
+```
+
+
+
 # Global CSS Overrides
 
 Sometimes we'd like an MUI component to look a certain way without being forced to create our own custom components- we want every instance of it to be customized no matter what
+
+
 
 ### Understanding how a Visual Aspect must be Overridden 
 
@@ -2062,7 +2213,7 @@ Relevant part of API
 
 
 
-### MUI Grid System
+### MUI Grid System (not learned)
 
 MUI has its own grid system based on flexbox that helps you create layouts
 Feel free to use it or even regular CSS grid since the 2 don't interfere with each other at all
@@ -2085,7 +2236,7 @@ You just apply what you already know in a different way
 
 2. Add the same CSS Grid code you would normally use, just in a JS object instead
 
-#### Mosaic Design Practice
+#### Template Areas
 
 > OBJECTIVE 																  RESULT:
 >
@@ -2136,6 +2287,14 @@ export default function Home() {
 }
 ```
 
+#### Grid Lines
+
+Works as normal, but you must remember to surround the numbers by quotation marks
+
+```react
+sx={{ bgcolor: "lime", gridRow: "1 / 3", gridColumn: "1 / 2" }}
+```
+
 #### Doc Links
 
 > MUI + Regular CSS Grid: 
@@ -2143,11 +2302,35 @@ export default function Home() {
 
 
 
-### Masonry CSS
+### Masonry CSS (unfinished)
 
+#### The Need for Masonry Layouts
 
+When we have grid layouts, sometimes we'll have grid items that extend further than others which ends up creating additional unrequired space for other items in that row
 
+![image-20220302203857384](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220302203857384.png)
 
+Masonry CSS is a package that allows us to create layouts like this:
+
+![image-20220302204049528](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220302204049528.png)
+
+#### Procedure
+
+1. Install the package
+
+```
+npm install react-masonry-css
+```
+
+2. 
+
+#### Docs
+
+> Tutorial: [Material UI Tutorial #18 - React Masonry CSS (masonry layout) - YouTube](https://www.youtube.com/watch?v=PLzx2thLQaU)
+> Good stuff @ 3:30
+>
+> Package docs:
+> [react-masonry-css - npm (npmjs.com)](https://www.npmjs.com/package/react-masonry-css)
 
 # Components
 
@@ -2506,6 +2689,33 @@ export default function UseFormControl() {
 ```
 
 ![image-20220131140940603](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220131140940603.png)
+
+#### inputProps
+
+There's a specific prop you can place onto `<TextField>`, `<OutlinedInput>`, `<InputBase>`, and possibly more elements to help assist with customization
+
+- Each of these MUI components create regular HTML elements, and the `inputProps` prop lets you add attributes to the `<input/>` element created by them
+- You can apply any attribute typically seen in HTML
+
+EXAMPLE: Blur input field when user hits enter
+
+- It's good UX to have the enter key unfocus the input field the user is currently typing in
+- On mobile, removing focus from an input field will close the mobile keyboard, freeing up screen space
+
+```react
+          // Earlier in the React component
+		  const blurInputField = {
+  			onKeyPress: function (e) {
+    		  if (e.key == "Enter") e.target.blur();
+            }
+  		  }
+
+		  // in JSX
+		  <TextField
+            label={`Enter code (required)`}
+            inputProps={blurInputField}
+          />
+```
 
 
 
@@ -2869,4 +3079,14 @@ export default function Notes(props) {
 Since `props.num` equals a falsy due to not existing, the secondary button fontSize is set to 28
 
 ![image-20220103002927061](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220103002927061.png)
+
+
+
+
+
+
+
+
+
+
 

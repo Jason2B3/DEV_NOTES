@@ -5217,6 +5217,8 @@ WHEN IT'S NOT WORTH THE TROUBLE:
 
 You'll need to combine this with useCallback to stop function recreation
 
+
+
 ### Function Recreation / Referential Equality
 
 The function recreation issue is one of React's most common gotchas, and this problem occurs purely because of how JS is designed
@@ -5641,6 +5643,8 @@ SO WHAT DID WE DO?
 
 - We employed useMemo, making the sort method run only when the testAttribute prop which held `arr`, changed (so, never)
 - The sort method is only executed once on startup, then never again, saving us performance
+
+
 
 ### Summary - Actionable Only
 
@@ -7934,6 +7938,55 @@ Other file:
 function NameComponent(){
     const [nameValue, bindName, resetName]= useInput("") // BY RETURNING AN ARRAY
     const { value: nameValue, bind: bindName, reset: resetName } // RETURN OBJ
+}
+```
+
+
+
+### Returning Functions fr/ Custom Hooks
+
+#### Why this is Powerful
+
+Use custom hooks like utility functions- but ones that actually have access to all React hooks
+
+- Regular exported utility functions cannot use hooks because they are not React components
+- With custom hooks you have access to state management and plenty of other useful things
+
+#### Structure
+
+Follow this general structure when you want to return a function from a custom hook
+
+> SOURCE: local-eats project useVisitSearchPage.js
+
+useWhatever.js
+
+```react
+export default function useVisitSearchPage() {
+  // USE REACT HOOKS OUTSIDE OF THE RETURN FUNCTION
+  const { locationObject, checkForSavedLocation } = useLocationContext();
+  const activeFilters = useGetFilters(); // filter state values
+  const setFilter = useChangeFilter(); // util function that helps you set Redux vals
+  
+    function useInsideComponents(searchParams){
+    // CANNOT DECLARE HOOKS IN HERE
+    // BUT WE CAN REFERENCE THE VARIABLES WE SET EQUAL TO WHATS RETURNED FR/ HOOKS
+    const { term, price } = searchParams; 
+    // EX. WE'RE EDITING REDUX VALUES HERE
+    if (term && term != activeFilters.term) setFilter("term", term);
+    if (price && price != activeFilters.price) setFilter("price", price);
+    return
+  }
+  return useInsideComponents
+}
+```
+
+React component
+
+```react
+import useVisitSearchPage from "../utility-functions/search/useVisitSearchPage";
+export default function Footer() {
+  const navToSearchPage = useVisitSearchPage();
+  // ^ call this when you want to run the code in the hook's return function
 }
 ```
 

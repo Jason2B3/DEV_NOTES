@@ -1449,6 +1449,108 @@ Watch this video if you enjoy using Styled Components and wish to firther your k
 
 ![image-20210725230406473](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210725230406473.png)
 
+# More Features: Lazy Load
+
+
+
+### Lazy Loading
+
+#### Quick Note on Performance
+
+PERFORMANCE PLUNGE (if we're reckless)
+
+- The point of lazy loading is to boost performance while offering visual candy
+- If you're lazy loading several photos, performance may actually take a hit since each individual image will be tracking scroll positions
+
+HOTFIX
+
+- Detect one single scroll position on a common parent of each image you're lazy loading
+  Pick the nearest parent component with a dedicated .js file- the most deeply nested one
+- Pass down the scroll position to each lazy loaded image via props
+- That way we only track position on 1 thing, but each image can reference/point to it without eating performance
+
+
+
+> EXPLAINED HERE: 
+> https://github.com/Aljullu/react-lazy-load-image-component#using-trackwindowscroll-hoc-to-improve-performance
+
+#### Setup
+
+1. Install the package and read the docs
+   https://github.com/Aljullu/react-lazy-load-image-component#installation
+2. Create a custom component that renders a lazy image and accepts props for image URL's
+   Find other effects than blur : [here](https://github.com/Aljullu/react-lazy-load-image-component#using-effects)
+
+LazyImage.js
+
+```react
+import React from "react";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
+
+export default function LazyImage({src, scrollPosition}) {
+  return (
+    <LazyLoadImage
+      alt="/images/noIMG.png"
+      effect="blur"
+      // fills out the parent container the Lazy Image is placed inside
+      height={"100%"} 
+      width={"100%"}
+      src={src}
+      onClick={() => redirect("/")} //!!! fix later
+      scrollPosition={scrollPosition}
+      style={{
+        borderRadius: 14,
+        gridColumn: 1 / -1,
+        // Resize image without compression
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+      }}
+    />
+  );
+}
+```
+
+3. Find the nearest/most deeply nested common parent of all your lazy images
+
+- Import  `trackWindowScroll()` to the file, then apply it to the default export
+  Now, this very same component will receive a `scrollPosition` prop in this very same file
+
+![image-20220224195117817](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220224195117817.png)
+
+> FULL EXPLANATION: 
+> https://github.com/Aljullu/react-lazy-load-image-component#using-trackwindowscroll-hoc-to-improve-performance
+>
+> - In the link above, they use the `scrollPosition` prop in the very same file they generate it in using `trackWindowScroll()`
+> - If the nearest common parent is nested higher than your lazy image, just prop drill scrollPosition downwards until you can supply it to the lazy image component (what we did in Local-eats)
+>
+> To see a more complex example, check out our Local-Eats project
+>
+> RELEVANT FILES LISTED IN NESTING ORDER
+> pages/search/index.js				(the most deeply nested common parent of all the Lazy Images)
+> src/custom-components/RestaurantCard.js  	(a component rendered 50x housing the lazy img) src/custom-components/LazyImage.js  			 (reusable lazy image comp)
+
+#### Implementation
+
+1. Create a container element for your lazy image to fit inside of, then dimension it 
+
+- Remember, height and width of the lazy image equal 100%, relevant to this container
+  As per the props we provided it in the previous subsection (which you can change if needed)
+- If the container is 400px wide and 500px tall, the lazy image will match that size
+
+2. Add in your reusable Lazy Image component, and feed it the src and `scrollPosition` props
+
+MUI example
+
+```react
+      <Box sx={styles.imageParent}> // sized offscreen***
+        <LazyImage src={cardData.image} scrollPosition={scrollPosition} />
+      </Box>
+```
+
+
+
 # ==== STATE MANAGEMENT ====
 
 # Context API & useContext
@@ -5325,7 +5427,9 @@ We are currently inside Welcome.js
 - Either way,  `localhost:3000/products` would not get us here, so ROUTE 2 will never do anything when its defined in this file, specifically
 - If you want to reach the URL the ROUTE 2 specifies in its path attribute, try the useHistory() hook
 
-# Query Parameters + Extracting URL Data
+# Query Parameters + Extracting URL Data (React-only)
+
+Keep in mind that next.js uses different built in tools to extract data from URLs
 
 ### useLocation 
 
@@ -5646,7 +5750,9 @@ Now that the required theory's been explained, we can learn how to make flexible
 | QuoteDetail.js<br />(image on left) | /quotes/:quoteID | Routes and Links         |
 | QuoteList.js<br />(image on right)  | /quotes          | useHistory               |
 
- 				<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210915101302544.png" alt="image-20210915101302544" style="zoom:80%;" />  <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210915101159041.png" alt="image-20210915101159041" style="zoom:80%;" />
+```
+			<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210915101302544.png" alt="image-20210915101302544" style="zoom:80%;" />  <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210915101159041.png" alt="image-20210915101159041" style="zoom:80%;" />
+```
 
 #### Method 1: useRouteMatch.path
 
@@ -7096,6 +7202,20 @@ LIMITATIONS OF CSS ANIMATION:
 
 
 
+# Hosting your Sites
+
+### General
+
+#### Use NameCheap Domains on Hostinger
+
+You can buy domains on Namecheap then point them towards Hostinger for hosting
+
+> TUTORIAL:
+> https://www.youtube.com/watch?v=7L1CBk_6E-0&ab_channel=WebsiteHostingGuides
+>
+> One step was not explained:
+> Get your Hostinger IP address under the Hosting tab
+> https://support.hostinger.com/en/articles/4407303-where-can-i-find-a-record
 
 
 
@@ -7117,5 +7237,3 @@ LIMITATIONS OF CSS ANIMATION:
 
 
 
-
-natiu

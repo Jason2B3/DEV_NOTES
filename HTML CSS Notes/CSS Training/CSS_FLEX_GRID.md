@@ -2421,10 +2421,31 @@ background-position: center
 ```
 
 - By default, 50% of the cropping will occur at the top while the other half occurs at the bottom. This distribution can be changed using percentages
-
 - The above code reaffirms the default settings in case you set it to something else via inheritance or something
 
-  
+
+#### Practical Example
+
+REQUIREMENTS
+
+- Hardcode the dimensions of a parent container
+- Place an evenly cropped image inside that covers the entire screen
+- Apply a dark filter on top
+
+Using JCSS in this soln
+
+```js
+    height: 425,
+    width: "100%",
+    background: `linear-gradient(
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 0) ),
+      url('${url}') no-repeat`,
+    backgroundPosition: "center",
+    backgroundSize: "cover",
+```
+
+![image-20220306160836011](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220306160836011.png)
 
 ### Crop Percentage and Premade Values (Pt.2)
 
@@ -7608,7 +7629,20 @@ There's still one issue though. Look what happens when you create more rows by c
 Instead, they are just as tall as their content necessitates them to be. 
 Makes sense since our code snippet only involved: `grid-template-rows: repeat(2, 100px);  `
 
+#### Practical Example
 
+From Local-Eats project
+
+```js
+gridTemplateColumns: "repeat(auto-fit, 20.75rem)" // img 1
+gridTemplateColumns: "repeat(auto-fit, minmax(20.75rem, auto))", // img 2
+```
+
+![image-20220323053350379](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220323053350379.png)
+
+![image-20220323053434894](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220323053434894.png)
+
+We can move the grid items inside their cells if we want (at start noe, but can be @ center or end)
 
 ### Implicit Rows (P2)
 
@@ -7622,7 +7656,7 @@ grid-auto-rows: 100px;
 
 
 
-#### `grid-auto-rows` and `grid-template-rows`
+#### grid-auto-rows and grid-template-rows
 
 Using these together gives you excellent control on how tall rows will be, whether they're implicit or not. Be careful when using `grid-auto-rows` alone though
 
@@ -7701,7 +7735,15 @@ https://codepen.io/NFuego24-7/pen/vYXwwOy?editors=1100
 
 <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210124065844944.png" alt="image-20210124065844944" style="zoom:67%;" />
 
+#### Advice for Both
 
+When building projects and you want to use one of these features, specify a hardcoded width for the elements you'd like to fit in a row or wrap
+
+```css
+gridTemplateColumns: "repeat(auto-fit, minmax(20.75rem, 1fr))",
+```
+
+![image-20220223133423031](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220223133423031.png)
 
 ### Responsive Image Grids (needs rework)
 
@@ -7888,7 +7930,15 @@ After `justify-items:end`:
 
 ![image-20211124131827231](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211124131827231.png)
 
+#### Project Example
 
+justify-items: end
+
+![image-20220223131508315](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220223131508315.png)
+
+justify-items: center
+
+![image-20220223131432334](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220223131432334.png)
 
 ### Difference between x-content and x-items
 
@@ -10511,6 +10561,30 @@ Explicitly setting heights  causes several problems
   And this can be remedied easier using media queries than if you set a height
 
 ![image-20211116105455588](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211116105455588.png)
+
+
+
+#### Calculate Remaining Height/Width
+
+Imagine you want to place a loading spinner in the dead center of any remaining space on your page
+
+![image-20220328183806658](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220328183806658.png)
+
+To do this, use the following snippet
+
+```css
+	<Box
+      sx={{
+        width: "calc(100vw - (100vw - 100%))",
+        height: "calc(100vh - (100vh - 100%))",
+      }}
+    >
+      <div
+        class="fullscreen_loader"
+        style={{ position: "absolute", left: "50%", top: "50%" }}
+      ></div>
+    </Box>
+```
 
 
 

@@ -109,7 +109,7 @@ Use underscores as an alternative `let new_title=Paul;`
 
 The console is a powerful tool/environment that was built to execute small pieces of code and then show results immediately.
 
-People use to deliver administrative messages. You will see`console.log( );`several times over this course. We log something to the console when we want the browser to tell us something 
+People use to deliver administrative messages. You will see`console.log();`several times over this course. We log something to the console when we want the browser to tell us something 
 
 - `console.log("words");`If this turns out to be false, deliver this message!
 - `console.log(a)`Tell me the value of the `a` variable!
@@ -274,7 +274,9 @@ The next patch would introduce errors to our site since we'd be using these vari
 
 Also, notice how even though we have 2 throw errors in our code, the console only warns us about the first
 
-### Overreliance on console.log()
+
+
+### Overreliance on console.log
 
 When learning JS, it's nice to have visual feedback when something happens 
 
@@ -488,7 +490,7 @@ Remember, it's called parsing when the browser build a DOM tree from an HTML fil
 
 Method 1: Place JS in the head section of your HTML (NEVER DO THIS)
 
-- This method is never ideal because it pauses the parsing process while the browser processes your JS. 
+- This method is never ideal b/c it pauses the parsing process while the browser processes your JS. 
 - There's no upside to doing this, when you can avoid extra wait time by placing script tags at the end of the body instead
 
 Method 2: Place JS at end of body tag
@@ -542,6 +544,8 @@ Remember, applications often include more than one script. Choose which method y
 
 - Use for supporting older browsers (NOT A SUGGESTION. IT'S THE ONLY OPTION)
 - Since older browsers don't support async or defer loading, they ignore it. Since these are HTML5 features, you can't get over this limitation with a simple polyfill
+
+
 
 ### File Paths & Organization 
 
@@ -2128,6 +2132,12 @@ We skip function, return, & even the curly braces when the case is simple enough
 
 <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210217174650588.png" alt="image-20210217174650588" style="zoom:80%;" /> <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210217174704725.png" alt="image-20210217174704725" style="zoom:80%;" />
 
+If you want to return an object from your arrow function, wrap it in parentheses
+
+```JS
+const returnObjectFN = () => ({a:1, b:2})
+```
+
 
 
 ##### EXAMPLE 2: 1 parameter, multiple lines of code in body
@@ -3392,7 +3402,7 @@ arr.sort(compareFunction) // the compare function is optional
 ```
 
 - Since the compare function is optional, we can use sort() with no argument
-  This will let the default behavior choose how your array should be reordered
+- This will let the default behavior choose how your array should be reordered
 
 #### Premades
 
@@ -4081,7 +4091,7 @@ console.log(combo);
 
 ### find & findIndex
 
-Both of these methods run a testing function across each element in an array
+Both of these methods run a testing function across each element in an array (loops through it)
 It returns a value
 
 - If the test is satisfied by an entry, the method will return something
@@ -4244,7 +4254,7 @@ The `fromIndex` parameter defaults to `array.length-1` (last element) when not s
 This method determines whether an array includes a certain value among its entries, then returns a Boolean
 
 ```JS
-arr.includes(valueToFind[, fromIndex])
+arr.includes(valueToFind[, fromIndex]) 
 // fromIndex is optional
 ```
 
@@ -4330,7 +4340,7 @@ console.log(sarahObj);
 //OUTPUT: Object { weight: 13, curFood: 275, owners: (2) […] }
 ```
 
-#### Includes anything other than (DN work)
+#### Includes anything other than
 
 > TLDR: Does NOT work with includes() - but you can use some() instead
 
@@ -4551,10 +4561,9 @@ This is what a reduce method replaces with its ACCUMULATOR parameter
 REDUCE METHOD APPROACH (defined function in parameter's spot)
 
 ```JS
+// Calcs sum of array entries
 const numbers= [1,-1,2,3];
-const sum=numbers.reduce((accumulator,currentValue)=>{
-  return accumulator+currentValue;
-},0);
+const sum=numbers.reduce((accumulator,currentValue)=> accumulator+currentValue,0);
 console.log(sum); // OUTPUT:5
 ```
 
@@ -4887,7 +4896,7 @@ Bracket notation lets us use pre-defined variables in order to look through obje
 
 
 
-### Add, Change, Delete KVP's
+###  KVP's: Add, Change, Delete, Search for, Count all
 
 #### Adding Key-Value Pairs
 
@@ -4943,7 +4952,38 @@ delete person["age"];
 ```
 
 If you delete an object key that does not exist, nothing happens- no errors even.
-So you can use this loosely
+So you can use this somewhat loosely
+
+#### Search for a KVP
+
+You're free to use dot/bracket notation to see if we have a defined value for a certain KVP, but there are some issues with that- use a `key in objName` expression instead
+
+```js
+let obj = {
+  a: "word",
+  b: undefined,
+  c: 7
+}
+
+// The distinction is not clear
+console.log(obj["z"]); // undefined, but this KVP does NOT exist
+console.log(obj["b"]); // undefined, but this KVP exists
+
+// The distinction is clear
+console.log("z" in obj); // false
+console.log("b" in obj); // true
+```
+
+#### Count all KVP's
+
+Use Object.keys which gives an array of KVP's
+
+```js
+const object1 = { a: 'somestring', b: 42, c: false };
+
+console.log(Object.keys(object1)); // expected output: Array ["a", "b", "c"]
+console.log(Object.keys(object1).length); // expected output: 3
+```
 
 
 
@@ -5351,6 +5391,215 @@ console.log(smasher);	// test to see if our orig object is unaffected by name ch
 
 ![image-20210305040535960](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210305040535960.png)
 
+# Advanced Object Methods & Operators
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+
+### Prototype-Oriented Methods
+
+#### isPrototypeOf
+
+Verifies if an object checks if an object exists in another object's prototype chain.
+
+```js
+const Person = function (firstName, birthYear) {
+  (this.firstName = firstName), (this.birthYear = birthYear);
+};
+const jonas = new Person('jonas', 1975); // Create new instance
+
+let verify= Person.prototype.isPrototypeOf(jonas)
+console.log(verify) //OUTPUT: true
+```
+
+![image-20210424221400564](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210424221400564.png)
+
+#### getPrototypeOf()
+
+Is the newer version of `ObjectName.__proto__`
+
+- Both return the prototype property of the object parameter you feed this method
+- Includes all the functions you assigned to the constructor's prototype, the constructor function itself, and more
+
+```js
+const Person = function (firstName, birthYear) {
+  (this.firstName = firstName), (this.birthYear = birthYear);
+};
+Person.prototype.calcAge = function () {
+  return 2037 - this.birthYear;
+};
+const jonas = new Person('jonas', 1975); // Create new instance
+
+console.log(jonas.__proto__); 			   //Shows the prototype object of jonas
+console.log(Object.getPrototypeOf(jonas))  //Shows the prototype object of jonas
+```
+
+![image-20210424214526991](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210424214526991.png)
+
+#### __ proto __
+
+The older version of getPrototypeOf(). Is not encouraged, but is very useful for when you want to go up the prototype chain quickly. 
+
+- Chaining this method multiple times lets you get the prototype of a prototype
+- There is a much more in-depth explanation of this example in the theory document
+  Lesson titled "Prototypal Inheritance and the Prototype Chain"
+
+```js
+const Person = function (firstName, birthYear) {
+  (this.firstName = firstName), (this.birthYear = birthYear);
+};
+const jonas = new Person('jonas', 1975); // Create new instance
+
+// jonas object's prototype 
+const box2= jonas.__proto__
+
+//prototype of jonas object's prototype
+const box1= jonas.__proto__.__proto__
+
+// Should equal null. We've reached the end of the chain
+const null_bait= jonas.__proto__.__proto__.__proto__
+```
+
+![image-20210425100213458](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210425100213458.png)
+
+
+
+#### hasOwnProperty()
+
+- This method will check if an instance/object has a certain property or key inside. 
+- It returns a Boolean, but doesn't count properties only accessible because of the prototype
+
+EXAMPLE: 
+
+```js
+const Person = function (firstName, birthYear) {
+  (this.firstName = firstName), (this.birthYear = birthYear);
+};
+const jonas = new Person('jonas', 1975); // Create new instance
+//—————————————————————【Setting properties】——————————————————————————
+Person.prototype.powerLevel= 9000; // set property to the POLO
+
+/*PICTURE 1*/
+console.log(jonas.powerLevel) //OUTPUT:9000 (BUT, it is not kept as a KVP)
+console.log(jonas)
+/*PICTURE 2*/
+let testA = jonas.hasOwnProperty('firstName'); //OUTPUT: true
+let testB = jonas.hasOwnProperty('powerLevel'); //OUTPUT: false
+console.log(testA, testB);
+```
+
+![image-20210424235205753](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210424235205753.png) ![image-20210425002218815](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210425002218815.png)
+
+As you can see, we can still access `jonas.powerLevel` with dot notation, but it is not directly showcased on the jonas object preview. It's inside the prototype object
+
+- When we use `hasOwnProperty`, it knows when a property is only available because of the prototype the instance inherited (hence the false output)
+- The method does consider properties that were deliberately included within the constructor function's initial declaration
+
+### instanceof Operator
+
+#### instanceof 
+
+This operator lets you identify whether an object was created using a certain constructor or not by returning a Boolean 
+
+- Remember, it doesn't work properly on objects constructed using method 0 (a regular function that happens to output an object) - it will return false 
+- It only works on constructor functions, class syntax, and `Object.create`
+- Returns an error if the object name or function name you give it is undefined
+
+### create() CONTINUE
+
+This method creates a new object, using another one as the prototype for it
+This means the new object will have all of the prototype's KVPs
+
+```js
+Object.create(prototypeObj, optionalPropertyObject)
+```
+
+PLACE THIS LESSON IN OOP chapter and then read this: [Understanding Own Properties of an Object in JavaScript (javascripttutorial.net)](https://www.javascripttutorial.net/javascript-own-properties/#:~:text=JavaScript uses prototypal inheritance.,from its prototype is inherited.)
+
+This method clones an object
+
+### getOwnPropertyNames() and keys()
+
+These methods create an array with all the key names of an object inside of it
+
+```js
+const chars = {
+  alien: "Piccolo",
+  creator: "Shin",
+  prince: "Vegeta"
+};
+
+let keyNames= Object.getOwnPropertyNames(chars);
+console.log(keyNames);  //OUTPUT: ["alien", "creator", "prince"]
+
+let keyNames2= Object.keys(chars);
+console.log(keyNames2);	//OUTPUT: ["alien", "creator", "prince"]
+```
+
+These 2 methods do have 1 small difference between each other:
+
+- `Object.getOwnPropertyNames(a)` returns *all* own properties of the object
+- `Object.keys(a)` returns *all enumerable* own properties
+
+These work the exact same as long as you don't set obj properties to `enumerable: false`
+
+
+
+### assign() 
+
+This method merges existing objects with each other, causing permanent change to the original starting object its used on. ℗
+
+```js
+Object.assign(startingObject,{KVPs_2_Add})
+//OR
+Object.assign(startingObject,additionObject) 	// if you're adding an existing object
+```
+
+- If the object you're adding has keys that with the same name as the starting object, the starting object's keys will be overwritten
+- This causes permanent change to the original object- yet it is our go-to choice for shallow cloning objects. Just set the starting object equal to `{}` 
+
+#### Basic Examples
+
+EXAMPLE 1:
+
+You can make the starting/adding objects come from existing variables, or you can make them up on the spot
+
+```js
+const starter = { jak1: "Gol", jak2: "Kor", jak3:"Errol"};
+const combo= Object.assign(starter,{jakX:"Mizo"}) 
+console.log(combo); // the starter object is equal to this as well, now
+```
+
+![image-20210324082022424](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210324082022424.png)
+
+EXAMPLE 2: Show how the starting obj and obj we add are binded together
+
+```js
+const target = { a: 1, b: 2, c:10};
+const source = { d:4, a:0 };
+
+const returned = Object.assign(target, source); // adds d:4 & overrides a:1 with a:0
+console.log(target, returned);
+```
+
+Both the starting and returned obj are the same: ![image-20210324080334733](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210324080334733.png)
+
+Negate this effect with shallow/deep cloning
+
+#### Shallow Cloning
+
+```js
+const target = { a: 1, b: 2, c:10};
+const source = { d:4, a:0 };
+const targetClone= Object.assign({},target) //adds target obj to an empty obj
+
+const returned = Object.assign(targetClone, source);
+console.log(target, returned);
+```
+
+Did not log `targetClone`- just know it's the same as "returned"
+
+![image-20210324081221269](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210324081221269.png)
+
 
 
 # Conditionals
@@ -5543,6 +5792,7 @@ switch(day) {
   
   default:
       console.log("Invalid day");
+      break;
 }
 ```
 
@@ -5550,6 +5800,35 @@ switch(day) {
 - Even one uncapitalized letter will make "friday" not count as "Friday". 
   These use strict equality operators `===`
 - Without `break;`, the next case's code block will run. Common error
+
+#### New Variant: Execute if True 
+
+- Sometimes we'll have cases where we want a certain switch case's code to run if certain expressions (1 or multiple) are true
+- In these cases, regular switch statements whose cases are restricted to being expressions won't do
+
+EXAMPLE:
+
+```js
+const obj = { a:5, b:-2, c:10 }
+
+switch (true) {
+  case a > 0 && b < 0:
+    console.log("A is positive while B is negative")
+    break;
+  case a < 0 && b > 0:
+    console.log("B is positive while A is negative")
+    break;    
+  default:
+    // Remember, we can add all sorts of JS logic in any of these cases
+    if(typeof a !== 'number') console.log("a is not a number"); break;
+    else if(typeof b !== 'number') console.log("b is not a number"); break;  
+    break;
+}
+```
+
+OTHER VARIANTS
+
+You can place anything inside the parentheses where the "true" went, which gives infinite possibilities with how you can use switch
 
 
 
@@ -5839,20 +6118,11 @@ for (let i=0; i< jonas.length; i++) {
 They terminate the entire for loop as soon as a condition is met
 
 ```js
-// EXAMPLE: Log the contents of an array, but stop as soon as you're about to log a number
-const jonas= [ 
-  "Jonas", 
-  "Schmedt", 
-  2037, 
-  "teacher", 
-  ["Mike","Pete", "Steve", true],
-  2020
-];
-
-for (let i=0; i< jonas.length; i++) {
-  if(typeof jonas[i] ==="number") {break;} 		// Key action here
-  console.log(jonas[i]);
+for (let i =0; i< 5; i++){
+	console.log(i)
+  if(i === 2) break;
 }
+// OUTPUT: 0, 1 , 
 ```
 
 - If the type of the current element equals "number, the loop is exited right away. What comes afterward doesn't change anything
@@ -6042,7 +6312,7 @@ Repeated once for every element in our array: ![image-20210218122127623](C:\User
 
 
 
-### Comparing for-in, for-of, & forEach
+### Comparing for-in, for-of, forEach, & String Looping
 
 - Each of these loops eliminates some of the legwork involved when using regular for loops. These include setting up counters, incrementors, getting access to array index/entry values...etc
 - They each have  use-cases, and should be chosen based on what needs they meet that align with your current problems
@@ -6095,11 +6365,11 @@ EXAMPLE 1: Subtract all the array elements from a starting value of 100
 ```js
 let numbers=[10, 5, 4, 1];
 let remains=100;		//start at 100
-for (let elName of numbers){
+for (let val of numbers){
    //   ELEMENT    ARRAY   
-  remains=remains-elName;
+  remains = remains - val;
 }
-console.log(remains); //OUTPUT:80
+console.log(remains); // OUTPUT:80
 ```
 
 ![image-20210218151853933](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210218151853933.png)
@@ -6164,6 +6434,16 @@ arr1.forEach((entry)=> {
   entry = entry*2;
 });
 console.log(arr1); 	//OUTPUT: [1, 2, 3, 4, 5]
+```
+
+#### String Looping
+
+Use for of to loop through strings
+
+```JS
+let str = "abcd"
+for(let i of str) console.log(i); // a b c d (useful)
+for(let i in str) console.log(i); // "0" "1" "2" "3" (not particularly useful)
 ```
 
 
@@ -6292,7 +6572,7 @@ Exercise 2: Burpees (4 reps)
 Exercise 3: Goblet squats (3 reps)
 
 ```js
-let revo=1;   //Starting point for the grande while loop (MANUAL ADDITION 1)
+let cycle=1;   //Starting point for the grande while loop (MANUAL ADDITION 1)
 
 while(revo<=2) {
   let star=1; let burp=1; let gob=1; 
@@ -6300,21 +6580,21 @@ while(revo<=2) {
   // (MANUAL ADDITION 3)
 
   while(star<=2) { //STAR 
-    console.log(`CYCLE ${revo} -Star jump number ${star}!`);
+    console.log(`CYCLE ${cycle} -Star jump number ${star}!`);
     star++;   //Incrementor (MANUAL ADDITION 1)
   }
 
   while(burp<=4) { //BURP  
-    console.log(`CYCLE ${revo} -Burpee number ${burp}!`); 
+    console.log(`CYCLE ${cycle} -Burpee number ${burp}!`); 
     burp++;   //Incrementor 
   }
 
   while(gob<=3) { // GOB  
-    console.log(`CYCLE ${revo} -Goblet squat number ${gob}!`);
+    console.log(`CYCLE ${cycle} -Goblet squat number ${gob}!`);
     gob++;    //Incrementor 
   }
   
-  revo++;
+  cycle++;
 }
 ```
 
@@ -6360,6 +6640,19 @@ That line I specified in the syntax is necessary to avoid an infinite loop.
 Let's say our roller gave us a 4. The while loop executes because our dice value isn't 6. 
 
 It then continues to iterate over and over because 4 will never equal 6, AND we don't redefine the variable involved with the condition
+
+#### break statements
+
+- You can use a `break;` to end the while loop when a condition is met
+- If you want, you can replace your while condition with a break statement
+
+```js
+    let counter = 0;
+    while (true) {
+      if (counter > 10) break;
+      counter++;
+    }
+```
 
 
 
@@ -9075,6 +9368,12 @@ Just remember the style property has 3 possible values: unit, percent, currency
 
 ### Delayed Actions with setTimeout
 
+```js
+setTimeout(() => {
+    // do stuff here after the delay
+}, 3000); // 3 second delay
+```
+
 This method is essentially just a delayed function call that runs after an amount of time you specify. 
 If placed within an event handler, you can make things happen X amount of time after an event occurs
 
@@ -9153,7 +9452,7 @@ setTimeout(()=>{
 })
 ```
 
-### Repeating Actions with setInterval...s
+### Repeating Actions with setInterval
 
 setInterval() is a method that causes a function to repeat after every X milliseconds
 
@@ -9180,6 +9479,8 @@ let alarmClock= setInterval(() => {
 ```
 
 ![image-20210411013341070](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210411013341070.png)
+
+
 
 ### Unreliability of setInterval
 
@@ -9274,3382 +9575,7 @@ Demonstrated at 19:00: [The Complete JavaScript Course 2021: From Zero to Expert
 
 
 
-# ———【DOM MANIPULATION】———
 
-# DOM Fundamentals: 
-
-Most of this unit will feature lessons from Traversy Media's series on DOM manipulation:  
-[(20) JavaScript DOM Crash Course - Part 1 - YouTube](https://www.youtube.com/watch?v=0ik6X4DJKCc&list=PLWrdF35wo-ISLXL9R7khxtpZ17jCsmeiv&index=1)
-
-The central project we'll be building is an item listing application:
-
-![image-20210326083746978](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326083746978.png)
-
-STARTING CODE: The below pen with an empty JS doc instead
-
-ENDING CODE: [DOM Item Lister (codepen.io)](https://codepen.io/bradtraversy/pen/Bwapow)
-
-
-
-### What is the DOM? (Repeat)
-
-The DOM is a complicated API that lets us interact with the DOM tree- which is formulated based off our HTML file. 
-
-Through DOM manipulation, we can force JS to interact with the browser by... 
-
-- Adding/placing new elements
-- Modify or delete existing ones
-- Set CSS styles, classes, and attributes
-- Create events that trigger when we do certain things on our webpage
-
-We use DOM methods and properties to interact with the tree. You've seen plenty already
-
-![image-20210411232522464](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210411232522464.png)
-
-#### Terminology
-
-When speak about the DOM, we use these terms: 
-Child element, parent element, sibling element, nodes...etc
-
-![image-20210226174738311](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210226174738311.png)
-
-If an element is the child of another, it will be placed below its parents
-Sibling elements result in branching paths
-
-There are more than just element nodes on the actual DOM of a typical HTML document. There's nodes for all text, comments, and other things. Everything in the HTML document must be in the DOM
-
-#### DOM and JS being Separate Entities
-
-To properly manipulate this structure, you'll need DOM methods and properties
-You've already used a common one: `document.querySelector()`
-
-These properties and methods are technically not JS. 
-They're part of web API's- libraries that browsers implement. 
-You can directly access certain methods/properties in JS.
-
-There are many more API's than just the DOM: ![image-20210226180115095](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210226180115095.png)
-
-### How the DOM Nodes Work
-
-TLDR: 
-The DOM API is broken up into different types of nodes.
-Each of these types of nodes has access to different properties and methods 
-
-#### HOW THE DOM API IS ORGANIZED
-
-![image-20210411222001680](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210411222001680.png)
-
-This is not a visual representation of the DOM tree. 
-It is a diagram to help you understand what role nodes play in the DOM
-
-#### Everything in HTML is in the DOM
-
-DOM nodes come in many forms, but every one of them is represented by a JS object
-Some nodes represent elements while others are for the nested text, or even comments
-
-Each node gets access to special node methods and properties: ![image-20210411233443563](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210411233443563.png)
-
-The node type (yellow rectangle) has a couple of "child-types". 
-These would be the element type, text type, comment type, and the document type
-This is how nodes can represent more than just elements (nested text, comments...etc)
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210411233953141.png" alt="image-20210411233953141" style="zoom:75%;" />
-
-EXAMPLE: Explain what nodes are generated b/c of this code snippet
-
-```html
-<p>Hello World</p> <!--explained-->
-```
-
-`<p></p>` gets an element node			`Hello World` gets a text Node
-`<!--explained-->` gets a comment node	 the entire document itself is a node
-
-#### Element Nodes and HTML Tag Origins
-
-The element nodes give HTML access to slew of useful methods and properties- all of which can be used for DOM manipulation through our JS document
-
-Useful properties and methods: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210411235452097.png" alt="image-20210411235452097" style="zoom: 67%;" />
-
-The element node has a child which represents the HTML element's type
-What I mean is, divs would result in a different type of node than article tags
-
-We have special types of nodes for buttons, images, links, and more. 
-By now, you've noticed that they all have differing properties
-
-- An image has a source attribute in HTML which no other element has
-- The anchor element for links has the HREF attribute which also no other element has
-
-The DOM needed a way of storing these different attributes. 
-This is how ~~babies~~ HTML elements were born in the DOM API
-
-#### Documents Node Type
-
-The document itself is just another type of node that lets us use important methods
-
-![image-20210412001747192](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412001747192.png)
-
-If you look closely at the diagram up top, you'll notice that querySelector is available for both element and document nodes, You'll see why later
-
-#### Intro to Prototypal Inheritance
-
-Inheritance means that all the child types will also get access to the methods and properties of all their parent node types.
-
-- For example, an HTML element will get access to everything from the element type, like innerHTML, or classList or all these other methods and properties.
-- And besides that it will also get access to everything from the node type because that is also its parent type. It's somewhat similar to the scope chain
-
-This will be explored further when we learn about Object-Oriented-Programming
-
-#### Why Event Listeners Work on Everything
-
-Event listeners work on every single node type on the DOM API
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412002323473.png" alt="image-20210412002323473" style="zoom:67%;" />
-
-As you can see on the diagram, EventTarget is a parent to the node and window node types- while being a node itself of course. Thanks to inheritance, everything down the descendant gets access to its methods
-
-EventTarget methods are extremely popular: ![image-20210412002215645](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412002215645.png)
-
-### The Document Object
-
-In the past, we've used `console.dir()` to look inside JS objects and see what's inside. Let's do the same with the document itself- which is in fact, an object
-
-```js
-console.dir(document)
-```
-
-goes much longer: ![image-20210326090140805](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326090140805.png)
-
-You get a very large tree of document methods and properties, all of which you can access through your JS code to read or manipulate things in the DOM
-
-#### A few Document Properties/Methods
-
-```js
-console.log(document.domain);  // Shows loop back address
-console.log(document.URL);     // Shows URL of the page
-console.log(document.doctype) // returns doctype. In this case <!DOCTYPE html>
-console.log(document.head) // returns entire head section in HTML
-console.log(document.body) // returns the body section in HTML w/ all its nested tags
-console.log(document.all) // gives an array of everything inside the DOM
-console.log(document.links) // fetches all links in your array
-console.log(document.images)  // fetches all images in your array
-console.log(document.forms) 
-	// fetches all forms in your webpage so you can access their properties
-```
-
-(Not disclosing my IP address for obvious reasons)
-
-#### Changing the Webpage with Doc Properties
-
-As you will see, we're not limited to reading off these properties on the console. 
-We can make changes in our code using them:
-
-EXAMPLE 1: Change Webpage Title
-
-```js
-console.log(document.title);   // Shows title of the doc that's found on tab
-document.title="New Age Black" //CHANGES the title on your site's browser tab
-console.log(document.title); // Shows new title
-```
-
-![image-20210326091239652](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326091239652.png)
-
-
-
-### Selecting HTML Elements & Adding/Removing Classes
-
-To create a dynamic webpage, we can't just hardcode everything in HTML/CSS, we need JS to perform certain actions once conditions are met by the page's visitors
-
-- There are multiple ways to bring HTML elements into JS- and once you do, you'll typically want to store them inside an aptly-named variable
-- After that, you can use them to change webpage content via your JS file, incorporate event listeners, change CSS styles, add classes to give pages a new look...whatever!
-
-#### 1 Element via ID:
-
-```js
-const varName= document.getElementById("elementID")
-//OR
-const varName= document.querySelector("#elementID")
-```
-
-- Some methods in JS allow you to target elements by their ID's without this importing step- for example, `rawID.addeventlistener` works
-- In case they don't however, this is important to know 
-
-#### 1 Element via Class:
-
-```js
-const varName= document.querySelector('.hello');	
-// standard CSS selector (can use any selector type, even combinators)
-```
-
-- Searches for a SINGLE element inside the "hello" class
-- If there are multiple elements in that "hello" class, this selector will go for the first one it finds in the HTML file (the one closest to the top)
-
-#### 2+ Elements via Class
-
-
-```js
-const varName= document.querySelectorAll('.hello');	 //returns node list
-//OR
-const varName= document.getElementsByClassName("hello") //returns HTML collection
-```
-
-- Searches for EVERY element inside the "hello" class
-- This creates a nodelist with every element successfully targeted, in the order they're found in HTML 
-- If you want to apply an event listener for all of them, you cannot do so normally.
-  You'll have to create a for loop to contain your event listener (Ex. WARP: AXQZE1)
-
-#### All HTML Tags by Type
-
-```js
-const varName= document.getElementsByTagName('li') //returns HTML collection
-// OR
-const varName= document.querySelectorAll('li'); //returns node list
-```
-
-- Captures every single `li` element (in this case) and places them all into an HTML collection, which is different than a node list or array
-- HTML collections update every time a change to the DOM is made.
-  Ex. if a list item is removed programmatically, our collection will reflect that
-  A node list or array would not
-
-#### Versatile Searches
-
-- Since querySelector and querySelectorAll use any kind of CSS selector to pick their targets, we are not forced into searching with ID's or classes only
-- This lets you create searches that can target different element types, or only pick some elements of what would normally be chosen
-
-EXAMPLE: You have a list. Pick the odd numbered list items only, then add color 
-
-```html
-<ul id="items" class="list-group">
-    <li class="list-group-item">Item 1</li>
-    <li class="list-group-item">Item 2</li>
-    <li class="list-group-item">Item 3</li>
-    <li class="list-group-item">Item 4</li>
-</ul>
-<script>
-	let listItems= document.querySelectorAll(".list-group-item:nth-child(odd)")
-	for (let i=0;i<listItems.length;i++){
-  		listItems[i].style.backgroundColor="lavender"
-	}
-</script>
-```
-
-![image-20210326154240607](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326154240607.png)
-
-#### Selecting the Entire Document
-
-```js
-let varName= document.documentElement
-varName.style.opacity=0; 		//makes entire webpage invisible
-```
-
-We also have an alternative to using querySelector on major webage sections. 
-Just refer to them directly on the document like this:
-
-```js
-document.head
-document.body
-```
-
-#### Only Searching within an Element Container
-
-- The `document.querySelector("")` method searches your HTML file for elements because of the "document" part. 
-- You can force it to only look inside an element by replacing "document" with it
-
-EXAMPLE: Search for anchor tags within the unordered list, not the entire document
-
-```js
-let ul= document.querySelector(".nav__links")
-let ul_Anchors= ul.querySelectorAll("a")
-```
-
-![image-20210421111452284](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421111452284.png)
-
-#### Add/Remove/Toggle Classes 
-
-Assume we imported an element from HTML named `testEl`
-
-|                         |                                                     |
-| ----------------------- | --------------------------------------------------- |
-| add a class             | `testEl.classList.add('className')`                 |
-| add multiple classes    | `testEl.classList.add('className1, className2')`    |
-| remove a class          | `testEl.classList.remove('className')`              |
-| remove multiple classes | `testEl.classList.remove('className1, className2')` |
-| toggle a class on/off   | `testEl.classList.toggle('className')`              |
-
-###### BAD METHOD TO SET CLASSES
-
-You should never use this method, but should be able to spot when it is.
-
-```js
-htmlEl.className= 'whatever'
-```
-
-This overrides every existing class the element once had. 
-Also, it limits the element to only having 1 class- the one you set here
-
-
-
-### Checking Elements for Classes
-
-You aren't required to use `.classlist.contains()` inside an event listener, in case you're wondering
-
-```js
-checkIt.addEventListener('click', ()=>{     //% CHECK FOR CLASS
-  let hasOrNot = $hello.classList.contains('bg','bd');  
-  //~ Checks if el belongs to the "bg" OR 'bd' class. returns true if in either 
-  // We can perform actions based on if an element has a certain class now...
-})
-```
-
-
-
-### Dealing with NodeLists of HTML Elements
-
-#### Targeting them All at Once
-
-If you've used `getElementsByClassName` or `querySelectorAll` , you need to loop over the arrays they produce if you want to apply changes to all the entries- which are HTML elements
-
-EXAMPLE: Take all the li elements in this list, and change the background color
-
-```html
-<ul id="items" class="list-group">
-      <li class="list-group-item">Item 1</li>
-      <li class="list-group-item">Item 2</li>
-      <li class="list-group-item">Item 3</li>
-      <li class="list-group-item">Item 4</li>
-</ul>
-<script> 
-    let listItems= document.getElementsByClassName("list-group-item")
-	for (let i=0;i<listItems.length;i++){
-  		listItems[i].style.backgroundColor="lavender"
-	}
-</script>
-```
-
-![image-20210326150112444](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326150112444.png)	=>	![image-20210326150050424](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326150050424.png)
-
-#### Targeting them Individually
-
-If you wish to target the items in an HTML element array one-by-one, just use bracket notation as you would with any array
-
-```js
-let listItems= document.getElementsByClassName("list-group-item")
-console.log(listItems);
-```
-
-![image-20210326150910239](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326150910239.png)
-
-- When we hover over a specific element in our array, it highlights the location on our webpage preview
-- This is how you know what you'll be directing your changes towards
-  You could also just see which element appears earliest in the HTML doc
-
-```JS
-listItems[0].style.backgroundColor="orange" // continuing from last snippet...
-```
-
-![image-20210326151336849](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326151336849.png)
-
-#### Add Event Listeners to all List Nodes
-
-FUN FACT, forEach works on node lists as well as arrays
-There's no need for conversion if we wish to apply event listeners to them all
-
-EXAMPLE: Add a modal to a group of captured buttons
-
-```js
-const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
-
-btnsOpenModal.forEach((btnElement)=>{
-  btnElement.addEventListener('click',eventHandlerFunction) //dw about the details
-})
-```
-
-Feel free to use a callback function you defined elsewhere
-Or you could define the event handler right inside the forEach loop (Doesn't matter)
-
-#### Applying Array Methods to a NodeList
-
-- `document.querySelectorAll()` and `getElementsByClassName` create a nodelist with all elements that match the selector in brackets. 
-- They don't create real arrays, so you have to convert it into one before you can use any array methods on it (use the spread operator)
-
-```js
-let listItems= document.getElementsByClassName("list-group-item")
-let listItemsArray= [...listItems]
-```
-
-
-
-### Manipulating or Using Text
-
-We have several options when it comes to adding, changing, or using existing webpage text. The most popular three are textContent, innerText, and innerHTML
-
-These methods are similar to each other, and can sometimes be used interchangeably
-That being said, they each have slight differences which dictate their use-cases
-
-|             | What it does                                                 | When to use                                                  |
-| ----------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| innerText   | retrieves and sets the content of the tag as plain text      | When you only need to see what’s in the element — with zero formatting |
-| innerHTML   | retrieves and sets the tag's content in HTML format          | When you want to see the HTML markup and what exactly is in our element — including any spacing, line break, and formatting irregulars |
-| textContent | same as innerText, but does NOT care about the rendered appearance of text | When you want to see what’s in the element, plus any styling on it |
-
-Additional notes for Inner HTML:
-
-If the text inside the element includes the characters `&`, `<`, or `>`, innerHTML will return these characters as HTML entities `&`, `<`, and `>`.
-
-#### Capturing Existing Text
-
-If you save existing text into a variable, you can reuse it at any time to do whatever you want. Make an alert with the text inside a div for example (not showing that)
-
-Sample HTML Code:
-
-```html
-<div id='blog-test'>
-This element is <strong>strong</strong> and     has some super fun <code>code</code>!
-</div>
-```
-
-![image-20210326135124002](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326135124002.png)
-
-NOTICE THE DIFFERENCES BETWEEN OUR 3 METHODS:
-
-```JS
-const getValue = document.getElementById('blog-test');
-let a= getValue.innerText 	// reformats text & removes HTML syntax
-let b= getValue.innerHTML	// keeps the tag's text as is, including all HTML code
-let c= getValue.textContent	// removes HTML syntax but keeps original formatting 
-
-console.log(a,b,c);
-```
-
-![image-20210326142643196](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326142643196.png)
-
-#### Changing Text
-
-The use-cases are much simpler when trying to change words on our sites. 
-
-- If you want to have HTML nested tag effects, use innerHTML
-- Otherwise, use innerText or textContent
-  The sentence will be reformatted thanks to HTML regardless
-
-```html
-<div id='blog-test'></div>
-<div id='blog-test2'></div>
-<div id='blog-test3'></div>
-<script> 
-	const getValue = document.getElementById('blog-test');
-	const getValue2 = document.getElementById('blog-test2');
-	const getValue3 = document.getElementById('blog-test3');
-
-	getValue.innerText= 'New		text with <strong>HTML bait</strong>'
-	getValue2.innerHTML= 'New		text with <strong>HTML bait</strong>'
-	getValue3.textContent= 'New		text with <strong>HTML bait</strong>' 
-</script>
-```
-
-![image-20210326144413440](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326144413440.png)
-
-#### Using/Manipulating Input Field Text
-
-- If you want to save or change text that's inside of an input field, the syntax is different.
-- The user typed it in his/herself or did something that changed its value
-
-```html
-<form class="form-inline mb-3">
-      <input type="text" class="form-control mr-2">
-      <input type="submit" class="btn btn-dark" value="Submit">
-</form>
-<!--Starter code above-->
-<script> 
-	document.querySelector('.mr-2').value="insert filler text hither"
-</script>
-```
-
-![image-20210326121512610](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326121512610.png) ![image-20210326121750738](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326121750738.png)
-
-#### .insertAdjacentText()  
-
-- You can actually add words to the beginning or end of an element- even it already has hardcoded words attached to it
-
-```js
-reference.insertAdjacentText("position-str",insertStr)
-```
-
-- `"afterbegin"` - at the top of the target element's children tree
-- `"beforeend"` - at the bottom of the target element's children tree
-
-You can use these last 2 if you want, but your text won't be nested inside any element
-
-- `"beforebegin"` - just before the target element
-- `"afterend"` - just after the target element
-
-EXAMPLE: Add some characters to the end of your existing list item
-
-```html
-<ul id="listContainer">
-	<li>List Item 1</li>
-	<li>List Item 2</li>
-	<li>List Item 3</li>
-</ul>
-<script>
-	const secondLI = document.querySelector("li:nth-child(1)");
-	const insertStr= "===="
-</script>
-```
-
-![image-20210328153552438](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328153552438.png)	![image-20210328183435348](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328183435348.png)
-
-# DOM: Manipulating HTML and CSS with JavaScript + Data Attributes
-
-### Extracting Values of CSS Properties (S1)
-
-There are a handful of methods which let you use hardcoded CSS property values in JS
-Changing their values is another topic- one found in a nearby lesson
-
-- Sometimes you might want to know a CSS property value without manually checking it. 
-
-|                                                | purpose                                                      |
-| ---------------------------------------------- | ------------------------------------------------------------ |
-| `window.getComputedStyle(element)`             | returns an object containing the values of all CSS properties of an element |
-| `HTMLelement.style.setProperty('color','red')` | changes the value of a CSS property                          |
-| getPropertyValue()                             | gets the property value of an HTML element that has getComputedStyle() applied to it. SEE NEXT LESSON |
-
-#### getComputedStyle()
-
-Remember, this method gets updated every time you change the document in a way that affects the property you're targeting
-
-STARTER CODE
-
-HTML: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412165550454.png" alt="image-20210412165550454" style="zoom:80%;" /> CSS: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412165612026.png" alt="image-20210412165612026" style="zoom:80%;" /> Result: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412165651644.png" alt="image-20210412165651644" style="zoom: 33%;" />
-
-EXAMPLE: Log the color of the div 
-
-```JS
-let square= document.querySelector('div')
-
-let divStyles=window.getComputedStyle(square)
-console.log(divStyles.backgroundColor); //OUTPUT: rgb(0, 255, 0)
-
-let widthVal = divStyles.getPropertyValue('width');
-console.log(widthVal); //OUTPUT: "200px"
-```
-
-As you can see, we get the computed rgb code for the "lime" color we hardcoded in CSS. It's not what we typed, but what the browser COMPUTES it to be
-
-- If you get the computed style of bold font weight, it'll return the computed thickness. 
-- If you feed the method a font size in em or rem, it'll return the hardcoded px size
-
-If you want to check a CSS property of a pseudo element, just add that as the second argument in `getComputedStyle()`
-
-Manipulating Regular CSS 
-
-#### Changing Inline CSS with getComputedStyle()
-
-We need to use parseFloat to extract a number from the result of getComputedStyle()
-
-```js
-let square= document.querySelector('div')
-let divStyles=window.getComputedStyle(square)
-
-square.style.width=Number.parseFloat(divStyles.width) + 200+ `px`
-```
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412175825840.png" alt="image-20210412175825840" style="zoom:33%;" />
-
-### Changing Inline CSS Properties (S2)
-
-#### Changing Inline CSS
-
-The DOM contains CSS styles as well- which means we can manipulate them using JS.
-There are just a few things you need to keep in mind
-
-- The method shown in this subsection applies inline CSS styles
-  You won't see any changes in the CSS or SASS documents
-- In JS, we need to use camelCase to name CSS properties that involve 2+ words
-  CSS: `font-size`	JS: `fontSize`
-- When typing the values for the CSS property in JS, they always need to be surrounded by quotation marks
-
-```js
-//SYNTAX
-importedElement.style.camelCaseProperty="value"
-```
-
-Some properties have different names altogther. For example, to use float we must type importedElement.style.cssFloat (cases like this are fairly uncommon though)
-
-DEMONSTRATION:
-
-Before we begin, realize that you can tweak any CSS property through JS
-Use your imagination, and don't limit yourself to simple applications like this one
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326113723672.png" alt="image-20210326113723672" style="zoom: 50%;" />
-
-Say we start off with a green square on our webpage- it's 200px by 200px
-Change the color to violet, then change the size to make it much longer
-
-```js
-let square= document.querySelector('div')
-square.style.backgroundColor= 'violet'
-square.style.width= '500px'
-```
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326114712649.png" alt="image-20210326114712649" style="zoom: 50%;" />
-
-PROPERTIES WITH MULTIPLE VALUES:
-
-If you want to set 2+ values for a single property, stay w/ 1 pair of quotation marks
-
-```js
-document.querySelector('.btn').style.padding = '20px 10px';
-```
-
-### Changing Regular CSS Properties (S3)
-
-Through JS, you can change the values of CSS properties, or even custom variables 
-As far as I know, this doesn't work with SASS variables - only native CSS variables
-
-WARP KEY: L943VR
-
-#### EXAMPLE 1: Practical Example
-
-STARTER CODE:
-
-```html
-<ul id="list1"> LIST 1
-	<li class="uno">List Item 1</li>
-	<li class="uno">List Item 2</li>
-	<li class="uno">List Item 3</li>
-</ul>
-
-<style>
-	:root{ --textColor: blue; }
-	#list1{
-  		color: var(--textColor);
-	}
-	.uno{ font-size: 24px }
-	p { font-size:24px }
-</style>
-```
-
-JS CODE:
-
-- From our JS doc, we can change custom properties, or even regular CSS properties
-- If the CSS custom property was defined on a different scope, you'd query select the selector it was defined inside of
-
-```js
-//———————————【Change custom property --textColor to teal 】—————————————
-const root= document.querySelector(':root')
-root.style.setProperty('--textColor','teal') 
-
-//————————————【Change regular property color to red (for p tags)】————————————————
-const paras= document.querySelector('p') // target all p tags
-paras.style.setProperty('color','red') /*change color property fr.JS*/
-```
-
-Before JS: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412202224161.png" alt="image-20210412202224161" style="zoom:80%;" /> After JS: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412202202785.png" alt="image-20210412202202785" style="zoom:80%;" />
-
-ALTERNATIVE (for changing CSS custom properties through JS)
-
-```js
-document.documentElement.style.setProperty('--textColor','teal')
-/*Keep in mind this only works for the ones defined in the root's scope*/
-```
-
-
-
-#### EXAMPLE 2: Very Niche Scenario
-
-Instead of hardcoding the second argument for setProperty(), we can even set it equal to the value of another property in CSS by using getProperty()
-
-```js
-const list= document.querySelector('#list1')
-const paras= document.querySelector('p') 
-
-/*Use the list's style object to get the property value of the "color" property*/
-const listStyles= getComputedStyle(list)
-const listColor= listStyles.getPropertyValue('color')
-
-/*Set the color property of something else equal to list's color*/
-paras.style.setProperty('color',listColor)
-```
-
-Before JS: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412202224161.png" alt="image-20210412202224161" style="zoom:80%;" /> After JS: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412221046921.png" alt="image-20210412221046921" style="zoom:80%;" />
-
-TLDR: We colored the paragraph at the bottom the same color as the list, by getting and setting property values
-
-Alternatively, we could have just gotten the property value of the root's custom variable, and colored the paragraph with that
-
-```js
-const root= document.querySelector(':root')
-const paras= document.querySelector('p') 
-
-const rootStyles= getComputedStyle(root)
-const rootColor= rootStyles.getPropertyValue('--textColor')
-
-paras.style.setProperty('color',rootColor)
-```
-
-https://codepen.io/NFuego24-7/pen/wvgmgPw
-
-### Extract or Change CSS Attributes
-
-METHODS WE'LL NEED:
-
-| method                                         | effect on the element it's applied to                    |
-| ---------------------------------------------- | -------------------------------------------------------- |
-| `htmlEl.getAttribute('id')`                    | returns the value of the attribute specified in brackets |
-| `htmlEl.setAttribute('attrib','desiredValue')` | sets an element attribute to your desired value          |
-
-#### EXAMPLE: Change Image using "src" Attribute
-
-We're going to use the exact same code for all subsections
-
-STARTER HTML: (we have no CSS)
-
-```html
-<h2 data-version-number='3.0'>We so fly</h2>
-<img href="#" src="https://i.postimg.cc/MTrfMx0t/94.jpg" width="500" height="600"> 
-```
-
-Before CSS: ![image-20210412225724711](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412225724711.png) After CSS: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412225140273.png" alt="image-20210412225140273"  />
-
-SOLUTION:
-
-```js
-const pic= document.querySelector('img')
-//————————————————【Get attributes in 2 ways】—————————————————————
-let picSRC1= pic.getAttribute('src')
-let picSRC2= pic.src // whichever one of these you use D.N matter in this example
-console.log(picSRC1);
-console.log(picSRC2);
-//————————————————【Set attribute】—————————————————————
-pic.setAttribute('src','https://i.postimg.cc/MTrfMx0t/94.jpg') // new image link
-```
-
-Console logs: ![image-20210412230457629](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412230457629.png)
-
-Directly accessing attributes using dot notation (picSRC2) has certain drawbacks. 
-
-- If the attribute is uncommon on the type of element its used on in HTML, JS won't recognize it when you try to read it. 
-- This does not mean we should always use setAttribute though
-
-#### The Diff b/t Dot Notation & getAttribute()
-
-Absolute vs Relative outputs is what separates our 2 methods of the day
-
-```js
-// all previous code is the same
-console.log(pic.href);					//returns undefined
-console.log(pic.getAttribute('href'));	// returns exactly what we typed in HTML
-```
-
-![image-20210412232119886](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412232119886.png)
-
-### Data Attributes 
-
-These are special kinds of attributes that start with `data-` 
-
-We use data attributes quite a lot when we work with the UI
-Especially when we need to store data in user interface (basically the HTML code)
-
-```HTML
-<h2 data-version-number='3.0'>We so fly</h2>    
-<h2 data-versionWAN='4.0'>Radio Rebel's underrated</h2>
-<script> 
-	let header2= document.querySelector('h2')
-	console.log(header2.dataset.versionNumber); //OUTPUT:3.0
-
-	let header22= document.querySelector('h2:nth-child(2)') //grab the second h2
-	console.log(header22.dataset.versionWAN);  //OUTPUT: undefined (JS d.n recognize)
-	console.log(header22.dataset.versionwan); //OUTPUT: 4.0
-</script>
-```
-
-All the data attributes can be found within the `dataset`
-
-- Just make sure to only capitalize words that come after the data attribute's second dash- assuming it has another dash in the first place
-- Look at the second last log. We namedropped the data attribute exactly as it was presented, yet JS still did not see it until we decapitalized the attribute name
-
-CONVERT THE DATASET OUTPUT TO A NUMBER:
-Fairly sure that datasets convert whatever you stored into a string (i forgot)
-
-
-
-# DOM: Create/Place/Delete Elements
-
-- We can create elements within our JS files then place them anywhere in the DOM. 
-- Once we place them in, it'll be as if they were hardcoded in our index.html file. 
-- This lets us dynamically introduce content that our actual HTML document never had
-
-### createElement Method  (S1)
-
-You can use JS to create entirely new HTML elements that work as if they were hardcoded in your HTML file initially. This can be used to dynamically add content to your webpage
-
-PRACTICAL EXAMPLE: 
-On Udemy, wishlisting a course will add it to the existing ones you have there
-You can interact with this new element- you can click it to go to a new webpage
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210325065442656.png" alt="image-20210325065442656" style="zoom:50%;" />
-
-You can create new DOM elements in multiple ways:
-
-#### Example 1: 
-
-These methods are used in conjunction to create brand new elements from your JS file.
-To demonstrate, create the following div element:
-
-EXAMPLE 1: Create the following element
-
-```html
-<div class="greet msg" id="hi" title="welcome">Hello World</div>
-```
-
-SOLN:
-
-```JS
-let newDiv = document.createElement("div");		//creates an element
-newDiv.className = "greet msg"; 				//sets class name(s)
-newDiv.id = "hi"; 								// sets ID
-newDiv.setAttribute("title", "welcome"); 		//sets a title attribute
-
-// Creating your element's text...
-
-let newDivText = document.createTextNode("Hello World"); // create text for element
-newDiv.appendChild(newDivText); 		// assign the text to your element
-console.log(newDiv); 
-```
-
-![image-20210327164755781](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210327164755781.png)
-
-- The text doesn't show on Firefox's log for some reason, but it does acknowledge its existence when you check the textContent property of your newly created element
-- Preview shown in the picture above is from edge
-
-List of attributes: [HTML Attributes (w3schools.com)](https://www.w3schools.com/tags/ref_attributes.asp)
-
-#### EXAMPLE 2: Nested Tags
-
-Create the following:
-
-```html
-<li>
-	<span class="name">The wise man's fear</span>
-    <span class="delete">delete</span>
-</li>
-```
-
-- The appendChild() method can assign tags to be nested inside other elements too. 
-  It's not just used for assigning text
-- We're going to use a different method to add in the words for your elements
-  Appending text nodes is one way, but textContent is also an option
-
-SOLN:
-
-```JS
-//# Creating 3 new sets of tags: li, and 2 pairs of span
-const listItem = document.createElement("li");
-const span1 = document.createElement("span");
-const span2 = document.createElement("span");
-
-//# Add the spans' words
-span1.textContent="The wise man's fear"
-span2.textContent="Delete"
-
-//# Add the spans' class names
-span1.className = "name";
-span2.className = "delete";
-
-//# Append the nested elements to their parents
-// by assigning span1 first, it goes to the top of the list
-listItem.appendChild(span1);
-listItem.appendChild(span2);
-
-console.log(listItem);
-```
-
-![image-20210328082118716](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328082118716.png)
-
-#### Adding CSS Styles to New Elements
-
-```js
-newDiv.style.fontSize= "30px" //changing a CSS style of our new element
-```
-
-
-
-
-
-### Inserting Elements into the DOM (S2)
-
-When you create an element in JS, it does not get placed in your HTML file by default. You must place it there yourself using a specific method
-
-- You have a handful of methods for new element insertion- choose based on where you want it to be placed (relative to the element you use your method on)
-- If you create an element in JS, it can only exist at one place at the same time
-
-#### insertAdjacentElement()
-
-```js
-referenceEl.insertAdjacentElement("position-str", elementToInsert)
-```
-
-- `"beforebegin"` - just before the target element
-- `"afterend"` - just after the target element
-- `"afterbegin"` - at the top of the target element's children tree
-- `"beforeend"` - at the bottom of the target element's children tree
-
-#### Demonstrations
-
-Starter Code: ![image-20210328121210319](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328121210319.png)
-
-```html
-<div id="container">
-	<article>THE UNORDERED LIST BEGINS HERE</article>
-	<ul ID="listContainer">
-		<li>List Item 1</li>
-		<li>List Item 2</li>
-		<li>List Item 3</li>
-	</ul>
-</div>
-<script>
-    // Imported 2 elements from our hardcoded HTML file to use as references
-    const container= document.getElementById("container") 
-	const listContainer= document.getElementById("listContainer");
-    
-    //Created a simple new element to insert
-    const newHeader= document.createElement("h2"); 
-	newHeader.textContent= "Someone INSERT me!"
-</script>
-```
-
-JS Code:
-
-```js
-listContainer.insertAdjacentElement("beforebegin",newHeader) //before UL list
-listContainer.insertAdjacentElement("afterend",newHeader) // after UL list
-```
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328121345334.png" alt="image-20210328121345334" style="zoom:90%;" /> <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328121430449.png" alt="image-20210328121430449" style="zoom:90%;" />
-
-
-
-```JS
-listContainer.insertAdjacentElement("afterbegin", newHeader); // start of child list
-listContainer.insertAdjacentElement("beforeend", newHeader); // end of child list
-```
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328124337836.png" alt="image-20210328124337836" style="zoom:90%;" /> <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328124432969.png" alt="image-20210328124432969" style="zoom:90%;" />
-
-
-
-### Alternative Ways to Insert DOM Elements
-
-I've already gone over the simplest ways to place elements in the previous lesson, but you may encounter others when looking over code. They perform similar or congruent tasks, and can be used interchangeably
-
-- If you want to read more about these, read this: 
-  [How to Add an Element to the DOM? (areknawo.com)](https://areknawo.com/how-to-add-an-element-to-dom/)
-- Don't focus on these too much- this type of work is now done using JS frameworks
-
-#### Alternate Element Inserts: 
-
-(We will refer to the element we use these methods on as the REFERENCE)
-
-|                      | Effect                                                       |
-| -------------------- | ------------------------------------------------------------ |
-| `.appendChild(el)`   | places a new element at the end of the reference's child list |
-| `.prepend(el)`       | places new element at the START of the reference's child list. Can accept multiple arguments |
-| `.append(el)`        | same as appendChild() but can accept multiple arguments      |
-|                      |                                                              |
-| `.insertBefore(a,b)` | inserts element right before the reference<br />a is the element you're inserting, b is the reference |
-| insert after         | Does not exist, but you can achieve this effect using a premade function |
-
-ADDITIONAL INFO:
-
-- prepend.() and append() only have 92% support ATM, but it has simple polyfills 
-- I recommend using insertAdjacentElement instead- it accomplishes the same thing plus it's universally supported
-
-
-```js
-// Insert After Function
-const insertAfter = (parent, child, reference) => {
-  parent.insertBefore(child, reference.nextElementSibling);
-};
-
-document.body.append(el);
-insertAfter(document.body, el2, el);
-```
-
-
-
-### Template Literal Method to Create/Place Elements
-
-Instead of using a slew of methods to create an element, you have the option to just type out HTML syntax within JS...as a string. 
-
-- The browser can convert the string into actual HTML in a location you specify
-- You can use innerHTML form this, but it has major drawbacks:
-
-![image-20210328155834776](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328155834776.png)
-
-#### insertAdjacentHTML()
-
-This is your main choice for turning typed out strings in JS into HTML elements
-You can even combine these with functions along with ${placeholders}
-
-```JS
-reference.insertAdjacentHTML("position-str","template-literal")
-```
-
-- `"beforebegin"` - just before the target element
-- `"afterend"` - just after the target element
-- `"afterbegin"` - at the top of the target element's children tree
-- `"beforeend"` - at the bottom of the target element's children tree
-
-EXAMPLE:
-
-```html
-<ul id="listContainer">
-	<li>List Item 1</li>
-	<li>List Item 2</li>
-	<li>List Item 3</li>
-</ul>
-//—————————————————————【starter code above】——————————————————————————
-<script>
-	const unorderedList = document.querySelector("#listContainer");
-	const fourthLI= `<li class="str">List item 4- created via temp literal</li>`
-	unorderedList.insertAdjacentHTML("afterbegin",fourthLI)
-</script>
-```
-
-![image-20210328153552438](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328153552438.png)	![image-20210328175404345](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328175404345.png)
-
-#### Cloning Created Elements
-
-insertAdjacentHTML() lets us place a newly generated HTML element in multiple locations at the same time
-
-```js
-const unorderedList = document.querySelector("#listContainer");
-const fourthLI= `<li class="str">List item 4- created via temp literal</li>`
-unorderedList.insertAdjacentHTML("afterbegin",fourthLI) //top of child list
-unorderedList.insertAdjacentHTML("beforeend",fourthLI) // end of child list
-```
-
-![image-20210412134359556](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412134359556.png)
-
-- Newly created elements in JS can only exist in one place a time, if you're placing it with an append method or one of the other alternates
-
-- Fortunately, the cloneNode() method exists to let us position new elements in 2+ locations at the same time. 
-
-However, this can be done naturally by using insertAdjacentHTML anyway, so I'm not going to demonstrate it
-
-
-
-### Replace or Erase Existing Elements
-
-#### Replace
-
-```js
-oldEl.parentNode.replaceChild(newEl, oldEl);	//SYNTAX
-```
-
-EXAMPLE: Replace the final list item with a new one you create
-
-```html
-<ul id="listContainer">
-	<li>List Item 1</li>
-	<li>List Item 2</li>
-	<li>List Item 3</li>
-</ul>
-<script>
-    // Select the last li element
-	const lastLI = document.querySelector("#listContainer :last-child");
-    // Create a new li element
-	const newLI= document.createElement("li");
-	newLI.textContent="Replacement"
-    
-    //Replace the old one with the new
-	lastLI.parentNode.replaceChild(newLI,lastLI)
-</script>
-```
-
-![image-20210328153552438](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328153552438.png)	![image-20210328153607621](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328153607621.png)
-
-#### Delete All Children in a Container
-
-```js
-importedEl.innerHTML=""
-```
-
-- We can actually use template literals with innerHTML to create new DOM elements
-  Not recommended over insertAdjacentHTML though
-- One twist on this is to set a container's innerHTML to nothing (an empty string)
-  This clears any children it originally has
-
-#### Delete a Specific Element
-
-For this, we use the remove() method which is fairly new and has 96% support (no IE)
-
-```html
-<ul id="listContainer"> 
-    <li>List Item 1</li> 	<li>List Item 2</li> 	<li>List Item 3</li>
-</ul>
-<script>
-	let thirdLI= document.querySelector('li:nth-child(3)')
-	thirdLI.remove()
-</script>
-```
-
-![image-20210328153552438](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328153552438.png) ![image-20210412141846678](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412141846678.png)
-
-OLD ALTERNATIVE (is wordier)
-
-A lot of people don't know about this feature yet, and use removeChild() instead
-The support is less than 0.1% larger- but IE supports it...so
-
-```html
-<ul id="listContainer"> 
-    <li>List Item 1</li> 	<li>List Item 2</li> 	<li>List Item 3</li>
-</ul>
-<script>
-	let thirdLI= document.querySelector('li:nth-child(3)')
-	thirdLI.parentElement.removeChild(thirdLI) // old method
-</script>
-```
-
-### Generate HTML w/ Template Tags
-
-Instead of generating DOM content with strings each time, you can actually pre-make container blocks in your HTML file
-
-1. Surround a container block you plan on reusing multiple times with template blocks
-   Give each one a unique ID- makes it easier to reference them
-
-![image-20210704230131494](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210704230131494.png)
-
-2. Find a location where you want to put this template
-
-![image-20210704230231159](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210704230231159.png)
-
-3. Use a variation of the following code snippet:
-
-```js
-var temp = document.querySelector("#statsCountTemplate");
-var clon = temp.content.cloneNode(true);
-var location= document.querySelector("aside")
-location.appendChild(clon);
-```
-
-#### Compared to Template Literal Method
-
-ADVANTAGES:
-
-- Any container wrapped in template tags will not be visible or take up any space before you render it, so you can place them where they will be rendered later
-- It lets you see where DOM content will eventually be directly in your HTML file
-- Takes up less space in your JS file, compared to generating brand new HTML methods
-
-DISADVANTAGES:
-
-- You can't add dynamic data to template tag content, like you can with template literals with `${}`
-
-# DOM: Element Parents, Children, and Siblings
-
-When performing DOM manipulation, you'll often need to target the siblings, parents, or children of the elements you import to JS. 
-
-You won't always target them directly with classes or ID's when selecting your tags to bring over to JS- that could bloat our code significantly
-
-STARTER CODE FOR THIS ENTIRE CHAPTER:
-
-```html
-<h2 class="title">Items</h2>
-<ul id="items" class="list-group">
-    <li class="list-group-item">Item 1</li>
-    <li class="list-group-item">Item 2</li>
-    <li class="list-group-item">Item 3</li>
-    <li class="list-group-item">Item 4</li>
-</ul>
-```
-
-### QUICK REFERENCE
-
-You have the option to save the elements these methods capture into a variable
-Or you can put them to use directly by chaining more methods onto the end of these
-
-| `htmlEl.whatever`         | Captures [~~] of the HTML element you use the method on      |
-| ------------------------- | ------------------------------------------------------------ |
-| `.parentElement`          | the parent element                                           |
-|                           |                                                              |
-| `.children`               | all the direct child elements <br />Creates an HTML collection that looks like an array. Suggest converting to an actual array with `Array.from()` |
-| `.firstElementChild`      | the first child                                              |
-| `.lastElementChild`       | the last child                                               |
-|                           |                                                              |
-| `.nextElementSibling`     | the sibling that comes directly after                        |
-| `.previousElementSibling` | the sibling that came right before                           |
-|                           |                                                              |
-
-FODDER: Don't bother using these methods- they each have counterparts in this table that work better
-
-.parentNode (may be the only 1 that's maybe worth using over .parentElement)
-.firstChild - useful counterpart is .firstElementChild
-.lastChild - useful counterpart is .lastElementChild
-.nextSibling - useful counterpart is .nextElementSibling
-.previousSibling - useful counterpart is .previousElementSibling
-
-#### .closest()
-
-The `closest()` method searches up the DOM tree for the closest elder element which matches a specified CSS selector. 
-
-- It starts at the element itself, then tests the parent, grandparent, and so on until a match is found. 
-- If a match is not found, this method returns *null*.
-
-```js
-let vari= htmlEl.closest('CSS_selector') // returns a matching element or null
-
-// Guard clause:
-if (!vari) return; // ends E-L early if closest() returns "null"
-```
-
-###### Sample Problem Description
-
-[Closest() (codepen.io)](https://codepen.io/NFuego24-7/pen/MWJzYWL?editors=1010)
-
-![image-20210421054709910](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421054709910.png)
-
-These button elements have spans inside them. If we want to apply E-Ls to them via delegation, we're going to run into a small problem
-
-```JS
-const tabsContainer = document.querySelector('.operations__tab-container');
-tabsContainer.addEventListener('click', e => {
-  const clicked = e.target;
-  console.log(clicked);
-});
-```
-
-![image-20210421055443741](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421055443741.png)
-
-- Clicking on the buttons works well- they return the button elements. 
-  However, clicking on the inline span elements within the buttons, does not
-- Ideally, we want to click anywhere on the button (even the span), and have it return the button element
-
-###### Solution 
-
-- We have to use closest(), because it will select the element we're currently on when we click the button, AND it will search up for the nearest match for the CSS selector we feed it
-- closest() searches for the the nearest button element in this instance
-
-```JS
-tabsContainer.addEventListener('click', e => {
-  const clicked = e.target.closest('button'); // find nearest button element
-  console.log(clicked);
-});
-```
-
-![image-20210421060226962](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421060226962.png)
-
-
-
-### Parent of an Element
-
-#### .parentNode and .parentElement  
-
-These 2 methods are nearly identical, and can often be used interchangeably. 
-Their purpose is to target your imported HTML element's parents
-
-```js
-let listItem1 = document.querySelector(".list-group-item"); 
-listItem1.parentNode.style.flexDirection = "row"; // switched parent flex direc
-listItem1.parentElement.style.border = "5px dashed black"; //created border 
-```
-
-We brought the `li` element into JS, yet we managed to target its parent element `ul` for all our changes
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326184928187.png" alt="image-20210326184928187" style="zoom:80%;" />   ![image-20210326184857029](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326184857029.png)
-
-### Children of an Element
-
-#### .children 
-
-```js
-let unorderedList= document.querySelector("#items"); // bring in the UL element
-let listItems= unorderedList.children // this is an HTMLcollection, not an array
-console.log(listItems);
-listItems[2].color = "green" //FAILS, because listItems is not really an array
-```
-
-![image-20210326195936437](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326195936437.png)
-
-- This method creates an HTML collection, containing the direct children of the element we imported. (in this case, ul is the parent while 4 li's are the children)
-- If there are elements nested more than 1 level deeper, `.children` does not capture those. Direct-children only, no grandchildren or further descendants
-
-You CAN access individual entries in our node as if it were an array 
-
-- However, you cannot loop over it with a for loop normally- you must first overcome the fact that this is technically not a real array
-
-Method 1: 
-Convert the collection to an array using `Array.from()`
-Iterate over your newly created array with `forEach or map` methods
-
-```js
-let unorderedList = document.querySelector("#items"); // bring in the UL element
-let listItems = Array.from(unorderedList.children); //NOW this is an array
-
-listItems.map((li) => {
-  li.style.color = "blue";
-});
-```
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326184928187.png" alt="image-20210326184928187" style="zoom:80%;" /> 	Now the text is blue: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326200911563.png" alt="image-20210326200911563" style="zoom:80%;" />
-
-METHOD 2: Use a for loop and redefine the node inside
-
-```JS
-let unorderedList = document.querySelector("#items"); // bring in the UL element
-let listItems = unorderedList.children; // HTMLcollection
-
-for (let i = 0; i < listItems.length; i++) {
-  let tableChild = listItems[i]; // i guess this converts it? idk but it works 
-  tableChild.style.color="BLUE"
-}
-```
-
-
-
-#### .firstElementChild & .lastElementChild
-
-- firstElementChild fetches us the first element that's the child of the HTML element we imported to JS
-- lastElementChild fetches us the last element that's the child of the HTML element we imported to JS
-
-```JS
-let unorderedList = document.querySelector("#items"); // bring in the UL element
-let firstBornLI = unorderedList.firstElementChild;
-let lastBornLI= unorderedList.lastElementChild
-firstBornLI.style.backgroundColor='dodgerBlue'
-lastBornLI.style.backgroundColor="#909090"
-```
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210327060020835.png" alt="image-20210327060020835" style="zoom:80%;" />
-
-### Siblings
-
-#### .nextElementSibling and .previousElementSibling
-
-As their names suggest, these methods target the elements that come right before or after the HTML tag we import
-
-```js
-let secondLI = document.querySelector(".list-group-item:nth-child(2)");
-secondLI.nextElementSibling.style.backgroundColor="#E71989"
-secondLI.previousElementSibling.style.backgroundColor="#FFE042"
-```
-
-![image-20210327061631150](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210327061631150.png)
-
-
-
-### Useless Methods
-
-#### .childNodes 
-
-Is the useless version of the `children` method
-
-- Works the same as children, but adds in extra text nodes every time HTML elements are separated by a line jump (is the reason why we hardly ever use it)
-- These extra text nodes don't show up when the HTML elements kiss, but either way, we have better options to select our children
-
-```js
-let unorderedList = document.querySelector("#items"); // bring in the UL element
-let listItems = unorderedList.childNodes; // array-like node
-console.log(listItems);
-```
-
-![image-20210327053055468](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210327053055468.png)
-
-#### List of Remaining Useless Methods
-
-- For the record, just know that all of these are considered worthless because of the HTML line jump issue described above. 
-- They offer us text nodes we don't want to consider as family members to our elements
-  Each of these have their own counterpart that does not consider line jumps
-
-.firstChild - useful counterpart is .firstElementChild
-.lastChild - useful counterpart is .lastElementChild
-.nextSibling - useful counterpart is .nextElementSibling
-.previousSibling - useful counterpart is .previousElementSibling
-
-
-
-# DOM: Events
-
-### Add/Remove Classes with Event Listeners
-
-Event listeners have the power to cause something once the specified condition is met. Oftentimes, we add/remove/toggle CSS classes to make a visual change.
-
-- Typically, devs will give styles to a class in CSS, but they won't give any elements that class in the HTML doc- that's hardcoding.
-- Instead, they'll give the class to an element in JS, only when a certain condition is met (this is why event listeners are so crucial)
-
-One common example would be a login page. 
-
-- Your site's content could be given a class that's coded to be transparent in CSS. 
-- Once you give your email and password, that class can be taken away- letting you see what used to be invisible
-
-#### Structure of Event Listeners
-
-- The target element is the element that changes when you click something
-  It's typically an HTML import - though you can also directly target elements with their ID's
-
-- If you're dealing with multiple classes, use 2 sets of quotation marks and separate them with a comma `('bg','bd')`
-- Event listeners typically use arrow functions due to how compact they are
-  The official term for these functions are EVENT HANDLERS
-
-![image-20210204090413044](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210204090413044.png)
-
-We can do more than just add classes in the callback function. 
-You can save the event listener to a variable, and it'll still work as if it wasn't
-
-#### Explanation of the Above 
-
-Know that my terminology differs fr/ official sources
-
-instigation element: `add`
-
-- Click the element with id="add"... something happens to itself and/or another element
-- Can also point to the instigation element using classes (shown in the "Add a singular class" example found later in this lesson)
-
-target element: `$hello`
-
-- $hello is an imported HTML element. This element is going to have the class "bg" added to it when someone clicks the id="add" element
-- This is one of the cases where the instigation/target elements are not the same
-
-![image-20210204090808826](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210204090808826.png) ![image-20210204090943726](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210204090943726.png)
-
-![image-20210226103722178](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210226103722178.png)
-
-When we press the add button (which has id="plus"), the classes are added to the hello world box, not the add button itself
-
-#### Different Kinds of Event Listeners
-
-Different action keywords allow us to....
-
-1) Add a singular class		 2) Add multiple classes
-
-2) Remove a singular class 	 4) Remove multiple classes
-
-3) Toggle a class on/off		6) Check if class/classes are active
-
-HTML CODE:
-
-```html
-  <div class="controls"> 
-    <!--% Class Controller. 
-Performs many operations (see their ID's)-->
-      <button id="plus">Add</button>
-      <button id="ditch">Remove</button>
-      <button id="flip">Toggle</button>
-      <button id="checkIt">Check</button>
-      <button id="plusAll">Add All</button>
-      <button id="clear">Remove All</button>
-    </div>
-
-    <div class="hello">
-      Hello World!
-    </div>
-```
-
-CSS CODE:
-
-```CSS
-.bg { background-color: gray; color: white;}
-.bd { border: 5px solid pink;}
-
-/* bg class makes the box gray with white text*/
-/* bd class adds a black border*/
-/* Some code was excluded above, but it was purely aesthetic*/
-```
-
-JS CODE:
-
-```js
-const $hello= document.querySelector('.hello');
-```
-
-//—————————————————————【】——————————————————————————
-
-If you're adding/removing/toggling classes, the dev tools will be updating in real time-telling you what classes or styles are active
-
-ADD A SINGULAR CLASS:
-
-```JS
-plus.addEventListener('click', ()=>{     //% targets el. with id="add"
-  $hello.classList.add('bg'); 
-  //~"bg" class added to .hello element
-})
-```
-
-ADD MULTIPLE CLASSES:
-
-```JS
-plusAll.addEventListener('click', ()=>{    //% targets el. with id="addALL" 
-  $hello.classList.add('bg', 'bd'); 
-  //~ Adds both the bg and bd classes to .hello element
-})
-```
-
-REMOVE A SINGULAR CLASS:
-
-```js
-ditch.addEventListener('click', ()=>{     //% targets el with id="remove"
-  $hello.classList.remove('bg'); 
-  //~ "bg" class removed from .hello element
-})
-```
-
-REMOVE MULTIPLE CLASSES:
-
-```js
-clear.addEventListener('click', ()=>{    //% targets el with id="removeAll"
-  $hello.classList.remove('bg', 'bd'); 
-  //~ Removes both the bg and bd classes to .hello element
-})
-```
-
-TOGGLE A CLASS ON/OFF: (does not work with multiple)
-
-```js
-flip.addEventListener('click', ()=>{    //% targets el. with id="flip"
-  $hello.classList.toggle('bg'); 
-  //~ "bg" class toggled on/off on $hello element
-})
-```
-
-CHECK IF CLASS/CLASSES ARE ACTIVE
-
-```js
-checkIt.addEventListener('click', ()=>{     //% CHECK FOR CLASS
-  let hasOrNot = $hello.classList.contains('bg','bd');  
-  //~ Checks if el belongs to the "bg" OR 'bd' class. returns true if in either 
-  // We can perform actions based on if an element has a certain class now...
-})
-```
-
-
-
-#### Variations to this Procedure
-
-Instead of using the element with the id="add", import an HTML element using class
-Then replace the instigation element with the JS variable for the import
-
-```html
-<button id="plus" class="backup">Add</button>
-```
-
-```js
-const $howdy= document.querySelector('.backup');
-$howdy.addEventListener('click', ()=>{     //% ADD CLASS
-  $hello.classList.add('bg'); 
-})
-```
-
-^^ Works just as well as the ID method
-
-We can even skip the process of storing our element imports into variables. 
-Target elements for manipulation all in 1 line:
-
-```js
-document.querySelector('.backup').addEventListener('click', ()=>{     //% ADD CLASS
-  $hello.classList.add('bg'); 
-})
-```
-
-#### Full Codepen Example
-
-See here: Full Codepen Example: [Event Listeners (codepen.io)](https://codepen.io/NFuego24-7/pen/WNoQWwM)
-
-class "bg" gives its target a gray background and white text
-class "bd" gives its target a pink border 
-
-Lesson this series is based on: 
-[(1) How to Add and Remove Class in Javascript - YouTube](https://www.youtube.com/watch?v=IKzlUvYSZO4)
-
-
-
-### The Event Object
-
-When we create an event listener, our callback function lets us access the event object
-This object has a large number of properties
-
-Take a look at the general structure of an event handler defined within the event listener method:
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210204090413044.png" alt="image-20210204090413044" style="zoom: 33%;" />
-
-- The arrow function has no argument in this version- but event handlers do have 1 parameter hardcoded into them- the event object
-
-- This is just like how forEach looks have index values and array entries hardcoded into them
-
-```js
-let body = document.querySelector("body");
-
-function buttonClick(event) { console.log(event); }
-let a= body.addEventListener("click", buttonClick);
-```
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210329132415931.png" alt="image-20210329132415931" style="zoom: 80%;" />
-
-#### Relevant Properties
-
-These adhere to the event listener we created above- just imagine you swapped console.log() statements
-
-```js
-eventObj.type; 	// gives the event type
-
-eventObj.clientX; // gives the X position of where you clicked (rel2window)
-eventObj.clientY; // gives the Y position of where you clicked (rel2window)
-eventObj.offsetX; // gives the X position of where you clicked (rel2element)
-eventObj.offsetY; // gives the Y position of where you clicked (rel2element)
-```
-
-These next few methods return true or false, depending on if you clicked the event trigger with another key held down at the same time
-
-```js
-eventObj.shiftKey; // True if you shift-clicked, false if you didn't
-eventObj.altKey; 
-eventObj.ctrlKey;
-```
-
-#### Event target Properties
-
-These are important to understand when writing event handlers for multiple elements
-Just assume the event listener type is 'click' for all these explanations
-
-```js
-eventObj.target; 		// the element you clicked
-this; 					// same as .target
-eventObj.target.id; 	// gives the ID of the element you clicked on
-
-eventObj.currentTarget; 
-// gives the element whose eventListener triggered the event
-// Does not mean that this element is what was clicked on (or whatever your trigger is)
-// comes into play when bubbling occurs due to HTML element nesting
-
-eventObj.target.className; 		// gives a single string with all classnames in it
-eventObj.target.classList; 		// gives an ""array"" w/ each class as an entry
-```
-
-To illustrate the difference between `eventObj.target` and `eventObj.currentTarget` , use this demo: https://codepen.io/NFuego24-7/pen/wvgYGGv?editors=1010
-
-
-
-### Mouse Events
-
-There are more event triggers we can use aside from a traditional click on an element
-
-#### Click-Oriented Events:
-
-```
-"dblclick"		requires you to double click
-"mousedown"	 	trigger occurs as soon as you left click (does not wait for a release)
-"mouseup"  		similar to a click event
-```
-
-Difference between "click" and "mouseup":
-
-- With a mouseup event, you can click somewhere else on the screen, hold down the click button, and move the pointer to your mouseup element, and then release 
-- A click event requires the mousedown and mouseup event to happen on that element
-
-#### Hover-Oriented Events:
-
-Triggers event when...
-
-```
-"mousemove"		you move your mouse through the element field
-
-"mouseenter"	your mouse enters the element area (doesn't bubble)
-"mouseover"		same as above, but triggers again if you hover over child els inside 
-
-"mouseleave"	triggers event when your mouse leaves the element area
-"mouseout"		same as above, but triggers again if you exit child els inside 
-
-See 18:30 of this vid to see the diff: 
-https://www.youtube.com/watch?v=wK2cBMcDTss&t=838s
-```
-
-TIP FOR EVENT DELEGATION AND BUBBLING: 
-Use `mouseover and mouseout`
-mouseenter and mouseleave don't work with bubbling
-
-#### Inline HTML Mouse Events (try not to use)
-
-You can apply these directly onto elements in HTML if you want to set up events in JS 
-It's an inferior, old school alternative to the addEventListener method
-
-
-
-![image-20210419144322132](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419144322132.png)
-
-EXAMPLES:
-
-```html
-<p id="demo" onclick="myFunction()">Click me to change my text color.</p>
-
-<script>
-	function myFunction() {
-  		alert('You clicked a paragraph element')
-	}
-</script>
-```
-
-- Here, we define an "onclick" event and point the HTML element to the event handler which will be written in JS later
-- We can actually define the event handler right inside the HTML tag, but you probably shouldn't ( it's an extremely archaic way of doing things)
-
-```html
-<p id="demo" onclick="alert('You clicked a paragraph element')">Click me to change my text color.</p>
-```
-
-DISADVANTAGES
-
-- You can't apply multiple event listeners to one element
-  Using 2 on-events on a single element will cause the earlier ones to get overwritten
-- addEventListener lets us remove an event handler if we don't need it anymore, while on-events do not (see the temporary events lesson)
-
-### Keyboard Events
-
-Keyboard events are another form of event triggering, just like hitting a button
-
-- They are "global events" because they do not happen on one specific element
-- The main difference here is that we're pressing a button on our keyboard to trigger something, making this a keyboard event
-
-There are 3 kinds of keyboard events: `key down`   `key press`    `key up`
-
-|             | triggers an event when...                                    |
-| ----------- | ------------------------------------------------------------ |
-| `key up`    | we lift our finger OFF a key after pressing it first         |
-| `key press` | event triggers for this works a bit differently<br />It continuously fires when we keep our finger pressed on a key |
-| `key down`  | we tap a key                                                 |
-
-- When using keyboard event listeners, knowing which key has been pressed is important. 
-- You'll need to grab they "key" property from the object that's created as soon as you click anything(assuming a keyboard event is active)
-
-Check out this keyboard event we apply to the entire document
-The object is much larger than this- but the key property we care about is visible
-
-```js
-document.addEventListener('keydown', (eventObj) => console.log(eventObj));
-```
-
-We pressed Caps Lock:	![image-20210228151148045](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210228151148045.png)
-
-#### Applying Specific Keyboard Events
-
-Now that we can see the key property we need, we can use it to create conditional statements. We can tell JS to do something only if a specific key is pressed
-
-```js
-document.addEventListener("keydown", (eventObj) => {
-  if(eventObj.key==="Escape") console.log("We pressed the escape key");
-    // be careful. This is case sensitive. escape != Escape
-});
-```
-
-- We applied this to the entire webpage (because of document.~~)
-- "We pressed the escape key" gets logged every time someone presses ESC
-
-#### Checking Official Key Names:
-
-- If you're mapping actions to keyboard keys, you'll need their names- which we can find with a simple custom function 
-- They are case sensitive, so you'll need to be exact
-
-```js
-document.addEventListener("keydown", (eventObj) => {
-  console.log(eventObj.key);
-});
-```
-
-Pressed some keys: ![image-20210329163448714](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210329163448714.png)
-
-
-
-### Input Events
-
-These events deal with input fields
-
-```
-"focus"		fires when you left click inside an input field (selecting it)
-"blur"		requires an input field to be selected 1st. Fires when you click out
-
-"cut"		triggers event when you cut content inside the input field
-"paste"		triggers event when you paste content in your input field
-"input"		fires when you do anything in the input field (copy,cut,paste,type)
-
-"change"	fires when you select an option from a drop down list
-```
-
-#### Clearing Input Fields
-
-When you click/select an input field, you give it focus
-
-- If you successfully log in or fail to do so, you should erase the old contents of the input field and remove its focus
-
-- You probably want to place these upcoming actions in an event listener- specifically for the submit button (typically, fields clear after being submitted)
-
-Carefully decide what gets deleted though. 
-
-- If the user types in a correct username but wrong password, it'd be annoying to have to retype everything just because of 1 minor mistake
-
-EXAMPLE:
-
-Assuming we imported the HTML elements representing these input fields earlier, and named them `userField` and `pinField`
-
-```JS
-userField.value=""; // clears contents of username field
-userField.blur();	// removes focus
-pinField.value=""; // clears contents of PIN input field
-pinField.blur(); // removes focus
-```
-
-![image-20210331132200524](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210331132200524.png)	![image-20210331132107976](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210331132107976.png)
-
-
-
-#### Submit Button Event Handlers
-
-This one event type gets its own sub section because it's usually problematic. 
-Submit buttons usually have default behaviors that reload pages or send data 
-
-- If you want an event to happen after clicking them, you'll need to prevent that default behaviour with `eventObj.preventDefault();` in your event handler. 
-- You'll need to use the built-in event object parameter for your event handler
-
-```js
-btnClose.addEventListener('click', (eventObj) => {
-  eventObj.preventDefault(); // stops submit btn from reloading page
-  // ~~~ Whatever else you want to happen when you hit submit
-}
-```
-
-#### All form field Inputs are Strings
-
-- Remember, all typed user inputs in a form field are considered strings
-  Convert them when comparing them to numbers for example (PIN verification)
-- By default, hitting enter inside a form field will trigger a "click" event for the actual submit button
-
-![image-20210331091015679](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210331091015679.png)
-
-#### < Empty string > Bug
-
-Sometimes when you try to use the words/numbers typed inside input fields, JS will say what's written inside your fields is an `<empty string>` or `""` 
-
-See here: [JSFiddle - Code Playground](https://jsfiddle.net/JasonXtuyotech/bus7z458/10/)
-
-SOLN: Move the form field element imports out of the global scope and into the event handler. 
-
-### Temporary Event Listeners
-
-By using the addEventListener method, we can can make it so events are only listened for a limited number of times, or for a limited time period
-
-#### Remove Event based on Trigger Counts or Time
-
-GREEN: 	 Remove event after triggered once
-AQUA: 	  Remove event after triggered 3X
-PURPLE: 	Remove event after 4 seconds have passed
-
-```html
-<div id= "demo"></div>
-<div id= "demo2"></div>
-<script>
-//—————————————————————【GREEN】——————————————————————————
-	// Green box only has event active for 1
-	let greenEl= document.querySelector('#demo')
-    
-	let handler= ()=>{
-		alert('You clicked me')
-  		greenEl.removeEventListener('click', handler)
-	}
-    
-	greenEl.addEventListener('click', handler)
-//—————————————————————【AQUA】——————————————————————————
-	//Aqua box has event active for 3
-	let aquaEl= document.querySelector('#demo2')
-	let counter=0
-    
-	let handler2= ()=>{
-		counter++
-		alert('You clicked me')
-  	if(counter===3) aquaEl.removeEventListener('click', handler2)
-	}
-    
-	aquaEl.addEventListener('click', handler2)
-    //—————————————————————【PURPLE】———————————————————————
-	let purpleEl= document.querySelector('#demo3')
-    
-	let handler3= ()=>{ alert('You clicked me') }
-	purpleEl.addEventListener('click', handler3)
-    
-	setTimeout(()=>{
-		purpleEl.removeEventListener('click', handler3)
-	},4000)
-    
-</script>
-```
-
-![image-20210419161420324](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419161420324.png)
-
-TEST HERE: https://jsfiddle.net/JasonXtuyotech/oah4857w/46/
-
-In both examples, we define our callback ƒ() externally. 
-
-- Inside them, we use the `removeEventListener` method, with the exact same parameters used in the `addEventListener` method for that element
-- To listen for an even more than once, but not infinity times, use a counter variable
-  Wrap your `removeEventListener` in an if statement
-
-
-
-### Preventing Default Behaviors
-
-As described in the previous lesson, many items on a webpage have default behaviors that me may want to disable with `preventDefault()`
-
-- Submit button reloads the page when pressed
-
-- An anchor link with `href=#` as an attribute brings you to the top of the webpage
-- An anchor with `href="#some-id"` would scroll to an element on the page with that specific ID
-
-#### Where to Apply preventDefault()
-
-Typically, the event handlers are defined inside the event listener. 
-So, we cancel default behaviors in there
-
-```js
-elementName.addEventListener('click', (eventObj) => {
-  eventObj.preventDefault(); // stops default behaviors
-}
-```
-
-If the event handler is a callback function we defined elsewhere, we must cancel the default behavior wherever that callback is located
-
-![image-20210411210921116](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210411210921116.png)
-
-In the above photo, we were applying event listeners to `btnElement`, a node list of buttons captured by `querySelectorAll`
-
-**Note:** Not all events are cancelable. Use the [cancelable](https://www.w3schools.com/jsref/event_cancelable.asp) property to find out if an event is cancelable.
-
-
-
-### Trick for Multiple Event Listeners on the same Element
-
-PREREQUISITES
-
-1. Multiple event listeners being applied to the same HTML element
-   Event types may vary
-2. The same callback function is being used on all of them
-
-#### Demonstration
-
-```js
-window.addEventListener('hashchange', callbackA) 
-window.addEventListener('load', callbackA) 
-```
-
-Refactored:
-
-```js
-['hashchange','load'].forEach((eventType)=> window.addEventListener(eventType, callbackA))
-```
-
-
-
-### Rendering Efficiently
-
-When building more complex applications, you'll be generating and rendering new HTML constantly, whenever someone interacts with your site.
-
-- If you constantly re render the entire DOM after every state change, that will be terrible for performance
-- Instead, we need to use a technique called Paint Flash rendering, which is performed automatically in React but can be replicated in vanilla JS
-
-#### How does React Update the DOM?
-
-Virtual DOM: 
-A virtual representation of the DOM which only exists in our computer's memory- but is not actively on the webpage
-
-React will make 2 virtual copies of the DOM:
-
-1.  A representation of your DOM's current state
-2.  A representation of the DOM after a state change 
-    Usually means "after you generate new HTML and render it"
-
-NOW WHAT?
-
-- Once those 2 representations are made, React will compare the 2 and only change the current DOM in the specific areas where the 2 differ. 
-- This way, you get your requested changes, but only re render things when absolutely necessary- saving performance
-
-#### Replicating React Rendering in JS
-
-React is written in JS, so you can absolutely replicate the process described in the previous subsection- although admittedly it is effortless in React and a pain in vanilla JS
-
-TRY USING THIS:
-
-```JS
-  update(data) {
-    this._data = data; // update class _data variable
-    // Set data variable equal to the info we pass in as an arg 
-    // (info came from model=>controller)
-    const newMarkup = this._generateMarkup(); // uses _data (can't see how atm)
-    const newDOM = document.createRange().createContextualFragment(newMarkup);
-    // Capture all els w/in the current HTML container and the one about 2Brendered
-    // conv nodelists into arrays with Array.from(), you can loop over them ATST
-    const newElements = Array.from(newDOM.querySelectorAll('*'));
-    const curElements = Array.from(this._parentElement.querySelectorAll('*'));
-
-    newElements.forEach((newEl, i) => {
-      const curEl = curElements[i];
-      // 1) Updates changed TEXT
-      // Changes old DOM elements with new DOM elements, 
-      // but only those whose text content's changed
-      if (
-        !newEl.isEqualNode(curEl) &&
-        newEl.firstChild?.nodeValue.trim() !== ''
-      ) {
-        curEl.textContent = newEl.textContent;
-      }
-      // 2) Updates changed ATTRIBUTES
-      // We change the old attributes with the new ones
-      if (!newEl.isEqualNode(curEl)) {
-        console.log(newEl.attribute); 
-        // logs attributes of all EL's that have changed
-        Array.from(newEl.attributes).forEach(attr =>
-          curEl.setAttribute(attr.name, attr.value)
-        );
-      }
-    });
-  }
-```
-
-#### EXAMPLE: forkify
-
-For an example of what I just described, feel free to check out the forkify git repo I've posted
-Look in View.js, update() method
-
-- Be aware that the functions we used are not robust enough for IRL professional work
-  You'd probably want o use a framework like React that does it automatically
-- Use them to learn or as a tool for your smaller code projects
-
-Explanation: https://www.udemy.com/course/the-complete-javascript-course/learn/lecture/22649619#questions/5589754
-
-# DOM: Event Delegation & Bubbling
-
-### Bubbling/Capturing (S1)
-
-JavaScript events have a capturing phase and a bubbling phase- and they are incredibly important properties to understand
-
-- A common 'click' event is generated at the document root, at the top of the DOM tree. 
-  It's not generated at the element the event listener's attached to
-- This event travels down a path of different elements, then back upwards
-  Along the way, it sets off event listeners of the same type
-
-QUICK REVIEW ON EVENT OBJECT PROPERTIES:
-Assuming we're using 'click' event listeners
-
-`eventObj.currentTarget` : the element whose event listener triggered (could be bubbled)
-`eventObj.target` : the element we actually clicked on (or whatever trigger)
-`this` keyword: the exact same thing as `eventObj.target`
-
-#### Explanations for Bubbling and Capturing
-
-![image-20210419224729646](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419224729646.png)
-
-In the example on the left, several elements are nested in each other. 
-The diagram in the middle is like a family tree with 1 branch, showing the hierarchy
-Assume each one of these elements has an <u>event listener with the same type (ex. click)</u>
-
-SCENARIO
-
-- Anchor `<a>` and `<section>` elements both have 'click' event listeners used on them
-- Their event handlers can perform the same actions or do completely different things, but the event listener types MUST be the same for bubbling to occur
-- Can both involve events based on 'click', or 'mouseenter'...etc
-
-If someone clicks the `<a>` element, the handler for `<a>` and `<section>` will go off
-This is because `<a>` is below `<section>` on the chain, and bubbling occurs upward
-
-If someone clicks on the `<section>` element, only its handler goes off (in this ex.)
-The event for `<section>` bubbles up the chain, not down
-If something higher on the chain than `<section>` had a click event, that would go off
-
-Now, let's say I click the anchor tag, which is nested fairly deeply
-
-- The click event is not generated down where element `<a>` is
-  It's generated at the document root, at the top of the DOM tree
-- From there, the so-called capturing phase happens, where the event then travels all the way down from the document root to the target element `<a>`
-
-#### Phases Described in Detail
-
-CAPTURING PHASE (represented by downward arrows)
-
-As the event travels down the tree, it will pass through every single parent element of the target element 
-
-TARGET PHASE
-Event listeners wait for a certain event to occur on a certain element. Once the condition is met, they run the callback function in this phase
-
-BUBBLING PHASE (represented by upward arrows) 
-After reaching the target, the event then actually returns all the way up to the document root, passing all its elders again.
-
-#### Event Delegation Intro
-
-Event delegation is when we use bubbling to our advantage by attaching an event listener to a common parent of all the elements we're interested in. (practical example shown in next lesson)
-
-EXAMPLE 1:
-
-> ![image-20210420064632116](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210420064632116.png)
->
-> There's some jQuery here- it adds an event listener to the parent and child element. (other element has none)
-
-Click on the child: ![image-20210420064849720](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210420064849720.png)
-
-Explanation of console logs:
-Child event is clicked, so its event handler goes off 
-Parent element also has a click event listener, so that handler goes off too 
-
-Click on parent: ![image-20210420065113176](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210420065113176.png)
-
-Explanation of console logs:
-Parent's click event handler goes off, but not the child's
-
-Click on other: ![image-20210420065226980](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210420065226980.png)
-
-Other element never had an event listener applied to it directly. 
-Since it's inside the parent element anyway, its as if you clicked that instead
-
-EXAMPLE 2: https://codepen.io/NFuego24-7/pen/wvgYGGv
-
-I created my own demonstration for the above phenomenon, and included console logs of `eventObj.target` and `eventObj.currentTarget` , so you can adequately understand the difference
-
-#### Practical Demonstration
-
-DEMO: https://jsfiddle.net/JasonXtuyotech/4fpaw8Lt/2/
-
-![image-20210419183345951](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419183345951.png)
-
-In this navbar, we have `<a>` nested in `<li>` nested in `<ul>` 
-
-- We have an event listener applied to each groups of these elements, which generates a random color for their background
-- It's easy to see which elements have their events triggered, because their appearance will look drastically different than their original states
-- The console will also log which event handlers go off
-
-![image-20210419181433418](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419181433418.png)
-
-JS CODE:
-
-```js
-let a_tag = document.querySelector(".nav__link");
-let li_tag = document.querySelector(".nav__item");
-let ul_tag = document.querySelector(".nav__links");
-function getRandomColor() { generates random color **}
-
-a_tag.addEventListener("click", () => {
-  a_tag.style.backgroundColor = getRandomColor();
-  console.log("anchor!");
-  // eventObj.stopPropagation() 
-  // UNCOMMENT TO PREVENT BUBBLING
-});
-
-li_tag.addEventListener("click", () => {
-  li_tag.style.backgroundColor = getRandomColor();
-  console.log("list item!");
-});
-
-ul_tag.addEventListener("click", () => {
-  ul_tag.style.backgroundColor = getRandomColor();
-  console.log("unordered list item!");
-});
-```
-
-#### Explanations
-
-TEST 1: Click on "Features"
-When we clicked on the element nested deepest, its elders got their colors changed
-
-![image-20210419183749463](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419183749463.png) ![image-20210419183758810](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419183758810.png)
-
-TEST 2: Click on the space between nav links
-We we clicked on the element at the top of the chain, only it got changed
-
-![image-20210419183850054](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419183850054.png) ![image-20210419183910374](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419183910374.png)
-
-TEST 3: Prevent bubbling with `eventObj.stopPropagation()` then click "Features" again
-Now, when we click an anchor tag, only its color gets changed
-
-- The location of `.stopPropagation()` can be seen in our JS code snippet 
-  (is commented out for all tests except for this one)
-- This is useful in complex scenarios where you have more than one event handler for the same events
-- However, stopping the propagation of events is apparently not a good idea normally
-
-REMEMBER:
-
-The `eventObj.target` is the same across all 3 of our handlers- due to bubbling passing the same event across multiple elements
-
-THIS TEST COULD'VE BEEN PERFORMED BETTER:
-
-For the record, it's pretty tough being able to click on `li` but not `a` at the same time, just because of my CSS. 1 background color has been overshadowed by another, but the point behind the lesson still stands
-
-Better execution fr/ tutorial: ![image-20210419184554915](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419184554915.png)
-
-#### Capturing
-
-We hardly ever have a practical use for capturing over bubbling these days. 
-It only remains in JS for legacy reasons. 
-
-- Still, capturing can be activated by setting a third argument in your event listener to the Boolean "true"
-- This causes the inverse of typical bubbling behaviour. Event listeners trigger things on the way down instead of up
-
-```js
-htmlEl.addEventListener('click',()=>{whatever}, true)
-```
-
-By default, the third argument for an event listener is set to false
-Only set it to true when you want to use capturing (hardly ever)
-
-
-
-### Writing Handlers for Multiple Events (S2)
-
-So far, you've stuck to defining event handlers within the listeners they're meant for. If several listeners share the same callback however, you can't hardcode certain values
-
-#### Important Event Object Properties
-
-`eventObj.currentTarget` : the element whose event listener triggered (could be bubbled)
-`eventObj.target` : the element we actually clicked on (or whatever trigger)
-`this` keyword: the exact same thing as `eventObj.target`
-
-EXAMPLE:
-
-```html
-<button id="uno" style="width: 50px">1</button>
-<button id="dos" style="width: 50px">2</button>
-<button id="tre" style="width: 50px">3</button>
-<script> 
-	let handler= function(eventObj){
-		alert(eventObj.currentTarget.innerText)
-  		console.log(eventObj.target.innerText);
-	}
-	uno.addEventListener('click',handler)
-	dos.addEventListener('click',handler)
-	tre.addEventListener('click',handler)
-</script>
-```
-
-OUTPUT: Press "1" button, get an alert and console log containing "1"
-
-In this example, we have no nested elements in HTML, so the choice we make really doesn't matter
-
-TEST IT OUT: https://jsfiddle.net/JasonXtuyotech/kc70p6bn/9/
-
-The event object properties described earlier can help cut down your code
-
-#### Problem Description:
-
-![image-20210420005132988](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210420005132988.png)
-
-Take a look at this navbar. We want each click on a nav link to take us to that section of the page, with smooth scrolling
-
-![image-20210420005423283](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210420005423283.png)
-
-#### Solutions 1-2 in Detail
-
-SOLUTION 1: Define each event handler inside the listener
-
-```js
-// HTML elements imported earlier***
-featuresLink.addEventListener('click', (e) => {
-  e.preventDefault()
-  document.getElementById('section--1').scrollIntoView({ behavior: 'smooth' });
-});
-operationsLink.addEventListener('click', (e) => {
-  e.preventDefault()
-  document.getElementById('section--2').scrollIntoView({ behavior: 'smooth' });
-});
-testimonialsLink.addEventListener('click', (e) => {
-  e.preventDefault()
-  document.getElementById('section--3').scrollIntoView({ behavior: 'smooth' });
-});
-```
-
-SOLUTION 2: Recycle a handler that can be used on all nav links
-
-```js
-let handler= function(e){
-  e.preventDefault()
-  let destinationID= e.target.getAttribute("href") // equals #id-name
-  // (changes per element. Each event listener is applied to a new one)
-  console.log(destinationID);
-  document.querySelector(destinationID).scrollIntoView({ behavior: 'smooth' });
-}
-featuresLink.addEventListener('click',handler)
-operationsLink.addEventListener('click',handler)
-testimonialsLink.addEventListener('click',handler)
-```
-
-SOLLUTION 2.5: Use forEach to apply the handler function (will only describe)
-
-- We could even apply event listeners to an array of anchor links captured with querySelectorAll if we wanted. 
-- It would stop us from applying the handler function 3 times individually. 
-  We'd apply it 3 times in 1 go instead
-- Though this is easier to read, you'd still be applying this same callback thrice. 
-  A more efficient method would be to use event delegation (next lesson)
-
-SOLUTION 3: Event Delegation
-
-
-
-### Event Delegation (S3) - Fix the span in Button Issue
-
-#### Simple Example
-
-Event delegation is when we use bubbling to our advantage by attaching an event listener to a common parent of all the elements we're interested in
-
-Take a navbar, and make clicking the links return the `<li>` element they're nested in
-You are not allowed to attach event listeners to all anchors, use bubbling/delegation
-
-PERSONAL TUT: https://drive.google.com/file/d/1eqp3l_u6l5abuzNf3UDqXEpSw_Jda0PR/view
-CODE: [Event Delegation (codepen.io)](https://codepen.io/NFuego24-7/pen/MWJzeOG)
-
-```html
-<ul class="nav__links">
-  <li class="nav__item">
-    <a class="nav__link" href="#section--1">Features</a>
-  </li>
-  <li class="nav__item">
-    <a class="nav__link" href="#section--2">Operations</a>
-  </li>
-  <li class="nav__item">
-    <a class="nav__link" href="#section--3">Testimonials</a>
-  </li>
-  <li class="nav__item">
-    <a class="nav__link nav__link--btn btn--show-modal" href="#">Open account</a>
-  </li>
-</ul>
-```
-
-JS:
-
-```JS
-console.clear()
-const navContainer= document.querySelector(".nav__links")
-
-navContainer.addEventListener('click', (e) => {
-  let clicked= e.target.closest("li") // returns li nested upwards or in place
-  if(!clicked) return // guard clause in case there are no li elders around
-  console.log(clicked);
-})
-```
-
-Remember that closest looks up the DOM, it doesn't just find the nearest element that happens to be `<li>` (see the lesson)
-
-We now click on the general area where these elements are. If we hit `<li>` or `<a>`, we'll get the li element returned to us. If we hit the `<ul>` and nothing else, nothing will happen. 
-
-#### SOLUTION 3:
-
-Let's solve last lesson's problem with event delegation now 
-
-- Look at our last solutions- it looks efficient, but in reality we're copying the same function and event listener 3 times
-
-- What if we were attaching the handler ƒ() to 1000 buttons? That'd be inefficient
-
-Step 1) Add event listener to the common parent element (`<ul>` in this case)
-Step 2) Determine what element originated the event (which el we clicked on)
-
-WANT:
-
-- Clicking a nav link anchor element smooth scrolls us to the location dictated by the `<a>` tag's href value. 
-- We also don't want to apply event listeners to those tags individually multiple times
-  Is time consuming and bad for performance when you have a lot of elements
-
-PLAN:
-Chain => `<ul>` parent of `<li>` parent of `<a>`
-
-- So, we'll apply an event listener to `<ul>`, but make it so it only performs an action if you click on the anchor `<a>`
-- This step is necessary, or else clicking anywhere on the nav would sooth scroll us somewhere, which would be annoying AF
-
-```js
-let ulElement = document.querySelector('.nav__links');
-
-ulElement.addEventListener('click', e => {
-  e.preventDefault();
-  //# Now, make sure the element you clicked is the anchor <a>
-  let isAnchor = e.target.classList.contains('nav__link'); // returns T/F
-  // if the element you clicked IS an anchor, it'll be in the nav__link class
-  //# Once you verify, smooth scroll to the location dictated by its href value
-  if (isAnchor === true) {
-    let destinationID = e.target.getAttribute('href');
-    document.querySelector(destinationID).scrollIntoView({ behavior: 'smooth' });
-  }
-});
-```
-
-FULL SOLUTION: https://codepen.io/NFuego24-7/pen/KKaGaRB
-
-#### Great Use Case
-
-- When working on larger projects, you'll be rendering lots of new HTML for your webpage, and you'll want event listeners to be set on startup
-- You can't  `document.querySelector("")` an element that does not exist, but you can use event bubbling and delegation
-
-If curious, take a look at your forkify project's controller module. 
-The bottom of that file has several event listeners set up that way
-
-IN VIEW:
-![image-20210708160828625](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210708160828625.png)
-
-![image-20210708161647974](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210708161647974.png)
-
-IN CONTROLLER:
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210708162108912.png" alt="image-20210708162108912" style="zoom:80%;" />
-
-# Intersection Observer API
-
-Typical Uses:
-
-- Lazy-loading of images or other content as a page is scrolled.
-- Implementing "infinite scrolling" web sites, where more and more content is loaded and rendered as you scroll, so that the user doesn't have to flip through pages.
-- Reporting of visibility of advertisements in order to calculate ad revenues.
-- Deciding whether or not to perform tasks or animation processes based on whether or not the user will see the result
-
-### API Basics
-
-#### Definitions 
-
-|                | What it is                                                   |
-| -------------- | ------------------------------------------------------------ |
-| target element | the element we're checking is in range of the root or root element |
-| root           | The reference for what the target element will be intersecting<br />root: htmlEl makes the reference an element on your page<br />root: null makes the reference the viewport |
-| rootMargin     | operates just like the CSS margin property "40px 0px 0px 0px" [TRBL] Negative values extend the trigger area for target elements<br />Positive values reduce the trigger area<br />Can be set in px or percent which is based on the target element dims |
-| threshold      | The percent of the target element that must be inside the viewport if root equals 0 for example. (threshold of 0.5 means that half must be on screen for your callback to go off) |
-| entries        | An array containing objects which house several useful properties which you'll likely use to write your event handlers |
-| observer       | `observer.unobserve(entry.target);` is often used to stop the API from observing an element after its been detected once. "entry" is just a name given to one of entries' array values- can be called something else |
-
-If unspecified, `threshold:0` and `root:null`
-
-entries:  <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421170645872.png" alt="image-20210421170645872" style="zoom:80%;" />
-
-observer: ![image-20210421170820886](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421170820886.png)
-
-#### How the Entries Array of Objects Works:
-
-Let's say you have 4 target elements. Upon loading, your callback function goes off 4 times- once for each element. The entries array will contain 4 objects total
-
-When you scroll down your page, you're eventually going to intersect with some target elements. 
-
-- If you intersect with 1, the entries array will contain one object. 
-- If you encounter 2 at the same time, it will have 2 objects
-- Every time a handler is invoked for a new target element encounter, the previous one seems to be discarded. 
-- The current entries array length is dictated by how many target elements are detected right at that moment (with the exception of the very start, as I explained)
-
-(I came up with this, but it may need additional verification)
-TEST HERE: [Entries Observation (codepen.io)](https://codepen.io/NFuego24-7/pen/mdRaRZP)
-
-#### ENTRIES PROPERTIES:
-
-| entries.             | gives...                                                     |
-| -------------------- | ------------------------------------------------------------ |
-| `isIntersecting`     | a Boolean based on if targetEl is intersecting the root at this exact moment |
-| `intersectionRatio`  | a rough ratio estimation of where a callback is invoked.<br />If threshold is 0.4, you'd get around 0.38 if you were scrolling into targetEl, and 0.41 if you were scrolling it out. |
-| `boundingClientRect` | the width, height, and L/R/B/T measurements relative to viewport (visual seen below) |
-| `target`             | the target element you're seeking intersections for          |
-|                      |                                                              |
-
-`.boundingClientRect` provides:  <img src="https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect/element-box-diagram.png" alt="img" style="zoom: 33%;" />
-
-#### THRESHOLD VALUE MEANINGS
-
-|                 | triggers event when...                                       |
-| --------------- | ------------------------------------------------------------ |
-| `threshold:0`   | any part of the target el gets on screen, or when all of it leaves |
-| `threshold:1`   | the entire target el is on screen (impossible if targetEl's bigger than the viewport) |
-| `threshold:0.4` | 40% of target element must be on screen to invoke the callback function |
-
-#### MULTIPLE THRESHOLD VALUES
-
-- You can have multiple thresholds in an array if you want- just make sure to loop over the entries argument inside the handler (assuming you need it)
-- You can loop over entries even if you only have 1 threshold. 
-  Just do that every time, for simplicity
-
-![image-20210422112637658](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210422112637658.png)
-
-#### CALLING THE OBSERVE FUNCTION ON 2+ ELEMENTS
-
-You have the option to use the API on several elements at once by looping over your observe function with your target element inside
-
-![image-20210422114349475](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210422114349475.png)
-
-#### THE API START-UP ISSUE 
-
-This API will automatically invoke the callback function as soon as the page loads up- regardless whether the target element intersects the root or not 
-
-That being said, `entries.isIntersecting` will still return an accurate true/false value. Use that in your callback function to guard yourself from this problem
-
-#### UNDERSTANDING ENTRIES (return4)
-
-I'll admit, I don't fully comprehend how this aspect of the API works. Not sure if the number of elements in this array is dependent on the number of target elements, or thresholds, or whatever.
-
-- To negate this, I use forEach on every entries array I deal with, then filter out all values that don't matter using if statements. (slightly worse for performance)
-
-![image-20210423122033473](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210423122033473.png)
-
-- I've seen the Udemy instructor pick out which array value from entries they want. 
-  Go back and review this video at 7:08 to see what I mean (picture above)
-
-[The Complete JavaScript Course 2021: From Zero to Expert! | Udemy](https://www.udemy.com/course/the-complete-javascript-course/learn/lecture/22648999#questions)
-
-
-
-### Example Problems
-
-#### Challenge 1: Track 1 Element's Ins and Outs
-
-CHALLENGE DESCRIPTION: 
-Log a message to the console when an element ENTERS the screen (any % of it)
-Log a message to the console when an element EXITS the screen fully (0% on screen)
-Be sure to ignore the first callback function invocation (no message at all)
-
-Refer to the element entering and leaving the screen with its ID
-
-```html
-<h1>SCROLL DOWN AND SEE WHAT'S IN STORE</h1>
-<p id="p1"> Long paragraph ~ </p>
-<section>pads out space</section>
-```
-
-JS CODE:
-
-```js
-//# Define options array
-const obsOptions = {
-  root: null, // Viewport is the frame of reference
-  threshold: 0, // trigger ƒ() if any of the targetEl is on screen
-};
-//# Observe callback ƒunction
-let count = 0;
-const obsCallback = function (entries, observer) {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) console.log(entry.target.id + " on screen");
-    if (!entry.isIntersecting) {
-      count > 0 && console.log(entry.target.id + " NOT on screen");
-      count++;
-      // if count is at least 1, then log a message (skips the first invocation)
-    } 
-  });
-};
-
-//# API call, specify the target element
-const paraChecker = new IntersectionObserver(obsCallback, obsOptions);
-paraChecker.observe(document.querySelector("p")); // target element
-```
-
-FULL SOLUTION: https://jsfiddle.net/JasonXtuyotech/9z3bu1hf/14/
-
-INCOMPLETE SOLUTION: https://jsfiddle.net/JasonXtuyotech/uharz6Ld/5/
-
-The incomplete solution does not address the problem where callbacks are invoked on page-loading. (Test the difference between these 2)
-
-#### CHALLENGE 2: Track 4 Elements' Ins and Outs
-
-Repeat, but track if any part of 4 paragraph elements are on screen
-Track all 4 of them entering and leaving all at the same time
-
-```html
-<h1>SCROLL DOWN AND SEE WHAT'S IN STORE</h1>
-<p id="p1"> Long paragraph ~ </p>	<p id="p2"> Long paragraph ~ </p>
-<p id="p3"> Long paragraph ~ </p>	<p id="p4"> Long paragraph ~ </p>
-<section>pads out space</section>
-```
-
-Aside from the HTML looking different, this is the only change:
-
-```JS
-"use strict";
-const allParagraphs = document.querySelectorAll("p");
-//# Define options array
-const obsOptions = {
-  root: null, // Viewport is the frame of reference
-  threshold: 0, // trigger ƒ() if any of the targetEl is on screen
-};
-//# Observe callback ƒunction
-let count = 0;
-const obsCallback = function (entries, observer) {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) console.log(entry.target.id + " ON screen");
-    if (!entry.isIntersecting) {
-      count > allParagraphs.length - 1 && console.log(entry.target.id + " OFF screen");
-      count++;
-      // (skips the first 4 invocations) 
-    } 
-  });
-};
-
-//# API call, specify the target element
-const paraChecker = new IntersectionObserver(obsCallback, obsOptions);
-allParagraphs.forEach((para) => {
-  paraChecker.observe(para); // target element
-});
-```
-
-SOLUTION: https://jsfiddle.net/JasonXtuyotech/1k72vanj/6/
-
-This time, we needed to ignore the first 4 callbacks. 
-
-- We have 4 elements, and the API will think all of them are in the viewport at start. 
-- Change the condition regarding your count variable. 
-  Don't hardcode the number 4 either 
-- Let JS calc how many elements there are to ignore using the captured target elements' array/nodelist (assuming you used `document.querySelectorAll` or an equivalent)
-
-
-
-#### CHALLENGE 3: Track 4 Elements w/ Diff Thresholds
-
-CHALLENGE DESCRIPTION: 
-Log a specific message to the console when each element FULLY is on screen (100%)
-Log a message to the console when an element EXITS the screen fully (0% on screen)
-Be sure to ignore the first callback function invocation (no message at all)
-Refer to the elements entering and leaving the screen with its ID
-
-HINT: You'll need 2 threshold values. 
-Fully exit screen needs a threshold is 0
-Fully on screen needs a threshold of 1
-
-Don't skip the initial callbacks this time. Just make sure the logs accurate tell you if an element is on screen or not
-
-```html
-<h1>SCROLL DOWN AND SEE WHAT'S IN STORE</h1>
-<p id="p1"> Long paragraph ~ </p>	<p id="p2"> Long paragraph ~ </p>
-<p id="p3"> Long paragraph ~ </p>	<p id="p4"> Long paragraph ~ </p>
-<section>pads out space</section>
-```
-
-JS Code:
-
-```js
-const allParagraphs = document.querySelectorAll("p");
-//# Define options array
-const obsOptions = {
-  root: null, // Viewport is the frame of reference
-  threshold: [0, 1], // trigger ƒ() if any of the targetEl is on screen
-};
-//# Observe callback ƒunction
-let count = 0;
-const obsCallback = function (entries, observer) {
-  entries.forEach((entry) => {
-    //&—————————————————————【 Is element fully onscreen? 】——————————————————————————
-    if (entry.isIntersecting && entry.intersectionRatio === 1) {
-      console.log(entry.target.id + " fully ON screen");
-    }
-    //&—————————————————————【 Is element FULLY offscreen? 】——————————————————————————
-    if (!entry.isIntersecting) console.log(entry.target.id + " fully OFF screen");
-  });
-};
-
-//# API call, specify the target element
-const paraChecker = new IntersectionObserver(obsCallback, obsOptions);
-allParagraphs.forEach((para) => {
-  paraChecker.observe(para); // target element
-});
-```
-
-SOLUTION: https://jsfiddle.net/JasonXtuyotech/1vtzhpoq/4/
-
-Logic Explained:
-
-We need to feed the API 2 thresholds to be on the lookout for. 
-Naturally, more event handlers are going off than we bother to show. 
-
-We only have 2 circumstances in mind where we want the console to log a message
-Define those circumstances, then code the actions to be taken after they're met
-The circumstances should be described using properties of the entries object
-
-#### CHALLENGE 4: Stop Tracking Elements after they're found
-
-With all previous challenges, the API detects a target element intersecting the root, which is usually the viewport. You can scroll all the way down a webpage, then back up- while the API detects every new intersection that occurs because of it
-
-- Some features don't need more than 1 detection for a target element
-- Example: Text animation occurring only when you scroll deep enough. 
-  Once an animation fires, that's it. No reason to let the API keep running tests
-
-###### How to do this:
-
-This is where we need the observe parameter built into the handler function 
-
-```js
-observer.unobserve(targetEl); // stops API from detecting a target element
-```
-
-- This works best when the browser determines what has already been detected
-  Use this in the entries forEach loop you rely on so much
-- The above method is effective, but this can be applied in slightly different ways (see the Udemy video ending about "Revealing Elements on Scroll")
-
-###### Back to the Challenge:
-
-Take Challenge 1, and tweak it...
-
-Version A 
-Stop detecting the element after it's found to be on screen 
-Exclude initial event handler going off
-
-```js
-//# Define options array
-const obsOptions = {
-  root: null, // Viewport is the frame of reference
-  threshold: 0, // trigger ƒ() if any of the targetEl is on screen
-};
-//# Observe callback ƒunction
-let count = 0;
-const obsCallback = function (entries, observer) {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      console.log(entry.target.id + " on screen");
-      //^ VERSION A:
-      count > 0 && observer.unobserve(entry.target); // this version does not
-    }
-    if (!entry.isIntersecting) {
-      count > 0 && console.log(entry.target.id + " NOT on screen");
-      count++;
-    }
-  });
-};
-
-//# API call, specify the target element
-const paraChecker = new IntersectionObserver(obsCallback, obsOptions);
-paraChecker.observe(document.querySelector("p")); // target element
-```
-
-Version B
-Stop detecting element after its been found to be off screen
-Exclude initial event handler going off
-
-```js
-//# Define options array
-const obsOptions = {
-  root: null, // Viewport is the frame of reference
-  threshold: 0, // trigger ƒ() if any of the targetEl is on screen
-};
-//# Observe callback ƒunction
-let count = 0;
-const obsCallback = function (entries, observer) {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      console.log(entry.target.id + " on screen");
-    }
-    if (!entry.isIntersecting) {
-      count > 0 && console.log(entry.target.id + " NOT on screen");
-      //^ VERSION B: 
-      count > 0 && observer.unobserve(entry.target);
-      count++;
-    }
-  });
-};
-
-//# API call, specify the target element
-const paraChecker = new IntersectionObserver(obsCallback, obsOptions);
-paraChecker.observe(document.querySelector("p")); // target element
-```
-
-Version A: https://codepen.io/NFuego24-7/pen/BapvRJE
-Version B: https://codepen.io/NFuego24-7/pen/dyNwWdm
-
-
-
-# Forms (partial)
-
-### Read First
-
-1. Forms can be built in their default states using HTML alone. There's no need to recreate what's already built into the browser using JS. Simply use the tools at your disposal, then stylize them afterwards
-2. The YouTube video we use to learn this chapter is provided below. Each interactive element in his code pen and video were placed sequentially after one another. To simplify things, I'm dissecting each interactive element/form separately
-3. If the required attribute is not used on a block of code used to create an interactive button/field, then the user is allowed to submit nothing for that specific one
-
-[(10) Learn HTML Forms In 25 Minutes - YouTube](https://www.youtube.com/watch?v=fNcJuPIZ2WE&ab_channel=WebDevSimplified)
-
-```html
-<!-- Structure of the document that has all the buttons on 1 HTML page. Have a standard template active and place the following syntax in the body element -->
-	
-<form action="results.html" method="GET" enctype="multipart/form-data">
-  	<div> INTERACTIVE ELEMENT OR FORM 1</div> 
- 	<div> INTERACTIVE ELEMENT OR FORM 2</div>
-</form>
-```
-
-action="results.html"
-Submits the data users enter to a page called results.html
-
-method="GET"
-Appends things to the URL and will send it to another page on your site. Incredibly unsafe to use GET requests on your webpages due to a lack of security. Only use for demo purposes where you don't have a server for hosting
-
-method="POST"
-Sends information to a server instead- much more secure. Browsers can't render post requests, so if we attempt to use this without an actual server, you'll receive an error message
-
-ENCTYPE="multipart/form-data"
-Included when we have method= POST
-And if one of our input labels has its type="file". 
-It allows entire files to be included in the data
-
-
-
-
-> ![image-20201208161309975](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20201208161309975.png)![image-20201208161333285](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20201208161333285.png) END RESULT
-
-### Checking for Empty Input Field Values
-
-If you have several input fields, you want to make sure that someone doesn't forget to fill one in
-That being said, if the user enters whitespace, that should not be a valid input wither
-
-```js
-const formSubmitHandler= event => {
-	event.preventDefault()
-	// End submit ƒ() early if the input is just whitespace
-	if(enteredValue.trim().length === 0 ) return
-}
-```
-
-
-
-### Scroll Lists
-
-No preselected option: ![image-20201209220617570](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20201209220617570.png)  With preselected option: ![image-20210504173653793](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210504173653793.png)
-
-```html
-<div>
-    <label for="eyeColor">Eye Color:</label>
-    <select name="eyeColor" id="eyeColor" multiple>
-        <option value="Green">Green</option>
-        <option label="Red" value="Red"></option>
-        <option value="Blue">Blue</option>
-        <option label="Brown" value="Brown"></option>
-        <option selected="selected" value="Sharingan">Sharingan</option>
-    </select>
-</div>
-```
-
-Because of the property `selected="selected"`, the Sharingan option is the default choice that's pre-picked as soon as the page loads
-
-#### Accepting Data with JS
-
-Usually, people store values from input fields inside variables. For our simple example, we'll just log what we would have saved.
-
-Either way, you'll be using `menuElement.value` to capture the option chosen
-
-EXAMPLE: Change your choice by clicking diff options on the list, and log your selected choice every time
-
-```js
-const eyeColorDDM= document.querySelector("#eyeColor")
-const allOptions= document.querySelectorAll("#eyeColor option")
-
-allOptions.forEach((el)=>{
-	el.addEventListener('click', (e) => { console.log(eyeColorDDM.value) })
-})
-```
-
-DEMO: https://jsfiddle.net/JasonXtuyotech/uj5wavem/9/
-
-
-
-### Text Fields
-
-#### Name 
-
-> ![image-20201208163822184](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20201208163822184.png)
->
-> It auto-suggests previously used names on your PC when you click the field
-
-```html
-<div>
-   <label for="name">Name</label>
-   <input type="text" name="name" id="name" required>
-</div>
-```
-
-#### Email 
-
-```html
-<div>
-   <label for="email">Email</label>
-   <input type="email" name="email" id="email" required>
-</div>
-```
-
-#### Age 
-
-```html
-<div>
-   <label for="age">Age</label>
-   <input type="number" name="age" id="age" min="1" max="200" step="5">
-</div>
-<!-- Step=5 just makes it so hitting up arrow increases the age by 5 year increments instead of 1
-```
-
-#### Phone 
-
-```html
-<div>
-   <label for="phone">Phone</label>
-   <input type="tel" name="phone" id="phone">
-</div>
-```
-
-#### URL 
-
-```html
-<div>
-   <label for="url">URL</label>
-   <input type="url" name="url" id="url">
-</div>
-```
-
-#### Password 
-
-```html
-<div>
-    <label for="ally"> ASSword </label>
-    <input type="password" name="password" id="ally" required>
-</div>
-```
-
-```html
-<div>
-  <label>
-    Password
-    <input type="password" name="password" required>
-  </label>
-</div>
-<!-- alternative to using the for attribute is to nest the input inside the label tags. End result is the same
-```
-
-#### Adjustable Size Text Field
-
-![image-20201209220309244](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20201209220309244.png)
-
-```html
-<div>
-   <label for="bio">Bio</label>
-   <textarea id="bio" name="bio"></textarea>
-</div>
-<input type="hidden" name="hidden" value="hi"> <!-- FIND LATER -->
-```
-
-
-
-### Date Fields 
-
-#### MM DD YYYY
-
-![image-20201209220050803](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20201209220050803.png)
-
-```html
-<div>
-   <label for="date">Birthdate</label>
-   <input type="date" name="date" id="date" min="2019-06-10">
-</div>
-```
-
-The earliest possible date the user can enter is june 6th 2019, thanks to our min attribute
-
-### Increment Arrow Input Fields
-
-```
-<input type="number" step="1">
-```
-
-![image-20210727024521079](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210727024521079.png)
-
-### Checkbox Fields
-
-#### 1 Option Permitted
-
-![image-20201209220451899](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20201209220451899.png)
-
-```html
-<div>
-     Gender:
-     <label for="male">Male</label>
-     <input type="radio" name="gender" id="male" value="male">
-    
-     <label for="female">Female</label>
-     <input type="radio" name="gender" id="female" value="female">
-</div>
-```
-
-Notice how the name "gender" is shared by both of our options. This is done deliberately to tell HTML that we may only select 1 choice between the 2.
-
-#### Multiple Options Permitted
-
-![image-20201209220414780](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20201209220414780.png)
-
-```html
-<div>
-   Favorite Food:
-   <label for="banana">Banana</label>
-   <input type="checkbox" name="banana" id="banana">
-   
-   <label for="apple">Apple</label>
-   <input type="checkbox" name="apple" id="apple">
-</div>
-```
-
-Our 2 choices here do not share the same attribute names. This is because we are allowed to select both as our favorite food- despite what "favorite" may typically insinuate
-
-### Buttons
-
-#### Reset
-
-![image-20201209220516396](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20201209220516396.png)
-
-```html
-<button type="reset">Reset</button>
-```
-
-#### Submit 
-
-```html
-<button type="submit">Submit</button>
-```
-
-
-
-
-
-### Other Types
-
-#### Color Selection via Spectrum
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20201209220719635.png" alt="image-20201209220719635" style="zoom:67%;" />
-
-```html
-<div>
-   <label for="color">Color</label>
-   <input type="color" name="color" id="color">
-</div>
-```
-
-
-
-#### Select File
-
-![image-20201209220803608](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20201209220803608.png)
-
-```html
-<div>
-   <label for="file">Select File:</label> <br>
-   <input id="file" type="file" name="file">
-</div>
-```
-
-
-
-### Search Bar
-
-![image-20210131160728254](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210131160728254.png)
-
-
-
-#### Importing Icons
-
-To import the icons for the magnifying glass and the x, copy this link tag to the head of your HTML doc:
-
-```html
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
-```
-
-The icons are from font-awesome, and you can summon them using `fa fa-something` class names. 
-
-- These names will match the ones you've seen on the site-assuming they came included in that CSS doc found on the cloud flare site
-- Follow the link in the href to look at more packages
-  Go to the font-awesome site to check out your available icons
-
-![image-20210131170941827](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210131170941827.png)
-
-#### Syntax
-
-```html
-      <!-- Search Bar -->
-     <div class="searchbar-container">
-          <div class="fa fa-search"></div> <!--Search icon-->
-          <input type="text" placeholder="Search" /> <!--Search text field-->
-          <div class="fa fa-times"></div> <!--X icon -->
-      </div>
-```
-
-```scss
-* {
-  font-size: 1.5rem; // can apply directly to the a element 
-}
-
-.searchbar-container {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  background: $comp2; // searchbar icon color [][][C]
-  padding: 0.6rem;
-  border-radius: 0.5rem;
-  color: $charcoal;
-  width: 20vw; // searchbar width [][][S]
-
-  input {
-    margin: 0 0.8rem; //moves icons a bit away from textbox
-    width: 100%; //makes this 100% of container width (responsive)
-    border: none; //removes browser defaults for text field lines
-    outline: none; //removes browser defaults for text field lines
-    background: $comp2; //Searchbar Color [][][C]
-    color: $charcoal; // font color when searchbar's typed into
-  }
-
-  ::placeholder {
-    color: $charcoal; // placeholder text color [][][C]
-  }
-
-```
-
-
-
-
-
-
-
-
-
-# Modal Window
-
-WHERE TO FIND OUR FINAL CODE FOR THIS PROJECT
-FULL: Check Modal Practice file in your Study problems folder
-	  Or use this: https://codepen.io/NFuego24-7/pen/VwmXXva
-
-### Project Description
-
-- The modal pop-up window, and the backdrop are all set to `display:none` when the webpage is in its default state. 
-- They're just regular HTML elements whose appearances are hardcoded. 
-  We'll be switching `display:none` off when it's time for them to appear
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210228001921096.png" alt="image-20210228001921096" style="zoom:25%;" />    <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210228001951933.png" alt="image-20210228001951933" style="zoom:25%;" />
-
-TIP: If many elements have something in common (needing to be hidden with display none for example), put them all in the same CSS class. That way, we can target multiple elements at once using `querySelectorAll` in JS
-
-EXAMPLE:
-
-Behold the code for the 'show modal' buttons
-
-```html
-    <button class="show-modal">Show modal 1</button>
-    <button class="show-modal">Show modal 2</button>
-    <button class="show-modal">Show modal 3</button>
-
-    <div class="modal hidden"> <!--modal in hidden class-->
-      <button class="close-modal">&times;</button>
-      <h1>I'm a modal window 😍</h1>
-      <p> Random karp </p>
-    </div>
-    <div class="overlay hidden"></div> <!--backdrop in hidden class-->
-```
-
-Log the text content of each modal button, and the entire query selector array
-
-```js
-let modalBtn= document.querySelectorAll('.show-modal')
-console.log(modalBtn);  	// log the entire array
-
-for (let i=0; i<modalBtn.length;i++){
-  console.error(modalBtn[i].textContent); // show text content
-}
-```
-
-![image-20210228014357163](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210228014357163.png)
-
-### Adding and Removing Classes (P1: Execution)
-
-Read the previous lesson. The modal and backdrop are both already hardcoded in our HTML and CSS. 
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210228001921096.png" alt="image-20210228001921096" style="zoom:25%;" />    <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210228001951933.png" alt="image-20210228001951933" style="zoom:25%;" />
-
-- They're unseen in our website's default state because of their "hidden" class.
-- To show them, remove this class as soon as we click one of our "Show Modal" buttons 
-
-#### Handling Query Selector Arrays
-
-We've done something similar to this at the start of section 7, but this is more advanced. 
-
-- We have 3 buttons that must summon both the modal and backdrop at the same time. We'll need to manage the arrays that `querySelectorAll` creates
-
-```html
-<!--Relevant HTML-->
-	<button class="show-modal">Show modal 1</button>
-    <button class="show-modal">Show modal 2</button>
-    <button class="show-modal">Show modal 3</button>
-
-    <div class="modal hidden">			<!--Modal element-->
-      <button class="close-modal">&times;</button>
-    </div>
-    <div class="overlay hidden"></div>	<!--Overlay element-->
-```
-
-```css
-/*Relevant CSS*/
-.hidden { display: none; }	/* hidden class hides everything inside it*/
-```
-
-#### Procedure
-
-OBJECTIVES:
-
-- Activate modal and backdrop when any one of our "Show Modal" buttons are clicked
-- Be able to exit the modal/backdrop by pressing the x button on the upper right
-- Be able to exit by hitting the background space behind the modal (aka the backdrop itself)
-- Be able to exit using ESC (later lesson)
-
-1) Store the modal element and the overlay element in JS elements, SEPERATELY
-
-- We could target them both with `querySelectorAll`, but then it would make them harder to manage since they'd be in an array. 
-
-- This'd lead to problems like pressing a button and only activating them 1 at a time
-
-```js
-let modal= document.querySelector('.modal')
-let overlay= document.querySelector('.overlay') 
-```
-
-2) Create JS variables for the 3 buttons and the X button for exiting
-
-```js
-let btnOpenModal= document.querySelectorAll('.show-modal')  // 3 button elements
-let btnCloseModal= document.querySelector('.close-modal') // X button
-```
-
-3) Create a single event listener for your 3 buttons
-
-Since your 3 buttons are placed in an array thanks to `querySelectorAll`, use a for loop to make sure each of the 3 are affect by your event listener
-
-```js
-for (let i=0; i<btnOpenModal.length;i++){
-  btnOpenModal[i].addEventListener('click', ()=>{
-    overlay.classList.remove('hidden');
-    modal.classList.remove('hidden');
-    // target the overlay and modal elements then REMOVE "hidden"
-  })
-} // WARP: AXQZE1
-```
-
-4) Create an event listener for the modal's X button. Exit the modal+backdrop when its clicked
-
-```js
-//# Exit the modal+backdrop when you hit the X button
-btnCloseModal.addEventListener('click', ()=>{
-  overlay.classList.add('hidden');
-  modal.classList.add('hidden');
-  // target the overlay and modal elements then ADD "hidden"
-})
-```
-
-5) Create an event listener for the background space behind the pop up window. Exit the modal+backdrop when its clicked
-
-```js
-overlay.addEventListener('click', ()=>{
-  overlay.classList.add('hidden');
-  modal.classList.add('hidden');
-})
-```
-
-6) Refactor to create dry code
-
-You may have noticed that the callback function for the X button and the backdrop space are identical. 
-
-- Let's define the callback function externally instead, letting us dry up our code
-- Do the same for our callback function to open the modal as well
-
-```js
-// FINAL CODE
-'use strict';
-// classes: overlay hidden  ... modal hidden
-
-let modal = document.querySelector('.modal');
-let overlay = document.querySelector('.overlay');
-let btnOpenModal = document.querySelectorAll('.show-modal'); // 3 button elements
-let btnCloseModal = document.querySelector('.close-modal'); // X button
-
-//@ open modal when something is pressed (will be used for callbacks)
-const openModal = function () {
-  overlay.classList.remove('hidden');
-  modal.classList.remove('hidden');
-};
-//@ close modal when something is pressed (will be used for callbacks)
-const closeModal = function () {
-  overlay.classList.add('hidden');
-  modal.classList.add('hidden');
-};
-
-//# Activate modal and backdrop when we hit 1 of 3 "Show Modal" buttons
-for (let i = 0; i < btnOpenModal.length; i++) {
-  btnOpenModal[i].addEventListener('click', openModal);
-}
-//# Exit the modal+backdrop when you hit the X button, OR hit the backdrop
-btnCloseModal.addEventListener('click', closeModal);  //READ IMPORTANT DETAILS BELOW
-overlay.addEventListener('click', closeModal);  //READ IMPORTANT DETAILS BELOW
-//—————————————————————【】——————————————————————————
-// This last section requires you to understand keyboard events
-document.addEventListener('keydown', (obj) => { 
-  let isModalActiv= modal.classList.contains('hidden') //returns a Boolean
-  let isBackdropActiv= overlay.classList.contains('hidden') //returns a Boolean
-  if(obj.key==="Escape" && isModalActiv==false && isBackdropActiv==false) {
-    closeModal(); 
-    console.log("closed the modal!");	// HELPER LINE
-  }
-});
-```
-
-!!! IMPORTANT !!!
-When using your externally defined callback function inside your event listener, do not include parameter brackets ().
-
-CORRECT WAY TO USE CALLBACK: `btnCloseModal.addEventListener('click', closeModal);`
-IT IS NOT=> `overlay.addEventListener('click', closeModal());`
-
-If we include brackets (), that tells JS to execute that function as soon as its parsed over. We want the event handler to only call that function WHEN/IF the event trigger occurs
-
-//—————————————————————【】——————————————————————————
-
-COMPLETED DEMO: https://codepen.io/NFuego24-7/pen/VwmXXva
-
-The last part of our code can be understood by reading our lesson on keyboard events
-
-
-### Adding and Removing Classes (P2)
-
-#### 2 Ways to Implement Class Toggling
-
-Method 1) WHAT WE DID HERE
-Have the class with your modal+backdrop hardcoded to the webpage
-Add a secondary class with "display: none" applied to it
-Remove that secondary class to show your outcome
-
-Method 2) ALTERNATIVE
-Have a class that produces a modal+backdrop, but don't assign it to anything
-Assign the class to an element as soon as a button is pressed
-
-Both of these are equally viable, and can be applied to any scenario involving eventy listeners
-
-#### This Method VS Manipulating CSS Styles
-
-Adding and removing classes using JS is a much more efficient way to make website changes compared to manipulating CSS styles one by one
-
-- In CSS, a class can contain dozen's of changes, all of which will affect elements when we add or remove that class
-- With CSS style manipulation, we can only change CSS properties 1 at a time
-
-### Making ESC Exit the Modal
-
-```JS
-btnCloseModal.addEventListener('click', closeModal);	//randome example
-```
-
-- Our event handler function is waiting for a button on our webpage to clicked. 
-- Once this happens, JS generates an object that contains information about the event. We can access this object in the event handler function
-
-This is necessary to tell JS which key should activate our keyboard event. Otherwise, your event will trigger as soon as any key is pressed.
-
-
-#### RTTP: Making ESC exit the modal+backdrop
-
-We don't want to make the modal hidden if it is already being concealed- that would be sloppy coding. So we make an if statement that list our conditions for making the ESC exit our modal
-
-```js
-document.addEventListener('keydown', (obj) => { 
-  let isModalActiv= modal.classList.contains('hidden') //returns a Boolean
-  let isBackdropActiv= overlay.classList.contains('hidden') //returns a Boolean
-  
-  if(obj.key==="Escape" && isModalActiv==false && isBackdropActiv==false) {
-    closeModal(); 
-    console.log("closed the modal!"); //HELPER LINE 
-  }
-});
-```
-
-EXPLANATION: 
-Conditions: ESC key is pressed, modal is active, & the backdrop is active...
-OUTCOME: Exit the pop-up by calling the closeModal function we made in a prev. lesson
-
-When you click escape and no modal/backdrop is open, the console should say nothing
-If you use ESC to exit them, the console will say "closed the modal!". Test it out
-
-Find code here: https://codepen.io/NFuego24-7/pen/VwmXXva
 
 # ——【STRING MANIPULATION】———
 
@@ -15107,2850 +12033,6 @@ Or check your study problems' regex files
 
 
 
-# === OBJECT ORIENTED CODING ===
-
-# OOP Part 1: Objects with Prototypal Inheritance
-
-> MAIN TOPICS
-> Prototypal Inheritance Method 1: Constructor Functions
-> Prototypal Inheritance Method 2: ES6 Classes
-> Prototypal Inheritance Method 3: Object.create 
-
-HOW I STRUCTURED THIS CHAPTER:
-
-If a lesson is included after the lesson titled "METHOD 2: Class Syntax" for example, it means that lesson can be applied to that method
-
-EXAMPLE: "Prototypes and Custom Methods (S1)" is directly related to "METHOD 1: Constructor Functions"
-
-### Intro to Classical OOP
-
-#### Why it Exists
-
-![image-20210423155334403](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210423155334403.png)
-
-The whole point of OOP is to reduce what people would refer to as "spaghetti code". This kind of code typically only makes sense to the person writing it
-
-- This code includes a bunch of values gathered across multiple functions, even in the global scope
-- The structure would be questionable, especially because function declarations can be used anywhere in the document
-- Trying to upscale code made this way is nightmarish
-
-Up until now, we've used objects to hold loose bits of data. Now, we'll need to create new ones programmatically, and be able to make objects interact with each other
-
-#### Classes and Instances
-
-To create new objects from our JS code, we must use something called classes 
-
-###### What are classes?
-
-- Imagine an architect develops a blueprint to accurately plan and describe a house. 
-- The blueprint itself is just a set of rules- but one can use it to build many structures in the real world.
-- Classes work this way as well, and they function the same in different languages- albeit with different syntax. Use them to create new objects based on the class rules
-
-###### What are instances?
-
-- An instance of a class is an object created by that same class
-  The class itself is NOT an object
-- Let's return to the blueprint analogy. 
-  A house built from a blueprint would be the instance
-- You will likely use a class to build several objects, which is why we call them instances in the first place- it implies they're 1 of many
-
-![image-20210423171226815](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210423171226815.png)
-
-The above diagram does not use actual JS syntax, it's purely conceptual
-
-- We have a class that stores user data and methods inside an object it'll create
-- When its used to create objects for Jonas, Mary, and Steven, their user information is different. But the overall structure of the object remains the same
-
-#### Designing Classes with the 4 Fundamental OOP Principles
-
-There is no singular correct way for people to design classes- we just have to abide by the 4 fundamental principles, which I will be describing next
-
-> 1. Abstraction		2. Encapsulation		3. Inheritance		4. Polymorphism
-
-###### Principle 1: ABSTRACTION
-
-Ignore or hide details that do not matter. We want an OVERVIEW perspective of what we're implementing, instead of messing with smaller details
-
-- This is why you create your own custom functions, or why methods like forEach were created- they abstract things like setting counters or end conditions
-
-We don't even need to understand the low level operations we use. 
-
-- For example, `addEventListener('click', (e) => {})` is an abstracted method- and we don't care how it works behind the scenes as long as it does what we expect it to do
-
-![image-20210423172340797](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210423172340797.png)
-
-###### Principle 2: ENCAPSULATION
-
-Keep properties and methods private inside the class so they cannot be accessed from outside of it. Some methods can be exposed intentionally as a public interface (API)
-
-- This is done to prevent external code from accidentally manipulating internal properties/state 
-- It's conceptually similar to how we try to prevent permanent array/object changes via deep cloning
-
-![image-20210423173724410](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210423173724410.png)
-
-Encapsulation Example:
-
-In the above diagram (which again, D.N include real JS syntax), we have private password and email. We also have a private checkSPAM method. 
-
-- All of these are accessible from inside the class, but not outside. 
-- If you could access it from outside the class, it'd be possible to change what the checkSPAM method does. 
-- That would cause a lot of bugs, especially if that function was used in a large codebase
-
-###### Principle 3: INHERITANCE
-
-Make all properties and methods of a certain class available to a child class, forming a hierarchical relationship between classes. This allows us to reuse common logic and to model IRL world relationships
-
-Visual Explanation:
-
-Imagine you're designing 2 classes for a company- classes A and B. 
-Class B is just class A with some extra properties and methods. 
-
-- Without inheritance, you'd have a lot of duplicate code. 
-- With inheritance, you could make B a child of A, letting you add only the extra things you had in mind 
-
-No inheritance:   ![image-20210423175213568](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210423175213568.png)
-
-With inheritance: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210423175241047.png" alt="image-20210423175241047" style="zoom:80%;" />
-
-###### Principle 4: POLYMORPHISM
-
-A child class can overwrite a method it inherited from a parent class
-The way in which it does this is easier said than done, but this is a simple intro
-
-Visual Explanation:
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210423180901616.png" alt="image-20210423180901616" style="zoom:80%;" />
-
-The parent class includes a method that creates a login process. 
-
-- The child class on the left is meant for admins- which need 2 factor authentication just to be safe. 
-- Inside that child, we would redefine the login method, but differently. 
-- With polymorphism, that new login() function would overwrite the parent's version that it inherited
-
-### OOP in JavaScript
-
-JavaScript OOP doesn't actually work exactly the way you saw in the last lecture. 
-
-- That being said, it's important to understand the classical OOP model, because the concepts in JS are very similar
-- Also, people often use the terms from classic OOP interchangeably when describing JS 
-
-#### How OOP works in JS
-
-All objects in JS are linked to a certain prototype object 
-Reworded: Each object has a prototype with a set of rules
-
-The prototype object contains methods (functions within objects), and properties that all objects linked to that prototype can use. This is PROTOTYPAL INHERITANCE
-
-- For example, you can use reduce() on any kind of array object, but you can't use it on regular objects. 
-
-![image-20210423222635187](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210423222635187.png)
-
-The Difference: 
-
-- In classic OOP, methods are copied from the class to the object
-- With JS prototypes, an object's methods and properties are inherited from a prototype object
-
-What "Delegation" Means:
-
-Some explain inheritance as: "an object delegates its behavior to the prototype object"
-
-- It sounds a bit backwards since the prototype dictates what objects of its type can and cannot do. 
-- The diagram above even agrees with this notion, which is why the arrow points to the prototype, not away from it
-- What they mean is that an object doesn't bother coming up with its own way to act. 
-  It leaves that up to the prototype its connected to.
-
-#### The 3 Methods to Create Prototypes
-
-![image-20210424135344319](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210424135344319.png)
-
-- ES6 classes being "syntactic sugar" simply means that they have the same constructor functions as method 1, but with nicer syntax that makes OOP easier and more intuitive
-- Just to reiterate, ES6 classes DO NOT work like classical OOP classes
-
-
-
-### METHOD 1: Constructor Functions
-
-- Constructor functions are functions whose purpose is to create objects when invoked using the `new` keyword. 
-- The `this` keyword is often used freely inside the function since they will be inside an object later on. 
-- You CANNOT write arrow constructor functions- since "this" doesn't work inside them
-
-#### Constructor ƒ() Example
-
-Capitalize the first letter of your constructor function's name
-
-```js
-function Dog(arg1,arg2,arg3){
-  // Instance properties below (found on all instances created with this blueprint)
-  this.name= arg1;
-  this.color=arg2;
-  this.numLegs=arg3
-}
-const moralPup= new Dog("Bella","white",4) 
-console.log(moralPup);
-//OUTPUT:	Object { name: "Bella", color: "white", numLegs: 4 }
-```
-
-moralPup is now an INSTANCE of the Dog constructor ƒ()
-
-EXPLANATION
-
-- Notice how the Dog function incorporates the `this` keyword 3X
-- You might assume it refers to the global object since it's inside a regular function
-- You're technically correct, but we invoke the function alongside the `new` keyword
-  It does 3 things behind the scenes
-
-The new keyword does the following...
-1) Creates an empty object
-2) Sets `this` equal to that empty object- after we invoke the Dog constructor function
-3) The empty object is linked to its prototype (WARP: XN18)
-4) Constructor function automatically returns the new object
-
-In real examples, the argument names will be identical or at least related to the key names they're used on. 
-
-#### Standard Practices
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210424155748767.png" alt="image-20210424155748767" style="zoom:67%;" />
-
-1. Capitalize the first letter of a constructor function's name 
-
-2. Name your object keys and parameters the same thing 
-
-- Done so you know exactly where an argument will go (matters in huge objects)
-- For the sake of learning, I named the parameters in the initial example arg1, arg2, arg3 so you'd know what you're looking at
-
-3. NEVER include functions or object methods inside a constructor function
-
-- If you have multiple instances, you'll be copying the same ƒ() several times
-- This is horrible for performance, and is why we bothered to learn event delegation
-- To pass functions between constructors and their instances, we rely on prototypes and prototypal inheritance (will learn in a later lesson)
-
-#### Adding Methods to Constructor Functions
-
-EXAMPLE 2: All standard practices are in effect here
-JS will automatically add (parentheses) around KVP's when prettier is active
-
-```js
-const Person = function (firstName, birthYear) {
-  (this.firstName = firstName), (this.birthYear = birthYear);
-  // NEVER do this
-  // (this.calcAge = function () {
-  //   console.log(2037 - this.birthYear);
-  // });
-};
-// Create new instances
-const jonas = new Person('jonas', 1991);
-const matilda = new Person('matilda', 2017);
-const jack = new Person('Jack', 1975);
-console.log(jonas, matilda, jack);
-```
-
-We will learn how to add the function we refuse to include within the method in the "Prototypes" lesson
-
-
-
-### Prototypes and Custom Methods v1 (R1)
-
-DON'T FORGET THAT STATIC METHODS ARE AN ALTERNATIVE
-They're good when you don't want every helper function you make to be inherited
-You can still use them on  any instance a constructor function creates
-
-#### How Prototypal Inheritance and Delegation Works
-
-Each and every function in JavaScript automatically has a property called prototype. That includes constructor functions as well
-
-This means that every object created by a certain constructor function will get access to all the methods/properties that we define on the constructors prototype property
-
-TLDR: 
-Give an instance's prototype property access to a certain function/method
-After that, use that same function/method on any instances
-
-#### Simple Example
-
-Continue the example from the last lecture. We refused to add an object function to the constructor- it'd be bad for performance. Replace this inferior method using prototypes
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210424171556546.png" alt="image-20210424171556546" style="zoom: 80%;" />
-
-REUSE A FUNCTION VIA PROTOTYPES:
-
-```js
-const Person = function (firstName, birthYear) {
-  (this.firstName = firstName), (this.birthYear = birthYear);
-};
-// Assign function to Person.prototype
-Person.prototype.calcAge = function () {
-  return 2037 - this.birthYear;
-};
-
-const jonas = new Person('jonas', 1975); // Create new instance
-console.log(jonas.calcAge())  //OUTPUT: 62
-```
-
-Now, any object created from the Person constructor has access to the `calcAge()` function- without it being declared more than once
-
-#### Changing KVP's with Prototype Methods
-
-We can alter values stored inside our instances by using our methods. 
-
-- Take a look at this example where we build vehicle objects after we specify the "make" and starting "speed" in the constructor parameters
-- We can increase and decrease the value of the "speed" key by using these methods after the instance is created
-
-```js
-const Vehicles = function (make, speed) {
-  (this.make = make), (this.speed = speed);
-};
-Vehicles.prototype.accelerate= function(){
-  this.speed+=10
-  console.log(`${this.make} is going at ${this.speed} km/hr`)
-}
-Vehicles.prototype.brake= function(){
-  this.speed-=10
-  console.log(`${this.make} is going at ${this.speed} km/hr`)
-}
-const car1= new Vehicles("BMW", 120)
-const car2= new Vehicles("Mercedes", 95)
-
-car1.accelerate() // should subtract 10 from the speed (120+10=130)
-car2.brake()      // should add 10 to the speed (95-10=85)
-```
-
-![image-20210425103437408](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210425103437408.png)
-
-Remember that this method is inherited, and not explicitly declared in the constructor function
-
-```js
-let az = car1.hasOwnProperty('accelerate'); //OUTPUT: false
-```
-
-
-
-#### Custom-Made JS Methods (aka. Instance Methods)
-
-Prototypal inheritance is how people build their own custom functions that operate just like official JS methods do. Just assign functions to inbuilt data structures
-
-When making a custom function for arrays, apply it to the `Array.prototype`
-When making some for objects, apply it to the `Object.prototype`
-
-EXAMPLE 1: Create an array method that doubles all values 
-
-```js
-Array.prototype.doubleEntries= function(){
-  let newArr= this.map((el)=>{
-    return el*2
-  })
-  return newArr
-}
-
-let testArr= [1,2,3,4]
-let doubleUp= testArr.doubleEntries()
-console.log(doubleUp)
-```
-
-This function can easily be refactored, and tested further in case we have some arrays with entries other than numbers- but you get my point
-
-EXAMPLE 2: "Delete array entries" ƒ() someone made (removes need for splice)
-
-```js
-Array.prototype.remove = function(from, to) {
-  let rest = this.slice((to || from) + 1 || this.length);
-  this.length = from < 0 ? this.length + from : from;
-  return this.push.apply(this, rest);
-};
-arrName.remove(0, 2); // EXAMPLE: remove 1st to 3rd entry 
-```
-
-###### DISCLAIMER
-
-Adding methods to built-in object is usually frowned upon for 2 reasons
-
-1. JS may add a feature with the same name in the future. If that happens, the browser will pick the official method ahead of yours, which will break your code
-2. When working in large teams, other developers risk using the same method names as you
-3. By default, other devs probably won't understand what type of arguments your methods need to be fed in order for them to work properly 
-
-SOLN: 
-
-- Try to use custom functions when you build projects alone or with a small team you can communicate with often
-
-- Create a file that briefly explains how your functions should be used
-
-- Add an insignia to the end of your function names, so that nobody would possibly match your method's name. Ex. `.deleteArrayEntry_CF` 
-
-#### Custom JS methods on other Methods
-
-You can use custom methods on all 3 major methods. Just apply them on the prototype of what would be the constructor function
-
-![image-20210429135638827](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429135638827.png)
-
-#### Consider Reading your Theory Document
-
-This lesson teaches you how to practically use the prototype object. It lets you share 1 function from a constructor blueprint with all its instances. 
-
-- If you want an in-depth explanation on what a prototype actually is, or how the prototype chain works, go read the chapter on "Prototypal Inheritance". 
-- It looks complex but is actually fairly simple when you have the appropriate diagrams 
-
-
-
-### METHOD 2: Class Syntax
-
-The whole point of class syntax was to cater to people who come from different coding backgrounds. Their version of OOP looks and functions differently
-
-- This way of performing OOP is mostly the same as constructor syntax, just with changed syntax which appeals to certain people
-- Its important to be familiar with all popular methods of implementing OOP, although personally I prefer class syntax over constructors (they have a faster way to apply prototypal inheritance)
-
-#### Class Expressions VS Declarations
-
-Much like regular functions, classes can be defined as expressions or declarations
-
-```js
-/*DECLARATION*/
-class Persona {
-  constructor(firstName, age) {
-    this.firstName = firstName;
-    this.age = age;
-  }
-}
-const joker = new Persona('Ren', 16);
-console.log(joker);
-
-/*EXPRESSION*/
-const Persona = class {
-  constructor(firstName, age) {
-    this.firstName = firstName;
-    this.age = age;
-  }
-};
-const joker = new Persona('Ren', 16);
-console.log(joker);
-```
-
-Output's the same either way: `Object { firstName: "Ren", age: 16 }`
-
-- Using the special nested function `constructor` is a must- it's what the "new" operator calls when we create a new instance
-
-###### The Difference 
-
-These 2 methods can be used interchangeably, and the benefits come down to personal preference- unlike regular declarations/expressions where one is usually better thanks to hoisting differences 
-
-- The main thing that separates these 2 is the fact that expressions are bound to a variable. When you call that expression, you need to call the variable
-- This is the case, even when you name your expression's class
-  I haven't shown you how to name them yet. Look below
-
-![image-20210425111132644](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210425111132644.png) ![image-20210425111239361](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210425111239361.png)
-
-Try to log our class using the variable name (works) and the class name (doesn't work)
-
-```js
-console.log(Persona)  	//OUTPUT: the constructor class
-console.log(arsene) 	//OUTPUT: error 
-```
-
-![image-20210425111517994](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210425111517994.png)
-
-#### Adding Instance Methods to Classes
-
-When using constructor functions, we had to directly assign our methods to the constructor function's prototype. With ES6 classes, that's no longer needed
-
-- We can specify the methods/properties inside the class, as long as its outside of the constructor's block.
-- Anything declared in that zone is auto-included in the instances' prototype object
-  MUCH faster than the constructor method 
-- It's not its own property, but it is inherited through the constructor's "prototype" (actually just the proto of linked objects, but whatever...close enough for this description)
-
-EXAMPLE: Give the "Persona" blueprint a method for all its instances to inherit
-
-- Everything inside the class but outside the constructor block will automatically be placed in the constructor's prototype object
-- All instances created by Persona will inherit these, but it's not their own property
-
-```js
-class Persona {
-  constructor(firstName, age) {
-    this.firstName = firstName;
-    this.age = age;
-  }
-  rageMultiplier() {
-    return 1.2 * this.age;
-  }
-}
-const joker = new Persona('Ren', 16);
-//—————————————————————【 OUTPUT TESTING 】——————————————————————————
-console.log(joker);
-console.log(
-  joker.hasOwnProperty('age'),              // true
-  joker.hasOwnProperty('rageMultiplier')    // false
-); 
-```
-
-![image-20210425133316161](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210425133316161.png)
-
-#### Important Details
-
-1. Classes are first-class citizens
-   Means they can be fed to functions as arguments or be returned from them
-
-2. There is no clear advantage to using declarations over expressions like the way it is for regular functions (hoisting difference). Both class expressions and declarations  must be declared before they're used
-3. The body of every class is executed in "strict mode" regardless of if you enabled that earlier
-
-
-
-### Setters/Getters Part 1: How to Use them
-
-You can use setters and getters an any object in JS. Traditional properties are referred to as data properties, while these are called assessor properties
-
-Remember, you do not need a getter for every setter. Have 1/2 or both, no one cares
-
-GETTERS: 
-They GET you a certain property value- the one you specified when creating it
-The original object you start with is left untouched
-
-- You can run some code on the data it fetches as well
-- For example, your object may have an array. 
-  A setter can be coded to fetch you the final array value multiplied by 10 
-
-SETTERS: Ⓟ
-Use it to change a specified property in your object programmatically, with a function
-It must contain exactly 1 argument to work, and DOES permanently change your object
-
-- Add a new property that doesn't exist in the object yet
-- Fully change an existing property to something new
-- Tweak an existing property like an array (add to the end for example)
-
-BEFORE YOU DIVE INTO THE EXAMPLES:
-
-I'm well aware you can set or mutate object values without using a setter. 
-The advantages of using setters will be explored in the next lesson. 
-In this one, we simply learn how to use them in overly simplistic scenarios
-
-#### EXAMPLE 1:
-
-```js
-const account={
-  owner: 'Jonas',
-  movements: [200,530,120,300],
-  
-  get latest(){
-    return this.movements.slice(-1)[0] // return last array value    
-  },
-  set latest(mov){
-    this.movements.push(mov)
-  },
-  set replaceOwner(newName){
-    this.owner = newName
-  },
-  set secondOwner(newName){
-    this.owner2 = newName
-  }
-} 
-```
-
-Here's how to use the getters and setters you set up:
-
-```js
-//GET the value of the last movements array element
-console.log(account.latest)  
-
-//SET the value of the new latest array element (add 1 on to the end)
-account.latest=800 
-console.log(account.movements) 
-
-//CHANGE the value of the owner
-account.replaceOwner= "Jefferson"
-console.log(account) 
-
-//ADD a new owner to the account
-account.newOwner= "Marcy"
-console.log(account)
-```
-
-![image-20210426105610278](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210426105610278.png)
-
-#### Rules about Naming
-
-IN OBJECT LITERALS:
-
-- Naming one getter the same thing as one setter is fine inside object literals 
-  The browser knows the difference because setters require 1 argument
-
-IN ES6 CLASSES:
-
-- When using ES6 classes, the set ƒ() name and the property name cannot be the same
-  You'll get an error that says "too much recursion"
-
-- Instead, name your object property the same thing...with an underscore in front. 
-
-That's typical convention- but now we can't fetch `Obj.fullName` anymore. We can only fetch `Obj._fullName`
-
-This flaw can be negated and used to our advantage when validating data (next lesson), but avoid this if that's not your intent 
-
-![image-20210426132810955](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210426132810955.png) ![image-20210426132843365](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210426132843365.png)
-
-IN EITHER:
-
-Do not match getter/setter names with regular object properties! 
-Worst case: the getter,setter, or regular property gets ignored, leading to bugs
-Best case: An error's thrown at you
-
-![image-20210426111814444](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210426111814444.png) ![image-20210426112410945](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210426112410945.png)
-
-
-
-#### Class Getters and Setters
-
-Not much changes when using getters/setters on classes- except for the fact that you can't name them the same thing without causing errors/bugs
-
-```js
-class Person {
-  constructor(firstName, birthYear, currentYear) {
-    this.firstName = firstName;
-    this.birthYear = birthYear;
-    this.currentYear = currentYear;
-  }
-  get age() { return this.currentYear - this.birthYear }
-  set personHeight(test){ this.height= test }
-}
-const felon = new Person('Rhodes', 1940, 2021);
-
-const felon = new Person('Rhodes', 1940, 2021);
-console.log(felon) 				// Show original object
-console.log(felon.age) 			// GET (once calcd, this is stored in the prototype)
-
-felon.personHeight= "5 ft 9"; 	// SET new property
-console.log(felon) 				// Show mutated object
-```
-
-![image-20210426122115391](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210426122115391.png)
-
-#### Tough EX. Use set to convert Fahrenheit to Celsius
-
-This challenge from FCC is a great example that requires you to know exactly how getters/setters work. See "Getters/Setters for Conversion" in your challenges doc
-
-
-
-### Getters/Setters Part 2: Advantages & Data Checks
-
-#### The Problem they Solve
-
-Getters and setters are special object methods with help us access things in our objects easier. There are many instances where we'd need this. Exhibit A...
-
-```js
-const person={ firstName: "Anthony", lastName:"Jone"}
-console.log(`${person.firstName} ${person.lastName}`);
-```
-
-- If we want to access this person's full name multiple times, we'd have to use object literals several times over. 
-- It'd make more sense to create a function that does this for us:
-
-```js
-const person={ 
-  firstName: "Anthony", 
-  lastName:"Jone",
-  fullName(){ return `${person.firstName} ${person.lastName}` }
-} 
-console.log(person.fullName());
-```
-
-This approach works, but there are some issues with it:
-
-1. We can't set `person.fullName="Anthony Jone"` and have it redefine the firstName, lastName, and fullName all at the same time
-
-2. fullName is still treated as a method-   `person.fullName()`
-   It'd be preferable to have it as a regular object property-   `person.fullName`
-
-   getters => Access properties	  	 (fixes problem 2)
-   setters => change/mutate properties	(fixes problem 1)
-
-##### Fixing these Issues w/ Get & Set
-
-We're going to solve our problems from subsection 1 using getters and setters.
-
-```js
-const person={ 
-  firstName: "Anthony", 
-  lastName:"Jone",
-    
-  get fullName(){return `${person.firstName} ${person.lastName}`},
-    // can now access fullName as a property, not a method (PROB 2 SOLVED)
-    
-  set fullName(value){ 	//(PROB 1 SOLVED. Set function lets us define full/first/last)
-    const parts= value.split(' ');  
-    this.firstName= parts[0]; 
-    this.lastName= parts[1];  
-      
-  }
-}
-console.log(person.fullName); // can now access fullName as a property (GET)
-person.fullName= "Bruce Greene"; // change the full/first/last names all at once
-console.log(person);	// see if the previous line worked
-```
-
-![image-20210223114000770](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210223114000770.png) 
-
-![image-20210223114030070](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210223114030070.png) fullName's visible if you open the object
-
-Don't worry if you don't understand the exact details of the set function.
-
-We split our string into different parts using gaps and funnel them into an array
-index 0: firstName		index 1: lastName
-
-#### Data Validation & Setting Properties that Exist Already
-
-- In the previous lesson, I mentioned that using setters to set a property that already exists will lead to callstack errors. 
-- This is true, but we can negate this effect while checking for valid/invalid data at the same time
-
-###### EXAMPLE: 
-
-Make a class that creates student profiles, but only allow users to enter full names
-
-——————————————————————————【 SOLUTION PHASE 1 】———————————————————————————————
-
-First, test what happens when you have an equal property name and setter name
-Do not include a getter just yet
-
-```js
-class Student {
-  constructor(fullName, year) {
-    this.fullName = fullName;
-    this.year = year;
-  }
-  //^ Setting a Property that Exists Already
-  set fullName(str) { this._fullName = str }
-}
-const girl = new Student('Katherine Pyra', 4);  //create initial object
-console.log(girl);								// log object before setter
-girl.fullName = 'Coraline Jones'; 			
-console.log(girl);								// log object after setter
-```
-
-![image-20210426134952541](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210426134952541.png)
-
-- Notice how the constructor doesn't create `fullName: Katherine Pyra` at all. 
-  It creates `_fullName` right from the get-go
-- Polymorphism sets fullName equal to the setter, so the original fullName:~ is ignored
-  This happens because the browser encounters the setter earlier on the proto chain
-
-`girl.fullname` would normally target the object property. Now it targets the setter
-`_fullname: Katherine Pyra` disappears and is replaced with `_fullname: Coraline Jones`
-
-——————————————————————————【 SOLUTION PHASE 2 】———————————————————————————————
-
-Add in a getter to help remedy the situation. It will allow you to fetch `obj.fullName` even when there is only an `obj._fullName` property inside the object you created
-
-```JS
-class Student {
-  constructor(fullName, year) {
-    this.fullName = fullName;
-    this.year = year;
-  }
-  //^ Setting a Property that Exists Already
-  set fullName(str) {
-    if(str.includes(' ')) this._fullName=str
-    else alert (`${str} is not a full name!`)
-  }
-}
-const girl = new Student('Katherine Pyra', 4);  	// creates initial object
-console.log(girl)
-console.log(girl.fullName) // fetches girl._fullName via the getter
-
-const artist= new Student('Sher', 6) 				// gives an alert telling us off
-console.log(artist)
-```
-
-![image-20210426140005815](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210426140005815.png) => ![image-20210426141255180](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210426141255180.png)
-
-GIRL OBJECT:
-
-- It creates an object with the property _fullName, but we can use `girl.fullName` because we set up our getter properly
-- The name we fed our constructor was valid
-
-ARTIST OBJECT:
-
-- The name we fed the constructor did not meet standards, so the property was not added
-  We got an alert telling us what's wrong instead
-- The rest of the object was created however
-
-### Static Helper Methods for Constructors (R4)
-
-#### Definition
-
-- They're methods who are properties of an object's constructor function
-- They are not stored in the object's prototype, which means they're not inherited by any instances of that object's constructor
-- This changes how they are used compared to methods that objects do inherit
-
-EXAMPLE 1: `Array.from` VS `includes()`
-
-Both of these are array methods, but only includes() can actually be used on an array
-Array.from needs to be applied to the array constructor
-
-```html
-<p> P-tag 1 </p>
-<p> P-tag 2 </p>
-<script>
-	let a= test.includes(1)  //true
-	let b= Array.from(pTags, (el)=>el.textContent) // works. Gives an array
-	let c= pTags.from((el)=>el.textContent) // SYNTAX ERROR
-</script>
-```
-
-Array.from works as if its a custom function, even though its official
-We never paid much attention to the syntax until now, but there is a reason for it
-
-EXAMPLE 2: `Number.parseFloat(12)`
-
-parseFloat is a property of the Number object, but is not inherited by any numbers
-
-```js
-let x= Number.parseFloat('14a2') 	// works. Gives 14
-let y= '14a2'.parseFloat() 			// SYNTAX ERROR
-```
-
-#### METHOD 1 and 2 with Static Methods
-
-Oftentimes, people use these as helpers that are strictly related to a constructor
-All you have to do is define the property on your constructor directly
-
-METHOD 1: Constructor Functions
-
-```js
-const Quadrilateral= function(width, height){
-  this.width = width;
-  this.height = height;
-}
-Quadrilateral.check= function(obj){
-  if(obj.width===obj.height) return "You created a square or rhombus"
-  else return "Your shape's sides are not all equal"
-}
-//————————————————【 TEST SECTION IS THE SAME AS METHOD 2】—————————————————————
-```
-
-As you can see in both cases, we use these static methods on the constructor function "Quadrilateral"
-
-METHOD 2: ES6 Classes
-
-```js
-class Quadrilateral {
-  constructor(width, height) {
-    this.width = width;
-    this.height = height;
-  }
-  static check(obj){
-    if(obj.width===obj.height) return "You created a square or rhombus"
-    else return "Your shape's sides are not all equal"
-  }
-}
-```
-
-Now, test the static methods to see if they work. 
-Add the snippet below after either one of the previous ones
-
-```js
-//————————————————【 TEST SECTION】—————————————————————
-const shape1= new Quadrilateral(5,5)
-const shape2= new Quadrilateral(8,11)
-
-let shapeType1= Quadrilateral.check(shape1)
-let shapeType2= Quadrilateral.check(shape2)
-console.log(shapeType1) // "You created a square or rhombus"
-console.log(shapeType2) // "Your shape's sides are not all equal"
-```
-
-
-
-#### Compared to Custom Prototype Methods
-
-Both forms of helper functions can be used to do the same things, so use whichever
-
-- The static functions can still be used on any instances created by "Quadrilateral", there's just no inheritance involved
-- It's not really a problem since we use `Quadrilateral.check()` to use the function
-
-```js
-class Quadrilateral {
-  constructor(width, height) {
-    this.width = width;
-    this.height = height;
-  }
-  // STATIC METHOD
-  static check(obj){
-    if(obj.width===obj.height) return "You created a square or rhombus"
-    else return "Your shape's sides are not all equal"
-  }
-}
-// CUSTOM METHOD
-Quadrilateral.prototype.check2= function(){
-  if(this.width===this.height) return "You created a square or rhombus"
-  else return "Your shape's sides are not all equal"
-}
-
-const shape1= new Quadrilateral(5,5)
-const shape2= new Quadrilateral(8,11)
-```
-
-Test them both out to get the same result
-
-```js
-// Test the static methods
-let shapeType1= Quadrilateral.check(shape1); console.log(shapeType1) 
-let shapeType2= Quadrilateral.check(shape2); console.log(shapeType2)
-// Test the custom methods
-console.log(shape1.check2()) 
-console.log(shape2.check2()) 
-```
-
-![image-20210429135748672](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429135748672.png)
-
-### METHOD 3: Object.create
-
-This final method creates objects in a completely different way than the other two. 
-
-- There is still prototypal inheritance involved, but we don't use any constructor functions, "new" keywords, or prototype properties
-- Instead, we use Object.create to manually set the prototype of an object to any other object we want (we usually end up building it from scratch)
-
-#### Demonstration
-
-EXAMPLE 1: Create empty object "Larry" and assign its prototype to an object literal
-
-```js
-const s4_Proto= {
-  calcAge(){
-    console.log(2021-this.birthYear)
-  }
-}
-const larryLurr= Object.create(s4_Proto)
-console.log(larryLurr) 
-```
-
-![image-20210426172627848](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210426172627848.png)
-
-At this point, we can add properties using dot notation if we want. But we want a more programmatic way to achieve this
-
-EXAMPLE 2: 
-Add in some properties to the object you make with Method 3 (directly on the object)
-
-```js
-const s4_Proto = {
-  calcAge() {
-    console.log(2021 - this.birthYear);
-  },
-  init(firstName, birthYear) {
-    this.firstName = firstName;
-    this.birthYear = birthYear;
-  },
-};
-const foxMain = Object.create(s4_Proto);
-foxMain.init('Larry', 1990);
-console.log(foxMain); //OUTPUT:
-```
-
-![image-20210426205811674](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210426205811674.png)
-
-- The `init()` function can be named anything
-- Just like method 2, the instance has `s4_Proto`'s properties as its own, but the functions are just inherited through prototypes
-
-#### The Scope Chain with Object.create
-
-It works the exact same way it normally does. 
-
-- The only difference is that with method 3, you manually set the prototype for an instance you `Object.create()` into existence. 
-- With other methods, instance prototypes are set the be equal to the constructor function's "prototype" (POLO, actually)
-
-![image-20210426201229930](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210426201229930.png)
-
-
-
-### instanceof Operator
-
-This operator lets you identify whether an object was created using a certain constructor or not by returning a Boolean 
-
-- Remember, it doesn't work properly on objects constructed using method 0 (a regular function that happens to output an object) - it will return false 
-- It only works on constructor functions, class syntax, and `Object.create`
-- Returns an error if the object name or function name you give it is undefined
-
-#### Testing the Operator
-
- ————————————————————————【 with Method 0 】—————————————————————————————
-
-Method 0 (which I'm introducing here) simply involves returning an object from a function that is now a constructor. 
-
-- There's no "new" operator, and the instanceof operator will always return "false" when an object is created with this
-- NEVER use this method for OOP- it's just a proof of concept
-
-```js
-function DogMaker(arg1, arg2, arg3) {
-  return {
-    name: arg1,
-    color: arg2,
-    numLegs: arg3,
-  };
-}
-const murillPup = new DogMaker('Tobias', 'caramel', 4);
-console.log(murillPup instanceof DogMaker);		//OUTPUT: FALSE 
-```
-
-The instanceof operator returns false even if that's where the object originated from
-
-————————————————————————【 with Method 1 】—————————————————————————————
-
-```js
-class DogSynthesizer {
-  constructor(arg1, arg2, arg3) {
-    this.name = arg1;
-    this.color = arg2;
-    this.numLegs = arg3;
-  }
-}
-const streliPup= new DogSynthesizer("Zippo","gray",4)
-console.log(streliPup instanceof DogSynthesizer); 	//OUTPUT: TRUE
-```
-
-### Defining Properties on Prototypes 1
-
-Throughout most of this chapter, we've discussed ways on how to define...
-
-1. Methods on prototypes (good for performance)
-2. Methods directly on instance objects (taught to avoid this at all costs)
-3. Properties on instance objects directly
-
-We've never discussed how to define properties on prototypes- but its fairly easy
-
-#### Demonstrations
-
-On Constructor Functions:
-
-```js
-function Dog(name) {
-  this.name = name;
-}
-Dog.prototype.numLegs=2 // defined this property on the constructor proto
-
-let beagle = new Dog("Snoopy");
-console.log(beagle.numLegs)  //OUTPUT: 2
-```
-
-![image-20210429152503012](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429152503012.png)
-
-On ES6 Classes:
-
-```js
-class Persona {
-  constructor(firstName, age) {
-    this.firstName = firstName;
-    this.age = age;
-  }
-}
-Persona.prototype.game= "P5" // defined this property on the constructor class proto
-const joker = new Persona('Ren', 16);
-console.log(joker.game) //OUTPUT:"P5"
-```
-
-![image-20210429152404793](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429152404793.png)
-
-On Object.create:
-
-```js
-const s4_Proto = {
-  calcAge() {
-    console.log(2021 - this.birthYear);
-  },
-  init(firstName, birthYear) {
-    this.firstName = firstName;
-    this.birthYear = birthYear;
-  },
-};
-s4_Proto.pine= "tree" // defining a property on the prototype obj we made
-const foxMain = Object.create(s4_Proto);
-foxMain.init('Larry', 1990);
-console.log(foxMain.pine)
-console.log(foxMain)
-```
-
-![image-20210429152303696](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429152303696.png)
-
-#### Faster Way to Add Prototype Properties
-
-The way I just showed you can get tedious when you have multiple properties you want to add to the prototype- especially when using method 1
-
-- A faster way to assign properties to constructor functions is to just redefine the prototype to new object literal
-- Just make sure to define the `constructor` property inside the prototype object itself. 
-- If you don't, that property will be erased when you redefine the prototype object
-  The `.constructor` property will give false results if you try to use it
-
-Before:
-
-```js
-function Bird(name,potential) {
-  this.name = name;  //own property
-  this.potential=potential
-}
-Bird.prototype.numLegs = 2; // prototype property
-Bird.prototype.flyDirection = "Eat"; // prototype property
-Bird.prototype.aviationSpeed= function(){
-  return (90*this.potential)+" mph"
-}
-```
-
-After redefining the prototype:
-
-```js
-function Bird(name,potential) {
-  this.name = name;  //own property
-  this.potential=potential
-}
-Bird.prototype={
-  constructor: Bird, //! DO NOT FORGET THIS !!!!!!!!!!!!!!!!!!!!
-  numLegs: 2,
-  flyDirection: "Eat",
-  aviationSpeed(){
-    return 90*this.potential
-  }
-}
-```
-
-#### Iterating Over Prototype Properties
-
-You can iterate over properties/methods that are part of an instance's prototype as well as those defined on the instance directly
-
-```js
-function Bird(name,lastname) {
-  this.name = name;  //own property
-  this.lastname= lastname
-}
-Bird.prototype.numLegs = 2; // prototype property
-Bird.prototype.calcU= function(){
-  return 25*4
-}
-let duck = new Bird("Daffy","Duck");
-let ownProps = [];
-let prototypeProps = [];
-
-for (let property in duck) {
-  if(duck.hasOwnProperty(property)) ownProps.push(property);
-  else prototypeProps.push(property);
-}
-console.log(ownProps) // contains key names of all props/methods directly on obj
-console.log(prototypeProps) // contains key names of all prototype properties/methods
-```
-
-![image-20210429231627730](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429231627730.png)
-
-
-
-### ES6 Classes Overview 1
-
-This will likely be the most popular method you encounter, regardless of whether you're using prototypal or class inheritance. I'm assuming you know the basics of how to set up ES6 classes for both in this lesson.
-
-I'll be showing you where to define...
-
-1)  Properties directly on object instances (dark blue)
-2)  Properties on constructor function prototypes (orange)
-3)  Methods on constructor function prototypes (teal)
-
-You can define methods directly on object instances, but you really shouldn't for the sake of performance. Not shown in the example
-
-![image-20210429182753787](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429182753787.png)
-
-CODE: https://jsfiddle.net/JasonXtuyotech/mjzgswde/
-
-### Imitating Class Inheritance with Protos
-
-It's funny when you think about it, isn't it? Classes in JS are just mimicking classes in other OOP languages like Java or C++. But we can also mimic that mimicry with prototypal inheritance
-
-In simple terms: 
-
-You can make a child constructor function inherit properties/methods from a parent constructor function. You can then give the child its own unique properties/methods (the entire point of class inheritance)
-
-- Hardcoded properties from the parent's constructor function block will also be defined directly on any instances created by the child constructor ƒ()
-- Properties on the parent's prototype will be inherited by the child constructor and any instances created by it
-
-#### Example
-
-```js
-//^ Create Parent Constructor ƒ()
-function Animal(type, name) {
-  this.type = type;
-  this.name = name;
-}
-Animal.prototype.eat = function () {
-  return 'nom nom nom';
-};
-
-//^ Create Child Constructor ƒ()
-//^ Inherits all properties/methods from parent's prototype and constructor ƒ()
-function Bird(type, name, speed) {
-  Animal.call(this, type, name); // set "this" keyword
-  this.speed = speed; // new child-exclusive properties
-}
-Animal.prototype.devour = function () {
-  return 'CHOMP';
-};
-//^ Set the bird's prototype to the Animal's prototype
-Bird.prototype = Object.create(Animal.prototype); // use M3 to make a prototype. New!
-Bird.prototype.constructor = Bird; // set the constructor ƒ() straight
-//—————————————————————【 TESTING 】——————————————————————————
-const radarr = new Bird('Condor', 'Connie', 90);
-console.log(radarr);
-console.log(radarr.eat());
-console.log(radarr.devour());
-```
-
-![image-20210429230237352](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429230237352.png)
-
-- `Animal.call(this, type, name)` is what allows us to bring over all the hardcoded properties from "Animal". That would be the "type" and "name" properties
-- Without this line, we'd have to retype all of Animal's properties, which violates the DRY principle
-
-The prototype chain should be set up correctly if I'm not mistaken
-
-### Using Closures to Make Properties Private
-
-If you have a constructor function where all properties are available publicly, that means anything from outside the constructor ƒ() can access properties and change them
-
-Think about things like passwords and bank accounts being easily changeable by any part of your codebase. That could cause a lot of issues
-
-- With class inheritance, the creators of JS are currently working on creating private versions of properties and methods (next chapter has a lesson on this, and I'm speaking as of April 2021)
-- When it comes to prototypal inheritance, we use closures
-
-#### How we use Closures 
-
-Involves creating a variable within the constructor function. This changes the scope of that variable to be within the constructor function versus available globally. 
-
-- This way, the variable can only be accessed and changed by "privileged methods" also within the constructor function- all of which the developer specifies his/herself
-- The only way anyone will be able to mess with your data from outside of the constructor is with methods you typed that allow them to do so (API)
-- They could just change your constructor function, but that's direct intent to mess things up on their part. Any bugs or critical errors caused by that will be on them, not you
-
-Method 1 EXAMPLE: Constructor Functions
-
-This is likely doable with methods 2 and 3 as well, but I haven't tested it
-
-```js
-function Bird(name) {
-  this.name=name;
-  let hatchedEggs = 10;
-
-  this.getHatchedEggCount = function () {
-    return hatchedEggs;
-  };
-  this.addEgg = function () {
-    hatchedEggs++ // add 1 to the variable
-    return hatchedEggs
-  };
-}
-let ducky = new Bird("Ace");
-console.log(ducky.getHatchedEggCount()) // 10
-console.log(ducky.addEgg()) // 11
-console.log(ducky)
-```
-
-![image-20210430000646994](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210430000646994.png)
-
-Trying to access variables defined in constructor functions doesn't work.
-`console.log(ducky.hatchedEggs)` gives undefined 
-
-#### Downsides
-
-This way of implementing security comes at the cost of performance. If you use the constructor 100 times, you'll be re-assigning the same privileged methods 100 times
-
-Closures don't work when you try to place the methods in the prototype instead. 
-You'll get an error for trying to access variables that exist in the constructor while outside of it
-
-```js
-function Bird(name) {
-  this.name = name;
-  var hatchedEggs = 10;
-}
-Bird.prototype.addEgg = function () {
-  hatchedEggs++; // add 1 to the variable
-  return hatchedEggs;
-};
-let ducky = new Bird('Ace');
-console.log(ducky.addEgg()); // 11
-```
-
-Closure working against us: ![image-20210430001523708](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210430001523708.png)
-
-> WARP: BNLSING
-
-# OOP Part 2: Inheritance between Classes
-
-> MAIN TOPICS
-> Class Inheritance Method 1: Constructor Functions
-> Class Inheritance Method 2: ES6 Classes 
-> Class Inheritance Method 3: Object.create
-
-This chapter has a lot of long examples, but they're all fairly simple. We simply need to demonstrate inheritance by allowing several properties and methods to be transferred
-
-PREVIOUS LESSONS:
-
-- We learned about how prototypal inheritance works in JS using 3 core methods. 
-- We allowed instances to inherit methods from prototypes
-  Now we'll learn about traditional OOP-style inheritance, like the image below shows
-
-THIS LESSON AND THE NEXT 2:
-
-> <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210426230336838.png" alt="image-20210426230336838" style="zoom:67%;" />
->
-> Student is a subset of Person
-> The tip of the arrow points to where an object delegates its behavior from
-> AKA. inherits properties and methods
-
-The whole point of inheritance is to have specific/self-tailored methods for the "Student" object, while at the same time being able to use generic methods that any instance of "Person" can access
-
-- We're going to learn how to do this while using all 3 major methods 
-- The first lesson focusing on constructor functions is by far the least convenient and most informative- it teaches you how to manipulate prototype objects manually
-
-### Inheritance b/t Classes: Constructor Functions
-
-#### Procedure
-
-Make "Student" a child class of "Person" that inherits all its methods and properties
-
-STARTER CODE: A Person object constructor ƒ() with 1 method assigned to its prototype
-
-```JS
-const Person = function (firstName, birthYear) {
-  this.firstName = firstName;
-  this.birthYear = birthYear;
-};
-Person.prototype.calcAge = function () {
-  console.log(2037 - this.birthYear);
-};
-```
-
-——————————————————————【 STEP 1 】—————————————————————————
-
-STEP 1: Import all parent properties, and add new specific ones for the child
-
-```js
-const Student = function (firstName, birthYear, course) {
-  Person.call(this, firstName, birthYear); // brings in all Person Properties
-  this.course = course; // set new properties only for "Student"
-};
-```
-
-- This step gives the illusion of inheritance, but we're really doing all this manually
-- Created a new constructor function for "Student"
-  It includes a new property not seen in the "Person" object (course)
-- Brought in all "Person" properties with the call method- had to set "this" value to the "Student" object the student constructor is going to make soon
-
-<< State of Prototype Chain >> 
-
-("prototype" means prototype of linked objects...aka POLO)
-
-We have the Student constructor function, its "prototype" property, and the mike object linked to it. The mike object being linked to the Student's "prototype" happens automatically when we use the "new" operator 
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210427110524305.png" alt="image-20210427110524305" style="zoom: 67%;" />
-
-————————————————————【 STEP 2 】——————————————————————————————
-
-STEP 2: Link the child's prototype to the parent prototype via Object.create
-
-```JS
-Student.prototype = Object.create(Person.prototype); // links Student proto to Person's
-Student.prototype.constructor= Student // LINE 2.2
-```
-
-- Object.create is the only way we can manually set prototypes
-  A simple `Student.prototype=Person.prototype` would mess up our prototype chain
-- Line 2.2 is needed or else the browser thinks Person constructed student's prototype
-  Check by w/ `console.dir(Student.prototype.constructor)` and getting Person obj back
-  This is an unwanted effect from Object.create with a simple fix
-- Object.create builds an empty object. So right now `Student.prototype` is empty and we need to fill it with any child-exclusive methods we want it to have
-
-<< State of Chain right before line 2.2 >>
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210427005521320.png" alt="image-20210427005521320" style="zoom:75%;" />
-
-- After we add `Student.prototype.constructor= Student `, the chain is actually finished being built properly (go to the end for the final diagram)
-- Step 3 just involves assigning a child-only method, which is self explanatory
-
-<< Why we can't set `Student.prototype=Person.prototype` in step 2 >>
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210427005603357.png" alt="image-20210427005603357" style="zoom: 60%;" />
-
-- This is the chain that would be created behind the scenes, which would lead to unexpected behavior when we try to inherit functions and properties
-
-—————————————————————————【 STEP 3 】———————————————————————
-
-STEP 3: Set any new child-only methods
-
-```js
-Student.prototype.introduce = function () {
-  console.log(`My name is ${this.firstName} and I study ${this.course}`);
-};
-```
-
-- Done by assigning the methods as properties of the child's prototype, so only that child can use it
-- Different than calcAge() which can be used on any instance of "Person" and also "Student" by the time we're done (they are linked by prototypes now after all)
-
-Now we can test out new instance objects and test out the methods (both child-only, and those inherited-by-all)
-
-#### FINAL CODE:
-
-Video explanation: https://www.udemy.com/course/the-complete-javascript-course/learn/lecture/22649085?start=720#questions
-
-DEMO: https://codepen.io/NFuego24-7/pen/GRrLqGz
-
-```js
-// --【 Define your parent class w/ any methods you want stored in its prototype 】--
-const Person = function (firstName, birthYear) {
-  this.firstName = firstName;
-  this.birthYear = birthYear;
-};
-Person.prototype.calcAge = function () {
-  console.log(2037 - this.birthYear);
-};
-
-/*【 STEP 1: Import all parent properties, and add new specific ones for the child 】*/
-const Student = function (firstName, birthYear, course) {
-  Person.call(this, firstName, birthYear); //brings in all Person Properties
-  this.course = course; // set new property only for "Student"
-};
-
-/*【 STEP 2: Link the child's prototype to the parent prototype via Object.Create 】*/
-Student.prototype = Object.create(Person.prototype);
-Student.prototype.constructor= Student 
-// above line needed or else browser thinks Person constructed student's prototype
-
-/*【 STEP 3: Set any new child-only methods to that child's prototype】*/
-Student.prototype.introduce = function () {
-  console.log(`My name is ${this.firstName} and I study ${this.course}`);
-};
-
-//—————————————————————【Testing zone】——————————————————————————
-const mike = new Student('Mike', 2020, 'Computer Science');
-console.log(mike);
-mike.introduce(); // test out the child-only method
-mike.calcAge(); //test the inherited method that comes fr/ the constructor prototype
-```
-
-#### Checking your Prototype Chain
-
-How the Prototype Chain should Look at Completion:
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210427010556947.png" alt="image-20210427010556947" style="zoom:67%;" />
-
-Look back at this diagram when you conduct your tests
-
-CONSTRUCTOR CHECK:
-
-```JS
-console.log(Student.prototype.constructor);
-console.log(Person.prototype.constructor);
-console.log(Object.prototype.constructor);
-```
-
-![image-20210427125003827](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210427125003827.png)
-
-Student constructor ƒ() created the student prototype
-Person constructor ƒ() created the Person prototype
-Object constructor ƒ() created the Object prototype. Looks good to me!
-
-INSTANCE CHECK:
-
-```js
-//# Check Instances
-console.log(mike instanceof Student) //OUTPUT: true
-console.log(mike instanceof Person)  //OUTPUT: true
-console.log(mike instanceof Object)  //OUTPUT: true
-```
-
-We check to see if the mike object is an instance of the Student/Person/Object Constructor. If class inheritance was set up properly, we should get true for all 3
-
-PROTOTYPE CHAIN SCANNING:
-
-If everything was done as per the procedure, check if your proto chain's correct
-We named the variables what the expression SHOULD give us
-We can check inside the objects for constructors, directly defined properties...etc
-
-```js
-let student_Proto= mike.__proto__          
-let person_Proto= mike.__proto__.__proto__  
-let object_Proto= mike.__proto__.__proto__.__proto__  
-// End of the chain
-console.log(student_Proto)
-console.log(person_Proto)
-console.log(object_Proto)
-```
-
-![image-20210427122941484](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210427122941484.png)
-
-1) We can tell student_proto is the `Student.prototype`
-
-- The introduce() method was only defined directly on the child's prototype
-  If it were inherited, you'd see it inside the grey `<prototype> Object` line
-- The constructor: function Student() was directly caused by line 2.2 in step 2
-
-2) We can tell person_Proto is the `Person.prototype`
-
-- The calcAge() function was defined directly on the Person prototype during the starter code (this proto did not inherit the function, just look at the blue text)
-- The constructor: function Person()
-
-3) We can tell object_Proto is the `Object.prototype`
-
-- The chain clearly ends here since `__proto__: null`
-- The constructor: function Object()
-
-You can look up the proto chain by using `console.dor(mike)`, but its a lot messier due to all the additional nesting. You still look for the same indicators and arrive at the same conclusion however
-
-
-
-### Polymorphism
-
-Polymorphism is just prototype chain priority when you have 2 methods/properties with the same name. 
-
-- As you know, when a property or method doesn't exist on an object, the browser will look at the object's prototype. If not found there it'll look up to the prototype's prototype...etc. 
-- Naturally, if searching for a method named "doubleUp", the browser will select the first one it encounters on the chain
-
-EXAMPLE: 
-Define 2 different methods- one on the parent prototype, and one on a child prototype. Give them the same name, but make them do different things
-
-We're going to borrow the large example from the last lesson
-
-//—————————————————————【 Code before changes 】—————————————————
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210427143835366.png" alt="image-20210427143835366" style="zoom: 80%;" />
-
-//—————————————————————【 Code after changes 】——————————————————
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210427144032558.png" alt="image-20210427144032558" style="zoom:80%;" />
-
-We changed Step 3's instance() method to a new calcAge() method. 
-It's the same as the first one, but it calculates your Age from 3037 instead of 2037
-
-TEST:
-
-```JS
-const mike = new Student('Mike', 2020, 'Computer Science');
-mike.calcAge() //OUTPUT: 1017 	(3037-2020= 1017)
-```
-
-This proves that calcAge() from the child prototype is encountered first, thus used over the calcAge() defined in the parent's prototype
-
-Code: https://codepen.io/NFuego24-7/pen/poRBNGB?editors=1010
-
-### Inheritance b/t Classes: ES6 Classes
-
-Class inheritance with ES6 classes is much easier than with constructors- mainly because all the manual prototype setting is done automatically
-
-#### EXAMPLE 1: No new Properties or Methods
-
-Make the StudentCL2 class a child of the PersonCL class
-Want the child to inherit all methods/properties, but have no new ones of its own
-Remember that getters and setters all count as methods too
-
-STARTER CODE:
-
-- PersonCL class has 2 properties, a calcAge() method, 1 getter, and 2 setters- all of which will be inherited by the child if we do this correctly
-- This example doesn't need to involve such a long parent, but I'm demonstrating that everything will be inherited by this class' child
-
-```js
-// PersonCL class
-class PersonCL {
-  constructor(fullName, birthYear) {
-    this.fullName = fullName;
-    this.birthYear = birthYear;
-  }
-  //————————————————【METHODS HERE DEFINED IN PROTOTYPE】—————————————————————
-  // Deliberate. Should never define them in the constructor (performance nightmare)
-  calcAge() {
-    console.log(2037 - this.birthYear);
-  }
-  get doubleAge() {
-    return (2037 - this.birthYear) * 2;
-  }
-  set fullName(name) {
-    if (name.includes(' ')) this._fullName = name;
-    else alert(`${name} is not a full name`);
-    // console.log(`New name is currently ${this.name}`)
-  }
-  get fullName() {
-    return this._fullName;
-  }
-  //————————————————【METHODS HERE DEFINED IN PROTOTYPE】—————————————————————
-}
-```
-
-CREATE YOUR CHILD CLASS:
-
-Yes, that's all we have to do. It's easier than last time huh?
-
-```JS
-// StudentCL2 Class
-class StudentCL2 extends PersonCL {} // create child class
-const mom = new StudentCL2('Lois Griffin', 1975);
-```
-
-TEST IT OUT:
-
-```JS
-// TESTING
-console.log(mom)
-console.log(mom.doubleAge); // use the getter fr/ PersonCL
-mom.calcAge(); // use the method fr/ Person CL
-
-mom.fullName="Megan Griffin"
-console.log(mom)
-```
-
-![image-20210427172345899](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210427172345899.png)
-
-All the properties, methods, getters, and setters are properly inherited by the child.
-
-#### Example 2: Yes to New Properties/Methods
-
-If we want the child class to have new properties/methods of its own while still inheriting all those from its parent, we'll need to include a constructor function inside that new class as we build it
-
-Use the same starter code from example 1
-Give the new child class its own method that halves age
-Give the new child a property called "major"
-
-```js
-// PersonCL class
-class PersonCL {
-  university = 'YorkU'; // hardcoded property available on all instances
-  constructor(fullName, birthYear) {
-    this.fullName = fullName;
-    this.birthYear = birthYear;
-  }
-  // All methods are defined on the prototype when placed outside of the constructor
-  // Deliberate. Should never define them in the constructor (performance nightnare)
-  calcAge() {
-    console.log(2037 - this.birthYear);
-  }
-  get doubleAge() {
-    return (2037 - this.birthYear) * 2;
-  }
-  set fullName(name) {
-    if (name.includes(' ')) this._fullName = name;
-    else alert(`${name} is not a full name`);
-    // console.log(`New name is currently ${this.name}`)
-  }
-  get fullName() {
-    return this._fullName;
-  }
-}
-//—————————————————————【STARTER CODE ABOVE】——————————————————————————
-//Create your child class
-class StudentCL3 extends PersonCL {
-  constructor(fullName, birthYear, major) {
-    super(fullName, birthYear); 	// sets the "this" keyword (CAN be empty)
-    this.major = major; 			// add in any child-exclusive properties
-  }
-  // Add all new methods outside of the constructor ƒ()
-  halfAge(){
-    return (2037 - this.birthYear)/2
-  }
-}
-
-const fuego= new StudentCL3("Leon Hart", 1990,"Radiology")
-console.log(fuego.major) 		// use StudenCL3's property
-console.log(fuego.halfAge()) 	// use StudenCL3's method
-console.log(fuego.doubleAge) 	// use Person's getter
-console.log(fuego)
-```
-
-![image-20210504122924913](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210504122924913.png)
-
-- "extends" will link Student Cl's proto to PersonCl's proto automatically, which passes over all its properties/methods after you set "this" with `super()`
-- "super()" is the constructor function of the parent class (PersonCl)
-
-CHECKING THE PROTOTYPE CHAIN:
-
-Perform checks the same way you did with constructor functions. 
-If curious, check out "Inheritance b/t Classes: Constructor Functions
-
-#### Hardcoded Properties on Instances
-
-Hardcoded properties are just like the properties we leave in the constructor, except they don't require parameters to be set. We have a value for them in mind
-
-From the looks of it, we can omplement them in one of 2 ways. Look at the property `university: YorkU `
-
-```JS
-// The new way (unofficial as of April 2021)
-class PersonCL {
-  university = 'YorkU';
-  constructor(fullName, birthYear) {
-    this.fullName = fullName;
-    this.birthYear = birthYear;
-  }
-}
-// OR the traditional way
-class PersonCL {
-  constructor(fullName, birthYear) {
-    this.fullName = fullName;
-    this.birthYear = birthYear;
-    this.university = 'YorkU';
-  }
-}
-```
-
-![image-20210504122924913](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210504122924913.png) ![image-20210504123755214](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210504123755214.png)
-
-Eitherway, every instance object will have the university property directly defined on them. This is particularly useful when API's come up with values for you (with dates for example)
-
-
-
-### Inheritance b/t Classes: Object.create
-
-One important thing to understand is that Object.create does not involve faking classes like the other 2 main methods do. 
-
-- All we're doing is linking objects together, and having certain objects act as prototypes for others
-- Unfortunately, this method isn't as popular in the real world as the other 2
-
-#### Challenge Description
-
-GOAL: Build a scope chain that looks like the above image
-
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210427230510583.png" alt="image-20210427230510583" style="zoom: 50%;" />
-
-<< `PersonProto` >>
-
-- Should have 1 function, and 2 properties defined directly on it
-- Everything below this object on the chain should inherit them as well
-
-<< `StudentProto` >>
-
-- Should be the child of its prototype `PersonProto`
-- Should have 1 new property in addition to all of `PersonProto`'s
-
-<< `jay` object >> 
-
-- Should have `StudentProto` as its prototype
-- Must inherit all properties and methods from `StudentProto` and `PersonProto`
-
-We want an object named "jay" to have `StudentProto` as its prototype. 
-`StudentProto` should be a child of `Personproto`
-
-#### Procedure
-
-STEP 1: Build your PersonProto object from scratch
-
-```js
-const PersonProto={
-  calcAge(){
-    console.log(2037-this.birthYear)
-  },
-  init(firstName,birthYear){
-    this.firstName = firstName;
-    this.birthYear= birthYear;
-  },
-};
-```
-
-- Directly contains 2 properties: firstName and birthYear
-- Has 1 method directly defined on it: calcAge()
-
-STEP 2: Build your StudentProto Object
-
-```js
-const StudentProto= Object.create(PersonProto); 
-StudentProto.init= function(firstName, birthYear, course){
-  PersonProto.init.call(this, firstName, birthYear); // set "this", import properties
-  this.course= course // child-only property
-}
-StudentProto.introduce= function(){
-  console.log(`My name is ${this.firstName} and I study ${this.course}`)
-}
-```
-
-- This step creates an empty StudentProto object with PersonProto as its prototype 
-- Then, we fill it with all the properties PersonProto had, while having access to its methods via inheritance through the proto chain
-- We define one new child-exclusive property, "course"
-  Also define a child-exclusive method, "introduce"
-
-STEP 3: The prototype chain is set. Create an instance and test it
-
-```js
-const jay= Object.create(StudentProto) //create empty object "jay"
-jay.init("jay",2010, "Computer Science"); // Fill it with its properties
-
-console.log(jay)
-jay.introduce() // test the child-exclusive method
-jay.calcAge() // test the method inherited from PersonProto
-```
-
-![image-20210428000936960](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210428000936960.png)
-
-FINAL CODE:
-
-```JS
-// STEP 1: Build your PersonProto object from scratch
-const PersonProto={
-  calcAge(){
-    console.log(2037-this.birthYear)
-  },
-  init(firstName,birthYear){
-    this.firstName = firstName;
-    this.birthYear= birthYear;
-  },
-};
-// STEP 2: Build your StudentProto Object
-const StudentProto= Object.create(PersonProto); 
-StudentProto.init= function(firstName, birthYear, course){
-  PersonProto.init.call(this, firstName, birthYear); // set "this", import properties
-  this.course= course // child-only property
-}
-StudentProto.introduce= function(){
-  console.log(`My name is ${this.firstName} and I study ${this.course}`)
-}
-//STEP 3: Create an instance and test it
-const jay= Object.create(StudentProto) //create empty object "jay"
-jay.init("jay",2010, "Computer Science"); // Fill it with its properties
-
-console.log(jay)
-jay.introduce() // test the child-exclusive method
-jay.calcAge()
-```
-
-#### Checking the Prototype Chain
-
-- Since we're not actually mimicking having classes in JS, the way we check our prototype chain is different. 
-- We can't look up constructors or instances of things anymore, because we have no constructor functions to begin with
-
-This stuff would work on Methods 1-2 but not here!
-
-```js
-console.log(jay instanceof StudentProto) //OUTPUT: true
-console.log(jay instanceof PersonProto)  //OUTPUT: true
-console.log(jay instanceof Object) 
-
-console.log(Student.prototype.constructor);
-console.log(Person.prototype.constructor);
-console.log(Object.prototype.constructor);
-```
-
-SOLUTION:
-
-- We have to bite the bullet and do things the long way
-  Use `console.dir()` on your instance object, then look up its prototype chain
-- Look through object prototype after object prototype and see if the methods are defined directly in the right places 
-
-```js
-console.dir(jay)
-```
-
-![image-20210428003048671](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210428003048671.png)
-
-- We see "jay" has a prototype that includes the init() and introduce() methods
-  We did define both of those on StudentProto, which is jay's prototype
-- That prototype's prototype is an object that has calcAge() defined on it
-  That would be PersonProto
-
-Everything checks out
-
-### Prototypal Inheritance VS Class Inheritance 
-
-#### What gets Inherited and How
-
-Before we begin, understand 2 things
-
-1. The 3 core methods (constructor functions, ES6 Classes, and Object.create) all have slightly different applications in prototypal inheritance VS class-inheritance
-2. "Method 2: ES6 classes" in our OOP Part 1 Chapter is still considered to be a method to perform prototypal inheritance, despite the name.
-
-PROTOTYPAL INHERITANCE METHODS:
-
-- An object's methods and properties are inherited from a prototype object
-  Our job is to assign these methods/properties to the parent's prototype
-- JS was designed to work with prototypes, and you can accomplish the exact same things that classes can do
-
-CLASS INHERITANCE METHODS:
-
-- Methods/properties are inherited by child classes, from a parent class. 
-  Those methods are then copied fr/ the child class to an instance object created by it
-- JS was never designed to work with classes. Even now it just mimics the ability to use them - and that comes with certain issues, especially with binding
-
-#### Comparison: Prototypal vs Class Inheritance
-
-Achieve the same thing using Method 2 for both Prototypal Inheritance and Class Inheritance
-
-###### PROTOTYPE- Challenge Description
-
-1. Make a parent constructor function named "Persona" 
-   Make it generate instances that inherit all its properties/methods
-
-- Persona properties: "firstName" and "age"
-  Persona methods: ageX2() 
-  Remember, we define methods on constructor prototypes, never directly on them
-
-2. Create your new "joker" object from the above constructor
-   Store a new property "genre" and method ageX3() on its prototype
-
-We might be using class syntax, but this is really just syntactic sugar over the traditional constructor function method to induce prototypal inheritance
-
-SOLUTION:
-
-```js
-class Persona {
-  constructor(firstName, age) {
-    this.firstName = firstName;
-    this.age = age;
-  }
-  // Stored on constructor function's prototype
-  ageX2(){
-    return this.age*2
-  }
-}
-//& Create new instance
-const joker = new Persona('Ren', 16); // created new object
-
-//& Store a new method on joker's prototype
-joker.__proto__.ageX3= function(){ 
-  return this.age*3 
-}
-// Store a new property directly on the joker object
-joker.genre= "RPG" 
-```
-
-Now lets test these methods and properties out:
-
-```js
-// TESTING
-console.log(joker.ageX2()); // method from constructor proto
-console.log(joker.ageX3()); // method from joker proto
-console.log(joker.genre) // property defined directly on "joker"
-console.log(joker)
-```
-
-![image-20210428140924111](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210428140924111.png)
-
-- It might be possible that I messed up the chain here somewhere, but I've inherited everything I wanted
-- The methods are also stored in prototypes instead of being directly defined in objects or constructor functions. Our job is done
-
-CLASS- Challenge Description
-
-1. Make a parent class named "Persona" 
-   Make a child class named "Phantom"
-   Ensure that "Phantom" inherits all methods/properties from its parent class
-   Give it unique methods and properties of its own that match the previous challenge
-
-- Persona properties: "firstName" and "age"
-  Persona methods: ageX2() 
-- Remember, we define methods on constructor prototypes, never directly on them
-
-2. With classes, you add any child-exclusive properties/methods before you generate the instance
-
-- Store a new property "genre" directly on the new instance object
-- Store method ageX3() on the future instance's prototype
-
-SOLUTION:
-
-```JS
-class Persona {
-  constructor(firstName, age) {
-    this.firstName = firstName;
-    this.age = age;
-  }
-  ageX2(){
-    return this.age*2
-  }
-}
-// STEP 1: Import all parent properties and methods 
-class Phantom extends Persona{
-  constructor(firstName, age, genre){
-    super (firstName, age) // set "this" keyword
-    this.genre=genre // add child-exclusive properties here
-  }
-  // STEP 2: Add any child-exclusive methods outside the constructor
-  ageX3(){
-    return this.age*3
-  };
-}
-```
-
-Create your new object "joker" and test out your methods
-
-```js
-const joker = new Phantom('Ren', 16,"RPG"); // created new object
-console.log(joker.ageX2()); // method from constructor proto
-console.log(joker.ageX3()); // method from joker proto
-console.log(joker.genre) // property from joker proto
-console.log(joker)
-```
-
-![image-20210428140342491](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210428140342491.png)
-
-#### Why not to Use Classes
-
-DISCLAIMER: This method of inheritance can be very problematic or dangerous in the real world when designing software
-
-1. **Binding issues**. As class constructor functions deal closely with `this` keyword, it can introduce potential binding issues, especially if you try to pass your class method as a callback to an external routine  (hello, React devs )
-2. **Performance issues**. Because of classes’ implementation, they are notoriously difficult to optimize at runtime. While we enjoy performant machines at the moment,  the fact that [Moore’s law is fading away](https://en.wikipedia.org/wiki/Moore's_law) can change all that.
-3. **Private variables**. One of the great advantages and the main reasons for classes in the first place, private variables, is just non-existent in JS.
-4. **Strict hierarchies**. Classes introduce a straight top-to-bottom order and make changes  harder to implement, which is unacceptable in most JS applications.
-5. **[Because the React team tells you not to](https://reactjs.org/docs/hooks-intro.html)**. While they did not explicitly deprecate the class-based components yet, they are likely to in the near future.
-
-SOLUTION:
-
-- All of these issues can be mitigated with JS objects and prototype delegation. 
-  JS offers so much more that classes can ever do, yet most developers are blind to it. 
-- If you want to truly master JS, you need to  embrace its philosophy and move away from dogmatic class-based thinking
-
-### Additional Tricks & Tips for JS Classes
-
-EXTRA CAPABILITIES OF CLASSES:
-
-- You can add properties into constructor functions that don't involve any parameters
-- You can code instantaneous actions for when the constructor builds a new object
-
-BEST PRACTICES:
-When mutating values inside objects, it's never a good idea to target them directly
-
-- Typically, you'll want to create a method to facilitate what you're trying to do
-  It'll reduce bugs in future projects, especially large scale ones
-- If you create good functions that automate low level actions, there's less to think about when coding (benefits you with abstraction)
-
-#### Demonstration
-
-PHASE 1: Create a bank account object generator
-
-- Fill your initially empty movements array with a deposit and a withdrawal
-- Use a heavily discouraged tactic for mutating data- accessing it directly
-
-```js
-class Account{
-  constructor(owner,currency,pin){
-    this.owner= owner;
-    this.currency=currency;
-    this.pin=pin;
-    this.movements=[]; // requires no argument
-    this.locale= navigator.language; // requires no argument
-    console.log(`This fires with every new account! Welcome, ${this.owner}`)
-    // the above message is logged instantaneously after every new object is created
-  }
-}
-const acc1= new Account('Jonas','EUR',1111)
-console.log(acc1)
-
-acc1.movements.push(2000) // deposit 2000
-acc1.movements.push(-500) // withdraw 500
-console.log(acc1.movements)
-```
-
-![image-20210428011248216](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210428011248216.png)
-
-PHASE 2: Replace your direct mutations of the movements array
-
-- Instead, create 2 methods that will make positive or negative additions to the array
-- Abstract away the need to supply negative number arguments for withdrawals
-  Aka. Get rid of manual manipulation
-- Make this function part of the Account constructor's prototype
-
-```js
-class Account {
-  constructor(owner, currency, pin) {
-    this.owner = owner;
-    this.currency = currency;
-    this.pin = pin;
-    this.movements = []; // requires no argument
-    this.locale = navigator.language; // requires no argument
-    console.log(`This fires with every new account! Welcome, ${this.owner}`);
-    // the above message is logged instantaneously after every new object is created
-  }
-  // Public interface of our objects
-  deposit(amount) {
-    this.movements.push(amount);
-  }
-  withdraw(amount) {
-    this.movements.push(-amount);
-  }
-}
-const acc1 = new Account('Jonas', 'EUR', 1111);
-console.log(acc1);
-
-acc1.deposit(2000)
-acc1.withdraw(500)
-console.log(acc1.movements);
-```
-
-same results: ![image-20210428011248216](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210428011248216.png)
-
-These two methods we created "deposit" and "withdraw" make up the public interface for our objects (API)
-
-#### Intro to Privacy and Data Encapsulation
-
-Those methods we created that compose our API are fairly simple. 
-
-- In the real world, you may have plenty of medium to large size methods that automate and abstract complex operations. 
-- Just because they exist doesn't mean that some dev won't attempt to do things manually. When he/does, they introduce the possibility for lots of bugs 
-
-Date encapsulation and privacy limit the access of methods and properties at certain locations in your code (not from outside the object for example)
-
-### Encapsulation: Protected Properties and Methods
-
-- Encapsulation involves keeping certain properties/methods private inside the class they're defined in so that nobody can access them outside of it
-- The remaining methods are essentially just exposed as a public interface with the object (API)
-- This is necessary for all professional projects that are to be taken seriously
-
-#### Why Data Privacy & Encapsulation is Needed
-
-1. To prevent code outside a class from accidentally manipulating data inside one
-
-- If something should not be messed with manually, encapsulate it
-
-2. Encapsulation lets us change internal methods with more confidence
-
-- If we only expose a small API consisting of only a few public methods, we can change all other internal methods with more confidence
-- At this point, we'd be sure that external code does not rely on the "private methods"
-  Our code will not break when we do internal changes
-
-#### Faking Encapsulation & Privacy in JS
-
-As of April 2021, JS classes don't support real data privacy and encapsulation yet. 
-
-- There is a proposal to add truly private class fields and methods to the language, but it's not completely ready- and it would take a while to become mainstream even if it was
-- The best developers can do in native JS is to mimic encapsulation and privacy, in the same spirit that we mimic having classes
-
-When we do this using the typical conventions that all devs agree to use, our data is data is "protected", but not truly private. This why people refer to things as "protected properties"
-
-EXAMPLE: "Protect" an array of movements within 
-
-The only difference between image 1 and 2 is the name of the movements array
-
-![image-20210428155701958](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210428155701958.png) ![image-20210428155733167](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210428155733167.png)
-
-```js
-const acc1 = new Account('Jonas', 'EUR', 1111);
-acc1._movements.push(900) // not a good idea to do this
-```
-
-Now, if a developer wants to access the movements array, they'd have to include an underscore when calling the property. 
-
-- I would know that I'm not supposed to access that property because of the underscore
-- If I access it anyway, someone's likely going to call me out if things go wrong as a result of directly targeting a "protected" property
-- For the rest of your code to work properly, you'd have to adjust every direct call to `movements` and make it to `_movements` instead
-
-#### Large Example
-
-STARTER CODE:
-
-```JS
-class Account {
-  constructor(owner, currency, pin) {
-    this.owner = owner;
-    this.currency = currency;
-    this.pin = pin;
-    this.movements = []; 
-    this.locale = navigator.language; 
-    console.log(`This fires with every new account! Welcome, ${this.owner}`);
-    // logged instantaneously after every new object is created
-  }
-  deposit(amount) {
-    this.movements.push(amount);
-  }
-  withdraw(amount) {
-    this.movements.push(-amount);
-  }
-  approveLoan() {
-    return true;
-  }
-  requestLoan(amount) {
-    if (this.approveLoan()) {
-      this.deposit(amount);
-      console.log('Loan approved');
-    }
-  }
-}
-```
-
-To-protect:
-
-- The "pin" and "movements" property
-- The "approveLoan" method
-
-To-abstract:
-
-- Fetching the movements array
-  We want to be able to grab it at a moment's notice, but through a method instead of accessing `objName._movements` directly
-
-```js
-class Account {
-  constructor(owner, currency, pin) {
-    this.owner = owner;
-    this.currency = currency;
-    this._pin = pin;
-    this._movements = []; // requires no argument
-    this.locale = navigator.language; // requires no argument
-    console.log(`This fires with every new account! Welcome, ${this.owner}`);
-    // the above message is logged instantaneously after every new object is created
-  }
-
-  deposit(amount) {
-    this._movements.push(amount);
-  }
-  withdraw(amount) {
-    this._movements.push(-amount);
-  }
-  _approveLoan() {
-    return true;
-  }
-  requestLoan(amount) {
-    if (this._approveLoan()) {
-      this.deposit(amount);
-      console.log('Loan approved');
-    }
-  }
-  getMovements(){
-    return this._movements
-  }
-}
-```
-
-Let's test out generating objects and using all the public methods
-
-```js
-const acc1 = new Account('Jonas', 'EUR', 1111);
-console.log(acc1);
-
-acc1.deposit(2000);
-acc1.withdraw(500);
-console.log(acc1.getMovements());
-```
-
-![image-20210429113624738](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429113624738.png)
-
-deposit(), withdraw(), and getMovements() are 3 functions that are intentionally exposed publicly. They, and all other methods/properties without a leading "_" are part of the API
-
-### Encapsulation: Truly Private Class Fields/Methods
-
-Class fields are not part of the JS language yet as of late April, 2021, but likely will be at some point in the near future. Use google chrome when testing them out in their developmental state
-
-Field: A property that will be on all instances (name comes from traditional OOP langs)
-
-- With this new proposal, JS intends to move away from the idea that classes are just syntactic sugar over constructor functions. 
-- Classes will soon be able to have abilities that constructor functions didn't let them have before
-
-The proposal includes 8 new features, but we're going to focus on 4 in this lesson
-
-1. Public fields	2. Private fields	3. Public methods	4. Private methods
-
-#### Demonstration
-
-STARTER CODE: 
-
-```JS
-class Account {
-  constructor(owner, currency, pin) {
-    this.owner = owner;
-    this.currency = currency;
-    this._pin = pin;
-    this._movements = []; // requires no argument
-    this.locale = navigator.language; // requires no argument
-    console.log(`This fires with every new account! Welcome, ${this.owner}`);
-    // the above message is logged instantaneously after every new object is created
-  }
-
-  deposit(amount) {
-    this._movements.push(amount);
-  }
-  withdraw(amount) {
-    this._movements.push(-amount);
-  }
-  _approveLoan() {
-    return true;
-  }
-  requestLoan(amount) {
-    if (this._approveLoan()) {
-      this.deposit(amount);
-      console.log('Loan approved');
-    }
-  }
-  getMovements() {
-    return this._movements;
-  }
-}
-```
-
-Take your starter code and make the following changes to the methods and properties already there. Pay attention to the location and syntax of the code replacing the old 
-
-————————————————【 Public fields: locale 】—————————————————————
-
-- Public fields are located directly on the instance objects, not the prototype
-- They're accessible via the "this" keyword, just like the constructor ƒ() properties
-
-————————————————【 Private fields: _movements, _pin 】—————————————————————  
-
-- These fields are defined directly on the instance objects, not the prototype
-- Trying to access private fields results in an error
-
-SYNTAX: Place a # in front of the property's original name. 
-
-- In our case, we also removed the "_" in front of _movements because there's no longer a need to fake "protect" this property 
-- If we try to access these fields directly, we get an error message
-
-![image-20210429123802071](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429123802071.png)
-
-————————————————【 Public Methods 】—————————————————————
-
-- The methods we placed beneath the constructor function in ES6 Classes have always been private (no new syntax or concepts to go over with this)
-
-————————————————【 Private Methods: approveLoan() 】—————————————
-
-DISCLAIMER: I'm showing you how private methods will work in the future. Right now, they're not supported by any browser. So just comment them all out when testing this on chrome
-
-- Place these below all the public methods, and make a simple change to their name by adding a #
-- Remove any fake protection "_"'s you may already have applied to their names too
-
-![image-20210429124007008](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429124007008.png)
-
-#### Full Solution Code
-
-Paste the JS into any generic HTML/CSS/JS environment. We don't use DOM manipulation
-FINAL CODE: https://jsfiddle.net/JasonXtuyotech/185Lagq7/
-
-![image-20210429124624101](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429124624101.png)
-
-Let's test out our code by generating an object:
-(Don't forget to comment out private methods since they're unsupported as of Apr 2021)
-
-```js
-const acc1 = new Account('Jonas', 'EUR', 1111);
-console.log(acc1);
-
-acc1.deposit(2000);
-acc1.withdraw(500);
-console.log(acc1.getMovements()); // works b/c we access private field through the API
-```
-
-![image-20210429124838433](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429124838433.png)
-
-Now, bait some errors by trying to access private properties/methods
-The error message may change eventually
-
-```JS
-console.log(acc1._movements.#movements)
-console.log(acc1.#pin)
-```
-
-![image-20210429124951782](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429124951782.png)
-
-#### Remaining Features
-
-Some/all of these are currently supported in chrome, but are apparently not that important. Return to this later if needed
-
-5. Static Public Fields
-6. Static Private Fields
-7. Static Public Methods (we've learned these in the "Static Methods" lecture)
-8. Static Private Methods
-
-
-
-### Chaining Methods
-
-Back in the array methods chapter, we learned that you can chain methods together. 
-It works as long as the output of the first matches the required input of the second
-
-This can be done with class methods as well, so long as you return the object itself inside the method you want to be chainable
-
-#### Watch for This!
-
-All we need to do to make a function chainable is to make it return the object its inside via `return this`. However, you can't just add this to the end of a function without considering the implications
-
-- Most functions have conditions about when it can/cannot perform its intended action 
-- Only add `return this` to the end of a block where the function has decided "all my conditions are met. I can go ahead and perform my action". 
-- You don't want the function to return the object its in if no actions are performed due to incorrect conditions. You want it to throw you an error to let you know what you're trying to do is wrong
-
-![image-20210429143353613](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429143353613.png)
-
-You would never put `return this` in the else block, or at the very end of this function. You'd create several bugs by doing that
-
-#### Example
-
-STARTER CODE: 
-
-```JS
-class Account {
-  constructor(owner, currency, pin) {
-    this.owner = owner;
-    this.currency = currency;
-    this._pin = pin;
-    this._movements = []; // requires no argument
-  }
-  deposit(amount) {
-    this._movements.push(amount);
-  }
-  withdraw(amount) {
-    this._movements.push(-amount);
-  }
-  _approveLoan() {
-    return true;
-  }
-  requestLoan(amount) {
-    if (this._approveLoan()) {
-      this.deposit(amount);
-      console.log('Loan approved');
-    }
-  }
-  getMovements() {
-    return this._movements;
-  }
-}
-const acc1 = new Account('Jonas', 'EUR', 1111); // INSTANCE
-```
-
-Let's say we want to do the following on one line...
-Deposit 300, deposit 500, withdraw 35, request a loan for 25K, then withdraw 4000
-
-```js
-acc1.deposit(300).deposit(500).withdraw(35).requestLoan(25000).withdraw(4000)
-// Make this actually work by changing our starter code
-```
-
-
-
-SOLUTION:
-
-Make the deposit(), withdraw(), and requestLoan() functions all return the object they're inside of. Just tack on `return this` to their functions at the end 
-
-We have 3 incredibly minor changes denoted by //TACKED ON
-
-```JS
-class Account {
-  constructor(owner, currency, pin) {
-    this.owner = owner;
-    this.currency = currency;
-    this._pin = pin;
-    this._movements = []; // requires no argument
-  }
-  deposit(amount) {
-    this._movements.push(amount);
-    return this 								// TACKED ON
-  }
-  withdraw(amount) {
-    this._movements.push(-amount);
-    return this									// TACKED ON
-  }
-  _approveLoan() {
-    return true;
-  }
-  requestLoan(amount) {
-    if (this._approveLoan()) {
-      this.deposit(amount);
-      console.log('Loan approved');
-      return this								// TACKED ON (conditions met here)
-    }
-    // return this				// AN EXAMPLE OF WHERE NOT TO PUT "return this"
-  }
-  getMovements() {
-    return this._movements;
-  }
-}
-//—————————————————————【 TESTING 】——————————————————————————
-const acc1 = new Account('Jonas', 'EUR', 1111);
-console.log(acc1);
-
-acc1.deposit(300).deposit(500).withdraw(35).requestLoan(25000).withdraw(4000)
-console.log(acc1.getMovements());
-```
-
-![image-20210429132147832](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429132147832.png)
-
-### Define Properties on Prototypes 2
-
-In the previous chapter, we had a similar lecture that taught us how to define properties on constructor function prototypes. 
-
-- They would later be inherited by all instance objects those constructors generated. The whole point is to have properties that aren't defined on instances directly
-- It works the same way with class inheritance methods
-
-#### Method 1: Constructor Functions
-
-```JS
-const Person = function (firstName, birthYear) {
-  this.firstName = firstName;
-  this.birthYear = birthYear;
-};
-Person.prototype.calcAge = function () {
-  console.log(2037 - this.birthYear);
-};
-Person.prototype.exampleProp= 99 // DEFINE PROPERTY ON CONSTRUCTOR PROTO HERE
-
-/*【 STEP 1: Import all parent properties, and add new specific ones for the child 】*/
-const Student = function (firstName, birthYear, course) {
-  Person.call(this, firstName, birthYear); //brings in all Person Properties
-  this.course = course; // set new property only for "Student"
-};
-
-/*【 STEP 2: Link the child's prototype to the parent prototype via Object.Create 】*/
-Student.prototype = Object.create(Person.prototype);
-Student.prototype.constructor= Student 
-// above line needed or else browser thinks Person constructed student's prototype
-
-/*【 STEP 3: Set any new child-only methods to that child's prototype】*/
-Student.prototype.introduce = function () {
-  console.log(`My name is ${this.firstName} and I study ${this.course}`);
-};
-
-//—————————————————————【Testing zone】——————————————————————————
-const mike = new Student('Mike', 2020, 'Computer Science');
-console.log(mike.exampleProp)
-console.log(mike);
-mike.introduce(); // test out the child-only method
-mike.calcAge(); //test the inherited method that comes fr/ the constructor prototype
-```
-
-#### METHOD 2: ES6 Classes
-
-```js
-class PersonCL {
-  constructor(fullName, birthYear) {
-    this.fullName = fullName;
-    this.birthYear = birthYear;
-  }
-  //————————————————【METHODS HERE DEFINED IN PROTOTYPE】—————————————————————
-  // Deliberate. Should never define them in the constructor (performance nightnare)
-  calcAge() {
-    console.log(2037 - this.birthYear);
-  }
-
-  //————————————————【METHODS HERE DEFINED IN PROTOTYPE】—————————————————————
-}
-PersonCL.prototype.testProp= 99 // DEFINE PROPERTY ON PARENT CLASS PROTO
-
-class StudentCL3 extends PersonCL {
-  constructor(fullName, birthYear, major) {
-    super(fullName, birthYear); 	// sets the "this" keyword 
-    this.major = major; 			// add in any child-exclusive properties
-  }
-  // Add all new methods outside of the constructor ƒ()
-  halfAge(){
-    return (2037 - this.birthYear)/2
-  }
-}
-
-const fuego= new StudentCL3("Leon Hart", 1990,"Radiology")
-console.log(fuego.testProp) 		// 99
-```
-
-#### METHOD 3: Object.create
-
-```js
-// STEP 1: Build your PersonProto object from scratch
-const PersonProto={
-  calcAge(){
-    console.log(2037-this.birthYear)
-  },
-  init(firstName,birthYear){
-    this.firstName = firstName;
-    this.birthYear= birthYear;
-  },
-};
-PersonProto.testProp=99 // DEFINE PROPERTY ON PROTOTYPE HERE
-
-// STEP 2: Build your StudentProto Object
-const StudentProto= Object.create(PersonProto); 
-StudentProto.init= function(firstName, birthYear, course){
-  PersonProto.init.call(this, firstName, birthYear); // set "this", import properties
-  this.course= course // child-only property
-}
-StudentProto.introduce= function(){
-  console.log(`My name is ${this.firstName} and I study ${this.course}`)
-}
-//STEP 3: Create an instance and test it
-const jay= Object.create(StudentProto) //create empty object "jay"
-jay.init("jay",2010, "Computer Science"); // Fill it with its properties
-
-console.log(jay)
-console.log(jay.testProp)  //OUTPUT: 99
-```
-
-
-
-### ES6 Classes Overview 2
-
-FOR THE RECORD: Our theory document has a more detailed explanation on how this works
-
-This will likely be the most popular method you encounter, regardless of whether you're using prototypal or class inheritance. I'm assuming you know the basics of how to set up ES6 classes for both in this lesson.
-
-I'll be showing you where to define...
-
-1)  Properties directly on object instances (dark blue)
-2)  Properties on parent class prototypes (orange)
-	  Properties on child class prototypes (orange)
-
-3)  Methods on constructor function prototypes (teal)
-
-You can define methods directly on object instances, but you really shouldn't for the sake of performance. Not shown in the example
-
-#### Cheat-Sheet Imagery
-
-The super keyword refers to **the parent class**. It is used to call the constructor of the parent class and to access the parent's properties and methods.
-
-CODE: https://jsfiddle.net/JasonXtuyotech/mujxfb0d/
-
-![image-20210429183502029](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210429183502029.png)
-
-YOU CAN ALSO...
-Add properties, event listener setups, and invoke methods on startup inside the constructor
-Taken from Mapty Project (before we learn MVC Architecture)
-
-![image-20210823175812129](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210823175812129.png)
-
-DON'T FORGET:
-
-1. Classes don't always require constructors
-2. Child classes inherit parent class variables as well as methods
-
-![image-20210706014408105](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210706014408105.png)
-
-#### Redefining Inherited Methods & Variable Values
-
-- You can change the values of hardcoded class variables, even if they start by inherting a value you don't like
-- You can also redefine methods you inherited initially
-
-![image-20210706014610159](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210706014610159.png)
-
-This feeds into my next point : 
-You can set variables equal to all kinds of things inside a class but outside the constructor:
-
-![image-20210824233623207](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210824233623207.png)
-
-### Using "this" and Rebinding it
-
-The "this" keyword points to different things depending on where it's used
-
-#### this" in Different Situations
-
-| LOCATION                                                     | value of "this"                                              |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| functions defined on global scope                            | undefined                                                    |
-| functions defined in an object                               | the object they're inside                                    |
-| internally defined event handlers (arrow_function)           | window object<br />Never use arrow handlers!!                |
-| externally or internally defined <br />event handlers (function_declaration) | Equals `eventObj.target`<br />For click events, it's be what you clicked on |
-| Inside a class                                               | The class "this" is used within.<br />Can be overridden      |
-| geolocation API callback F's                                 | undefined (overrides the "inside class rule")                |
-| inside a prototype method                                    | refers to what you'll be using it on                         |
-
-#### Rebinding "this"
-
-When using classes in JS or Class-based React, we sometimes need to change what the this keyword inside a function will be referencing- most commonly when dealing with event handlers
-
-- We usually want "this" to point to the class your function or event handler resides in
-  That way, we can access nested functions, regular class object properties...etc
-- Set up event listeners in the constructor (their handlers should be defined outside of it)
-  Bind those handlers to the class you're inside using `.bind(this)`
-
-![image-20210823175812129](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210823175812129.png)
-
-Let's evaluate!
-
-```js
-form.addEventListener('submit', this._newWorkout.bind(this));
-```
-
-- We're setting up an event listener onto `form`, an element we likely targeted with query selector
-- `_newWorkout` is a method we defined outside of the constructor but offscreen, just like the `_getPosition` you can see at the bottom (must use `this.` to reference it)
-- We bind the new workout method to the class we're residing in using `.bind(this)`
-  While inside the constructor, this will reference the class
-
-Now, we are free to use the this keyword inside our new workout method
-It will reference the App class
-
-# Advanced Object Methods and Operators
-
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
-
-### Prototype-Oriented Methods
-
-#### isPrototypeOf
-
-Verifies if an object checks if an object exists in another object's prototype chain.
-
-```js
-const Person = function (firstName, birthYear) {
-  (this.firstName = firstName), (this.birthYear = birthYear);
-};
-const jonas = new Person('jonas', 1975); // Create new instance
-
-let verify= Person.prototype.isPrototypeOf(jonas)
-console.log(verify) //OUTPUT: true
-```
-
-![image-20210424221400564](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210424221400564.png)
-
-#### getPrototypeOf()
-
-Is the newer version of `ObjectName.__proto__`
-
-- Both return the prototype property of the object parameter you feed this method
-- Includes all the functions you assigned to the constructor's prototype, the constructor function itself, and more
-
-```js
-const Person = function (firstName, birthYear) {
-  (this.firstName = firstName), (this.birthYear = birthYear);
-};
-Person.prototype.calcAge = function () {
-  return 2037 - this.birthYear;
-};
-const jonas = new Person('jonas', 1975); // Create new instance
-
-console.log(jonas.__proto__); 			   //Shows the prototype object of jonas
-console.log(Object.getPrototypeOf(jonas))  //Shows the prototype object of jonas
-```
-
-![image-20210424214526991](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210424214526991.png)
-
-#### __ proto __
-
-The older version of getPrototypeOf(). Is not encouraged, but is very useful for when you want to go up the prototype chain quickly. 
-
-- Chaining this method multiple times lets you get the prototype of a prototype
-- There is a much more in-depth explanation of this example in the theory document
-  Lesson titled "Prototypal Inheritance and the Prototype Chain"
-
-```js
-const Person = function (firstName, birthYear) {
-  (this.firstName = firstName), (this.birthYear = birthYear);
-};
-const jonas = new Person('jonas', 1975); // Create new instance
-
-// jonas object's prototype 
-const box2= jonas.__proto__
-
-//prototype of jonas object's prototype
-const box1= jonas.__proto__.__proto__
-
-// Should equal null. We've reached the end of the chain
-const null_bait= jonas.__proto__.__proto__.__proto__
-```
-
-![image-20210425100213458](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210425100213458.png)
-
-
-
-#### hasOwnProperty()
-
-- This method will check if an instance/object has a certain property or key inside. 
-- It returns a Boolean, but doesn't count properties only accessible because of the prototype
-
-EXAMPLE: 
-
-```js
-const Person = function (firstName, birthYear) {
-  (this.firstName = firstName), (this.birthYear = birthYear);
-};
-const jonas = new Person('jonas', 1975); // Create new instance
-//—————————————————————【Setting properties】——————————————————————————
-Person.prototype.powerLevel= 9000; // set property to the POLO
-
-/*PICTURE 1*/
-console.log(jonas.powerLevel) //OUTPUT:9000 (BUT, it is not kept as a KVP)
-console.log(jonas)
-/*PICTURE 2*/
-let testA = jonas.hasOwnProperty('firstName'); //OUTPUT: true
-let testB = jonas.hasOwnProperty('powerLevel'); //OUTPUT: false
-console.log(testA, testB);
-```
-
-![image-20210424235205753](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210424235205753.png) ![image-20210425002218815](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210425002218815.png)
-
-As you can see, we can still access `jonas.powerLevel` with dot notation, but it is not directly showcased on the jonas object preview. It's inside the prototype object
-
-- When we use `hasOwnProperty`, it knows when a property is only available because of the prototype the instance inherited (hence the false output)
-- The method does consider properties that were deliberately included within the constructor function's initial declaration
-
-### instanceof Operator
-
-#### instanceof 
-
-This operator lets you identify whether an object was created using a certain constructor or not by returning a Boolean 
-
-- Remember, it doesn't work properly on objects constructed using method 0 (a regular function that happens to output an object) - it will return false 
-- It only works on constructor functions, class syntax, and `Object.create`
-- Returns an error if the object name or function name you give it is undefined
-
-### create() CONTINUE
-
-This method creates a new object, using another one as the prototype for it
-This means the new object will have all of the prototype's KVPs
-
-```js
-Object.create(prototypeObj, optionalPropertyObject)
-```
-
-PLACE THIS LESSON IN OOP chapter and then read this: [Understanding Own Properties of an Object in JavaScript (javascripttutorial.net)](https://www.javascripttutorial.net/javascript-own-properties/#:~:text=JavaScript uses prototypal inheritance.,from its prototype is inherited.)
-
-This method clones an object
-
-### getOwnPropertyNames() and keys()
-
-These methods create an array with all the key names of an object inside of it
-
-```js
-const chars = {
-  alien: "Piccolo",
-  creator: "Shin",
-  prince: "Vegeta"
-};
-
-let keyNames= Object.getOwnPropertyNames(chars);
-console.log(keyNames);  //OUTPUT: ["alien", "creator", "prince"]
-
-let keyNames2= Object.keys(chars);
-console.log(keyNames2);	//OUTPUT: ["alien", "creator", "prince"]
-```
-
-These 2 methods do have 1 small difference between each other:
-
-- `Object.getOwnPropertyNames(a)` returns *all* own properties of the object
-- `Object.keys(a)` returns *all enumerable* own properties
-
-These work the exact same as long as you don't set obj properties to `enumerable: false`
-
-
-
-### assign() 
-
-This method merges existing objects with each other, causing permanent change to the original starting object its used on. ℗
-
-```js
-Object.assign(startingObject,{KVPs_2_Add})
-//OR
-Object.assign(startingObject,additionObject) 	// if you're adding an existing object
-```
-
-- If the object you're adding has keys that with the same name as the starting object, the starting object's keys will be overwritten
-- This causes permanent change to the original object- yet it is our go-to choice for shallow cloning objects. Just set the starting object equal to `{}` 
-
-#### Basic Examples
-
-EXAMPLE 1:
-
-You can make the starting/adding objects come from existing variables, or you can make them up on the spot
-
-```js
-const starter = { jak1: "Gol", jak2: "Kor", jak3:"Errol"};
-const combo= Object.assign(starter,{jakX:"Mizo"}) 
-console.log(combo); // the starter object is equal to this as well, now
-```
-
-![image-20210324082022424](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210324082022424.png)
-
-EXAMPLE 2: Show how the starting obj and obj we add are binded together
-
-```js
-const target = { a: 1, b: 2, c:10};
-const source = { d:4, a:0 };
-
-const returned = Object.assign(target, source); // adds d:4 & overrides a:1 with a:0
-console.log(target, returned);
-```
-
-Both the starting and returned obj are the same: ![image-20210324080334733](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210324080334733.png)
-
-Negate this effect with shallow/deep cloning
-
-#### Shallow Cloning
-
-```js
-const target = { a: 1, b: 2, c:10};
-const source = { d:4, a:0 };
-const targetClone= Object.assign({},target) //adds target obj to an empty obj
-
-const returned = Object.assign(targetClone, source);
-console.log(target, returned);
-```
-
-Did not log `targetClone`- just know it's the same as "returned"
-
-![image-20210324081221269](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210324081221269.png)
-
-### fromEntries(NEXT) 
-
-[Object.fromEntries() - JavaScript | MDN (mozilla.org)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries)
-
 # ===== ASYNC PROGRAMMING =====
 
 MODERN UTILITY FUNCTION:
@@ -18488,7 +12570,18 @@ Use postman in the browser to test out API calls without having to explicitly wr
 Afterwards, view the JSON fullscreen using another tools
 
 1. Make requests with Postman:					https://web.postman.co/
-2. View formatted JSON responses: 			http://jsonviewer.stack.hu/
+2. View formatted JSON responses: 			https://codebeautify.org/jsonviewer
+
+Log the results from your API calls in postman using this script in the Tests tab
+Edit it for each different API you test
+
+```
+var data = pm.response.json().businesses;
+console.log(data.length); // copy results and paste it into the JSON beautifier 
+```
+
+- Don't forget to attach necessary headers and body KVP's in Postman
+- Once you understand how your API works, remake the API call in your project code
 
 #### Demo
 
@@ -19869,6 +13962,34 @@ async function request1() {
 request1()
 ```
 
+#### Passing Data to the Catch Block (unrefined)
+
+When we manually throw errors, we have the ability to pass down extra data to the catch block using your choice of a gimmick
+
+- This is really useful when we want to code behavior for certain error types, or for when we want to incorporate some info from the try block into our error response
+- Try passing data using a variable declared before try/catch, or JSON stringify an object of data when you throw an Error (be wary not all data types are a good fit for that)
+
+DEMO
+
+```JS
+const demo = async function () {
+  try {
+    throw {
+      error: new Error(), // works even without this
+      message: 'Passing down error object',
+    };
+    console.log('Past the check'); // we do not reach this point
+  } catch (error) {
+    console.log(error);
+  }
+};
+```
+
+![image-20220313200401821](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220313200401821.png)
+
+> TEST OTHER METHODS:
+> https://stackoverflow.com/questions/58252067/pass-an-object-with-js-throw-new-error-in-node
+
 
 
 ### Immediately Invoked Function Expressions
@@ -20733,6 +14854,74 @@ When it comes to HTML, refer to the old image and svg paths in your code.
 - Most files get loaded when the webpage does anyway, so the bundler will convert the filepath to something new for you
 - When it comes to dynamic features which only undergo AFTER the page is bundled/loaded, we need import statements like I showed earlier
 
+
+
+### Debouncing
+
+Debouncing is a programming practice used to ensure that time-consuming tasks do not fire so often, that it stalls the performance of the web page. In other words, it limits the rate at which a function gets invoked
+
+#### Practical Example
+
+There are many times where we'd like to prevent people from making too many API requests
+
+- The bookmark icon button in our Local Eats project sends a request to our DB in order to save or unsave a restaurant from a list
+- We don't want people to send 10 requests per second or else that'd slow performance, possibly cause errors, chip away at the request limit on our 3rd party service..etc
+
+![image-20220319233453897](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220319233453897.png)
+
+
+
+#### Procedure
+
+1. Download and import the debounce function from Lodash [here](https://www.npmjs.com/package/lodash.debounce)
+   (we made a guide on how to install 1 Lodash function in the 3rd party packages chapter)
+2. Surround the onClick function with the debounce function, and a useCallback function
+
+
+
+```js
+import debounce from "lodash.debounce";
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "SELECT":
+      return { color: "selected", num: 0 };
+    case "UNSELECT":
+      return { color: "unselected", num: 0 };
+    case "PRE_SWAP_COLOR":
+      if (state.color === "selected") return { color: "unselected", num: 1 };
+      if (state.color === "unselected") return { color: "selected", num: 1 };
+    default:
+      return state;
+  }
+}
+
+export default function BookmarkButton() {
+  
+  // debounce timer (cancel subsequent requests that happen within this timeframe)
+  const INTERVAL = 1000; // ms (1 second in this case)
+  // Send an HTTP request to the DB to save or unsave each bookmark
+  const clickHandler = 
+        useCallback( debounce( 
+            async function (dataObj) {},
+      		INTERVAL, { leading: true, trailing: false, maxWait: INTERVAL }
+    ), [] );
+
+  return JSX
+}
+```
+
+Now, when we click the icon, clickHandler fires right away
+If it gets clicked again before 1 second passes, the clickhandler function refuses to fire that 2nd time
+
+#### Source and Demo
+
+> Demo and explanation: 
+> https://sandny.com/2021/02/16/usidebounce-with-react-hooks/
+>
+> Lodash npm link to debounce function:
+> https://www.npmjs.com/package/lodash.debounce
+
 ### REVIEW Part 1: Basics
 
 ```js
@@ -21334,22 +15523,90 @@ EXAMPLE: Make a POST request with a body payload
       Authorization: `bearer ${authKey}`,
     };
     const restoData = await axios.get(apiString, { headers });
+	// yes, we want a headers object inside of another object. this ain't a typo
 ```
 
 
 
 ### NextJS: Error Handling via the Response Object
 
-Th key to error handling with axios is accessing the response object that cayused an error to be thrown in the first place
+#### Response Object in try/catch blocks
+
+If an API route resolves successfully, then we can access the things we pass in the `res.status` line when we drill into the response object's data KVP
+
+API route
+
+```js
+// If things don't go well
+return res.status(401).json({ message: "User offline" });
+// If things go well
+return res.status(201).json({ message: "Bookmark added" });
+```
+
+Front End
+
+```js
+  // Send an HTTP request to the DB to save or unsave each bookmark
+  const clickHandler = async function (dataObj) {
+    try {
+      // Go into the DB and add/remove this restaurant from the saved list in the DB
+      const response= await axios.post("/api/bookmark/addRemove", {
+        address: dataObj.address,
+        category: dataObj.category,
+      });
+      console.log(response);
+    } catch (error) {
+      console.log(error.response);
+      revealErrorModal();
+    }
+  };
+```
+
+If the API route succeeds 
+(notice status 201)
+
+![image-20220316192340522](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220316192340522.png)
+
+If the API route fails with an anticipated error  
+(notice error 401, and how we still have `response.data.message`)
+
+![image-20220316195256057](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220316195256057.png)
+
+If API route fails with uncaught error 
+(notice error 500 which stands for "unexpected condition that prevent the request fr/ being fulfilled")
+(we no longer have `response.data.message`)
+
+![image-20220316195541725](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220316195541725.png)
+
+#### Explaining Uncaught Errors
+
+- A caught error is when you return a `res.status(failNumber)`. These are errors you anticipated
+- An uncaught error is when your API route crashes due to something going wrong that you haven't prepared for using code
+
+We did not use a try/catch when connecting to our database
+
+```js
+export default async function handler(req, res) {
+	const client = await connectToDB(); 
+    const db = client.db(); // access DB instance
+    client.close()
+    return res.status(201).json({ message: "Connected to DB!" });
+}
+```
+
+- If this 3rd party services fails to connect us through no fault of our own, client may equal null or undefined (despite the fact that we coded everything properly)
+- We then use `client.db()`, which would then  be `null.close()`, and that causes a fatal error 
+- Fortunately, we can fix this by placing a try catch in the API route to surround that async operation, or relying on the catch block on the front end to handle this error
+- Leaving uncaught errors may be bad practice though, even if we handle it in the front end (idk)
+
+#### Switch Error Handling
+
+The key to error handling with axios is accessing the response object that caused an error to be thrown in the first place
 
 - If we don't use the response object for error handling, we'll need to handle all types of errors with just one course of action in our catch block
 - This is fine if our API route only checks for 1 thing, but we have greater control with this method when we need it
 
-#### Viewing the Response Object
-
-In this demo...
-
-We call an API route that returns error codes when conditions are not met
+In this demo we call an API route that returns error codes when conditions are not met
 The error message changes depending on what the problem was
 
 API Route
@@ -21377,15 +15634,13 @@ Front End file
 
 We can render different things on the front end when `error.response.data.message` equals "PIN has expired" or "Invalid PIN"
 
-#### Coding for Multiple Errors
+#### Demo: Coding for Multiple Potential Errors
 
 PREMISE
 
 - In API routes we'll often code try catch blocks that throw an error if something goes wrong
   We can code actions in the front end when that type of error occurs
 - If something outside of a catch block causes the API route to fail, we can still code actions for that in the Front end
-
-#### Demo: Multiple Error Actions
 
 BACKEND: (small snippet)
 
@@ -21412,36 +15667,1256 @@ If Sendgrid fails, the response object looks like this
 
 #### Coding Actions for Any Possible Error
 
-It's impossible to anticipate every single thing that could go wrong inside API routes
+It's tough to anticipate every single thing that could go wrong inside API routes
 
-- Instead, use if/else blocks to code actions for certain errors, then just go with a generic error action for everything else
-- Switch statements work just as well, and without as much boiler plate
+- Instead, use if/else blocks or a switch statement to code actions for certain errors, then just go with a generic error action for everything else
+- If the error is uncaught, the default case will trigger
 
 ```react
-	try {
-      await axios.post("/api/auth/signupP1", {
-        email: typedEmail,
-        password: typedPassword,
-      });
-    } catch (error) {
-      console.log(error.response);
-      if(error.response.statusText=== "Internal Server Error"){
-          // Coding actions for API route errors not in a catch block
-          alert("Something has gone wrong");
-          return
-      }
-      else if(error.response.data.message=== "SendGrid API failure"){
-        // Coding actions for an error we placed in an API route catch block
-        alert("SendGrid failed")    
-      }
-      else {
-          // Generic error action for anything else we haven't anticipated
-          alert("Miscillaneous error encountered")
+catch (error) {
+      switch (error?.response?.data?.message) {
+        case "Province empty":
+          dispatchFN({ type: "ERROR", payload: "province" });
+          break;
+        case "City empty":
+        case "Invalid city":
+          dispatchFN({ type: "ERROR", payload: "city" });
+          break;
+        case "Postal code empty":
+        case "Invalid postal code":
+          dispatchFN({ type: "ERROR", payload: "postal_code" });
+          break;
+        default:
+          cancelModal(); // uncaight errors handled here
       }
     }
 ```
 
-![image-20220220133813967](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220220133813967.png)
+Our catch block will not crash fatally if error.response.message doesn't exist thanks to the question marks in our expression
+
+```js
+let a = null
+let b= a.data.message; // fatal crash
+let c= a.data.message; // undefined
+```
+
+ 
+
+
+
+
+
+# ======== NPM YARN ========
+
+FREE API LIST: https://github.com/public-apis/public-apis
+Pick those with `CORS: yes` or `CORS: unknown`
+You'll need CORS to access the API through your code
+
+# NPM Crash Course
+
+PERSONAL TERMS & SYMBOLS:
+
+- Dependencies+ => Dependencies and devDependencies
+- `*` => if found beside a terminal line description, it means the code was found on a library's dedicated webpage, and may be outdated at some point
+
+TOPICS WE'LL LEARN
+
+> Install, remove, update, and list packages	Understanding package.json
+> Local and Global Packages					 Dependencies vs devDependencies	
+> Commands and Shortcuts					  Versioning
+> NPM scripts and NPX
+
+SOURCE: https://www.youtube.com/watch?v=jHDhaSSKmB0
+
+### Introduction
+
+To use NPM, you'll need to have NodeJS installed first
+
+- NPM comes as part of the NodeJS installation
+- NPX is also a part for the installation, and it becomes useful when we start doing local installs
+
+Node Package manager is both a software on our computer and a package repository
+It's a new and superior way to manage our code's dependencies, and we'll be using it to locally install our 3rd party packages
+
+IN THE OLD DAYS:
+
+People used to include libraries and 3rd party packages via additional script tags placed before the main.js file in their HTML. This led to a few problems when it came to large projects...
+
+- Having our HTML file download all our JS is just messy
+- Many times, we would have to download library files to our computer directly, which led to some tedious maintenance issues
+- When a new version of the library would come out, you'd have to visit their site again, redownload the new version, and change the script tag (all manually)
+
+#### Finding Packages
+
+- Although you can search for libraries and frameworks on google, all major packages can be found on this site: https://www.npmjs.com/
+- The site will link to a page that gives you the line to enter so you can NPM install the package through your terminal
+- It also lets you access the package's GitHub repository, which likely has its own tutorials and explanations
+
+![image-20210525164610015](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210525164610015.png)
+
+#### NPM Basics
+
+BEGINNER NPM COMMANDS:
+
+```powershell
+npm --version 		"tells you the version of NPM you have installed"
+npm help 			"gives you a list of commands you can use in NPM"
+```
+
+Keep in mind that many commands have a short version that explains less when seen, but is faster to type out
+
+Ex. `npm --version` and `npm -v` do the same thing
+
+ 
+
+### Command Line Basics
+
+All the build tools available on NPM only work in the command line, which we'll be learning the basics of.
+
+- Move around and navigating the file system
+
+- Create files and folders, copy them... etc
+
+START:
+
+The latest line that appears when you open the terminal for the first time should tell you the current location
+
+![image-20210524013535974](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210524013535974.png)
+
+You have multiple options for how you can use your computer's terminal
+Use Git Bash or VS Code's built-in terminal 
+
+#### Commands
+
+Use up/down arrow keys to cycle through your recent commands when in the terminal
+
+NAVIGATION:
+
+```
+ls					shows all files in current folder (use to see where you are)
+dir 				same ^^
+
+cd 					change directory- can go higher or deeper into the file tree
+cd..				go 1 level higher
+cd../..				go 2 levels higher
+cd folderName		enter a file folder whose level you're currently on (goes deeper)
+```
+
+Deleting files and folders:
+
+```
+del map.js			delete the file named map.js
+rmdir foldername	delete an empty folder
+rm -r foldername	delete a folder with content inside (non reversible)
+```
+
+Adding files and folders:
+
+```
+mkdir name				create a new folder with a new name you specify
+edit noo.js				add a new JS file to current folder (works with all filetypes)
+edit map.js utils.js	add multiple new files to folder at once (good for modules)
+
+mv map.js../		move map.js up 1 level to its parent folder
+```
+
+Creating a package.json file
+
+```
+npm init		creates a new package.json file and asks you questions 
+npm init -y		^^ same but skips the questions
+```
+
+Other Actions
+
+```
+clear				clears console (does not reset position)
+live-server			broadcasts your code environment just like the extension
+```
+
+#### Experimenting
+
+![image-20210524014437155](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210524014437155.png)
+
+You can't really see my screen, but this is what happened when I entered certain commands
+
+`dir` :			![image-20210524014355816](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210524014355816.png)
+
+`cd JS` => `dir` : ![image-20210524014632615](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210524014632615.png)
+
+`mkdir foldah` => `dir` :
+
+​			![image-20210524014950732](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210524014950732.png) ![image-20210524015034409](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210524015034409.png)
+
+#### Files/Folders with Symbols in Names
+
+Some files are just tougher to access than others because of the way they're named. Take this for example:
+
+![image-20210524021741372](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210524021741372.png)
+
+If we wanted to delete this folder and all its contents...
+
+```
+rm -r starter - Copy		 gives an error
+rm -r "starter - Copy"  	 WORKS!
+```
+
+
+
+### About package.json
+
+When it comes to NodeJS, package.json is the single most important file to understand
+In many future examples, we'll assume you've created this file first
+
+- This file holds all the dependencies and devDependencies that your application needs 
+- It holds their version numbers too, since new/old versions may have some major syntax differences that can break your webpages
+- In addition to that, it holds other information like your application name, version, and author
+
+#### Build package.json 
+
+You can build a package.json file manually, but that's a waste of time when you can use these terminal commands:
+
+```JS
+npm init 			"Option 1: Asks a few questions"
+npm init -y 		"Option 2: Creates a JSON file quickly with all default answers"
+```
+
+- The questions will help you customize the JSON file that Node will build. 
+- You can just hit enter several times to say "yes" on all the default answers after `npm init` if you're performing a really simple task. 
+- Then the outcome of `npm init` and `npm init -y` will be the same
+
+![image-20210525171959104](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210525171959104.png)
+
+CHANGING DEFAULT VALUES
+
+```powershell
+npm set init-license 		'MIT change the default license to MIT instead'
+npm set init-author-name 	'Brad Jones'
+```
+
+CHECKING/RESETTING DEFAULTS:
+
+```powershell
+npm get init-author-name			'checks default value for author name'
+npm config delete init-author-name	'deletes your newly set default value'
+```
+
+#### dependencies VS devDependencies
+
+- Libraries like LoDash, Leaflet are directly used in our code to add new features, so we consider them to be dependencies
+- Frameworks like React and jQuery are also counted as dependencies as well
+- Tools like webpack and Parcel aid us with project development only, so we consider them devDependencies
+
+We install devDependencies slightly differently in NPM, and the tool gets placed in a separate object than the 3rd party libraries
+
+in package.json when you install locally: ![image-20210524165041973](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210524165041973.png)
+
+###### commonJS vs JS-modules
+
+Many of your dependencies will rely on commonJS, which won't work with your modern ES modules syntax. 
+
+- Name collisions will likely be all over the place, which is why we need Parcel's automatic transforms or Babel. 
+- They revert ES6 syntax to ES5, which allows us to use new features while still being compatible with old standards
+
+
+
+#### NPM Scripts
+
+By default, a standard package.json file will only give you this for your script
+
+![image-20210526143200390](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210526143200390.png)
+
+NPM scripts can do a ton of things, and I can't describe them all here- and it is beyond the scope of what I needed when writing this
+
+- You could have a script that automatically starts the live server when a new dev runs a command
+- You could possibly have a start script that tells what the entry point is
+
+#### For more Details...
+
+Description of each property in package.json: 
+https://nodesource.com/blog/the-basics-of-package-json-in-node-js-and-npm/
+
+
+
+### Global or Local?
+
+You have the option to install Parcel or 3rd party packages globally or locally. 
+In most cases, you should stick to installing locally
+
+GREAT ARTICLE ON TOPIC: 
+https://codeburst.io/maybe-dont-globally-install-that-node-js-package-f1ea20f94a00
+
+- Local installs create a `node_modules` folder in your project environment, which you should delete after you're done working on a project 
+- Any future viewers can recover all the files you deleted with a simple `npm install`
+
+#### Issues with Global
+
+ISSUE 1: MISMATCHING VERSIONS
+
+Let's say you download Gulp locally and globally for a project, and everything works fine because the versions match. Weeks later, you download an older project which relies on an outdated version of Gulp
+
+- Now your global Gulp version is different than the local Gulp used in multiple projects. There's a good chance that these version mismatches are eventually going to conflict and cause problems. 
+- Your global `# gulp` command is going to try to do something that a project’s local Gulp is incompatible with (or vice-versa). That’s an obvious problem
+
+ISSUE 2: PROJECT SELF-CONTAINMENT
+
+Projects should contain everything they need to work in the file folder they come in. 
+
+- If you're contributing to projects and it requires you to globally install a bunch of packages, what happens after you're done with the project and delete it? 
+- You'll have a bunch of globally installed software on your OS, which has the potential to cause further problems down the line thanks to issue 1
+
+This doesn’t mean that a project shouldn’t depend on external services like a database or 3rd-party API. I’m only referring to Node dependencies for Node projects
+
+#### NPM: Node Package Manager
+
+NPM lets you globally install any package on your machine
+
+- You can manage packages in your project with NPM
+  Packages can range from frameworks like React, to libraries like LoDash
+- Packages used with NPM are installed globally, which is not preferred in most cases due to issues described earlier (versioning, mainly)
+
+#### NPX: Node Package Execute
+
+NPX is most commonly used to run scripts located in `./node_module/bin`
+
+
+- Packages used by NPX are not installed globally
+  Local installs which produce `mode_modules` folders in your root folder will suffice
+
+- The NPX command is required in every app life cycle only once
+
+This package gets invisibly installed globally whenever you install `npm` 
+It's great for avoiding versioning/dependency issues
+
+
+
+### Installing and Removing Packages w/ NPM
+
+We'll be learning how to install packages using NPM, which opens the floodgates for what we can do with our code
+
+The installs can be global OR local
+
+- You can tell something's local if it shows up in "node_modules"
+- You can tell something's installed globally with a certain command, or if the terminal line had -g or --global in it
+
+DEPENDENCY OR DEV-DEPENDENCY
+
+The installed packages will be treated as dependencies, or dev dependencies. 
+The terminal lines for adding both are a bit different
+
+YOU CAN'T USE THESE LIBRARIES YET: 
+
+- You'll need a bundler to actually use these packages, even if you install them with npm- this is thanks to NPM's reliance on commonJS modules
+- The exception is if you install an ES-modules build of your library (ex. Lodash)
+- I wouldn't bother using ES Module builds though, the bundling process is straightforward and explained well in the next chapter
+
+#### Installing & Removing Dependencies+ 
+
+- You can find the syntax for installs by checking out a library's dedicated page
+- You also don't need to include < > in your terminal lines
+
+———————————————————————————————————————————————————————————————
+A) Removing a local package from your `node_modules` directory:
+
+```powershell
+npm uninstall <package_name>					"unscoped package"
+npm uninstall <@scope/package_name>				"scoped package"
+```
+
+Optional** To confirm that the uninstall worked correctly, check that the node_modules directory no longer contains a directory for the uninstalled package(s)
+
+```
+dir node_modules
+
+TO SEE VISUAL CHANGES IN VSC =>		
+CTRL shift P => select reload window  
+(or else node_modules will not be updated visually)
+```
+
+———————————————————————————————————————————————————————————————
+B) Removing a local package from the `package.json` dependencies:
+
+```powershell
+npm uninstall --save <package_name>				"unscoped package"
+npm uninstall --save <@scope/package_name>		"scoped package"
+```
+
+To check, just look inside package.json and see if the dependency is gone or not
+
+———————————————————————————————————————————————————————————————
+C) Uninstall global package from OS:
+
+```powershell
+npm uninstall -g <package_name> 
+"uninstall synonyms: remove, rm, r, un, unlink"
+"can also manually delete files (see challenge 2)"
+
+npm list -g --depth=0 
+"use to check list of globally installed packages"
+```
+
+Scoped vs Unscoped Packages: 
+https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages
+
+#### Install/Remove Examples
+
+ASSUMPTION: You've created a package.json file already (see lesson for how)
+
+CHALLENGE 1: Add/remove dependencies
+
+a) Install easytimer.js as a dependency
+b) Remove it as a dependency from package.json
+c) Delete that library's contents from the node_modules folder
+
+Assumption: package.json has already been created
+
+![image-20210526120047012](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210526120047012.png) ![image-20210526120119020](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210526120119020.png) ![image-20210526122723519](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210526122723519.png)
+
+```powershell
+npm install easytimer.js 				"* install easytimer as a dependency"
+npm remove easytimer.js --save-dev		"removes easytimer from package.json"
+npm uninstall easytimer.js				"removes easytimer from node_modules folder"
+```
+
+———————————————————————————————————————————————————————————————
+
+CHALLENGE 2: Add/Remove dev dependencies
+
+a) Globally install gulp & nodemon (both are dev dependencies)
+b) Add both of them as dev dependencies on your package.json file
+c) Remove them as dev dependencies from package.json
+d) Uninstall the global packages from your OS
+
+After B) ![image-20210526111123176](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210526111123176.png) After C) ![image-20210526111428196](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210526111428196.png)
+
+```powershell
+'————————————————【 A 】—————————————————————'
+npm install --global gulp-cli 		"* install gulp globally"
+npm install -g nodemon 				"* install nodemon globally"
+'————————————————【 B 】—————————————————————'
+npm install --save-dev gulp			"* add gulp as a dev dependency"
+npm install --save-dev nodemon 		"* add nodemon as a dev dependency"
+'————————————————【 C 】—————————————————————'
+npm remove gulp --save-dev
+npm remove nodemon --save-dev
+'————————————————【 D 】—————————————————————'
+'See the Managing Global Installs subsection (video)'
+```
+
+ALTERNATE LINES FOR TERMINAL:
+
+There are different keywords you can use to remove dependencies...
+'remove', 'uninstall', 'rm'...etc
+
+```powershell
+npm uninstall gulp --save-dev
+npm uninstall nodemon --save-dev
+```
+
+
+
+#### Managing Global Installs on your OS
+
+To see what you have installed globally:
+
+```powershell
+npm list -g --depth=0 
+"lists installed packages in console"
+"lets you open up the global packages folder in VS-code (delete what you want)"
+```
+
+![image-20210526001514561](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210526001514561.png) ![image-20210526001643436](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210526001643436.png) <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210526001807714.png" alt="image-20210526001807714" style="zoom:80%;" />
+
+- Use the output this line gives to uninstall global packages you no longer want
+  You open packages folder in VSC and delete your files there
+- You can locate the path to do delete your files in the file explorer as well
+
+
+
+CHALLENGE 2 PART D) Delete gulp and nodemon from your OS
+
+> < video src="Typora-vids/global_uninstall_pkg.mp4" controls> </video>
+
+Drive version: https://drive.google.com/file/d/1tyA0LzIWqGRnsoQWulBP90m6frLmf2qy/view
+
+
+
+#### Sharing dependencies+
+
+When you copy your project someplace else, you should never include the giant node_modules folder that contains your 3rd party packages 
+
+- This will slow you down, especially in large projects where you're using several
+- 3rd party packages are stored in NPM regardless, so they can be accessed by anyone
+
+TLDR: 
+Delete your node_modules folder or use git ignore when you store your code
+Use 1 of these lines to redownload what the creator used to make his/her project
+
+```powershell
+npm install 				'Access devDependencies and dependencies'
+npm install --production 	'Access dependencies only'
+```
+
+
+
+### Versioning
+
+#### What Version Numbers Mean
+
+ 						<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210526135041787.png" alt="image-20210526135041787" style="zoom:67%;" /> 
+
+- If a new major version is released, there's a decent chance you'll have to update your code to abide by any new syntax they may have replaced old code with
+
+#### Version Symbols in package.json
+
+In your package.json, you can determine which package versions you share with others if you use the correct symbols
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210526134455478.png" alt="image-20210526134455478"  />
+
+| symbol   | `npm install` will download...                               |
+| -------- | ------------------------------------------------------------ |
+| "^4.3.4" | the latest minor version                                     |
+| "~4.3.4" | the latest patch                                             |
+| "*"      | the absolute latest version, even if a new major version's out<br />usually a bad idea |
+| "4.3.4"  | version 4.3.4, no matter what else gets released             |
+
+Scenarios:
+
+> - If we type "^4.3.4", and a version 4.4.0 is released => new devs receive 4.4.0
+> - If we type "^4.3.4", and a version 5.0.0 is released => 
+>   new devs receive the last 4. version, whatever it was. 4.9.9 maybe? Who knows
+> - If we type "*", and a version 5.0.0 is released => new devs receive 5.0.0
+
+#### Downgrading & Updating Dependencies
+
+EXAMPLE: Downgrade a library we already installed then update it
+
+At the moment, Lodash's most recent version is 4.5.0- downgrade to 4.4.0 for me
+
+```powershell
+npm install lodash.clonedeep@4.4.0 --save 		"install older 4.4.0 version"
+npm update lodash.clonedeep						"return to most recent version"
+```
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210526134102446.png" alt="image-20210526134102446" style="zoom:80%;" />  <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210526134455478.png" alt="image-20210526134455478" style="zoom:80%;" />   <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210526134102446.png" alt="image-20210526134102446" style="zoom:80%;" />
+
+We're using a 1-feature version of Lodash right now, but you get the point
+Before this example, we already had it pre-installed
+
+
+
+# 3rd Party Packages & Bundling
+
+This chapter is not about the JS language itself. It focuses on the development process and the modern tools/ecosystem centered around JS that all developers use
+
+### Overview of Modern JS Development
+
+![image-20210523103948469](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210523103948469.png)
+
+#### Bundling:
+
+- Nowadays, we divide our projects into multiple modules and bundle them all together into one file afterwards- it makes code more organized and maintainable
+- Bundling helps to eliminate unused code and suppress what's left as well
+  It's also good for performance to only deploy 1 file for production
+- Older browsers don't support modules at all, so they won't be recognized by those browsers without this step
+
+#### NPM and 3rd Party Packages:
+
+- Modules often include 3rd party packages to be used alongside your regular JS code
+- 3rd party packages/modules is the technical term for open source libraries
+  EX. React framework, jQuery, Leaflet, Lodash...etc
+- NPM is the repository where we store, install, and manage our 3rd party packages and tools (Babel, Parcel, and webpack can all be accessed via NPM)
+
+#### Transpile/Polyfill:
+
+- This converts modern JS syntax and features to old ES5 syntax, so that old browsers will be able to read it
+- To use 3rd party packages without ES module builds in your JS code, you'll need to convert their commonJS-reliant builds with Babel
+
+LANGUAGE SUPERSETS
+
+- When you use language supersets like SASS or Typescript, you'll need a bundler to help you compile them at runtime after Parcel/Webpack does its work
+- Parcel's documentation is very intuitive and gives explicit instructions for how to compile most technologies you'll rely on 
+
+Many more down the list: ![image-20210525162052339](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210525162052339.png)
+
+### Parcel and its Features
+
+Parcel is the easier-to-use but less popular version of webpack. 
+
+- It's ready out-the-box and requires no configuration if all you want is basic module loading and asset bundling
+- If you want to use Parcel with frameworks like React, there may be some configuration required, but nothing as daunting as webpack 
+- You can either install Parcel locally or globally (the procedure differs)
+  In general, you should use the local install approach
+
+ FEATURES: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210524235441952.png" alt="image-20210524235441952" style="zoom:90%;" />
+
+
+
+#### Hot module replacement 
+
+```js
+if(module.hot) module.hot.accept(); 	// put in your main JS file
+```
+
+- Does what the live server extension in VSC does (automatically)
+- If you add the above line, the webpage will still update after changes, but it won't be forced to reload
+- The hot module feature works when you change JS/CSS/HTML/SASS...and more
+
+This is awesome for maintaining a certain webpage's state
+Ex. When designing Bankist, we had to sign back into user profiles after every single change we made in our JS file (annoying AF)
+
+#### Code splitting
+
+The splitting of code into various bundles or components which can then be loaded on demand or in parallel.
+
+- As an application grows in complexity or is maintained, CSS and JS files or bundles grow in byte size, especially as the number and size of included third-party libraries increases. 
+- To prevent the requirement of downloading ginormous files, scripts can be split into multiple smaller files. 
+- Then features required at page load can be downloaded immediately with additional scripts being lazy loaded (only when needed) after the page or application is interactive, thus improving performance.
+- While the total amount of code is the same (and perhaps even a few bytes larger), the amount of code needed during initial load can be reduced
+
+#### Asset bundling
+
+Parcel takes multiple JS files and dependencies then converts them into 1 single large file which will be used by the browser to load everything (the bundle)
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210525111804468.png" alt="image-20210525111804468" style="zoom:40%;" /> <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210525111835270.png" alt="image-20210525111835270" style="zoom:52%;" />
+
+- Your dependencies also likely have their own dependencies
+  Parcel makes a dependency graph to keep track of how things should be put together
+- You just tell the bundler what your ENTRY POINT is, then it will look at all your imports/dependencies and try to piece everything together into that single file
+- The entry point will usually be index.html
+
+
+
+### MAIN LESSON: Parcel Bundling & NPM Scripts
+
+Following the "Building for Production" section of Parcel's Getting Started page
+
+OBJECTIVES:
+
+1. Bundle 3 things together; `script.js`, `clean.js`, and Lodash library
+
+script.js : Our central JS file that we use to make our site dynamic
+clean.js : A file we import a function from to use inside script.js
+
+2. Use Parcel as a local dev dependency, not as a globally installed package
+   Every dependency should be installed locally, even Parcel (RECOMMENDED)
+
+- By doing this, our project will be ready out-the-box as soon as any future devs type "npm install" to clone our npm_modules folder
+- If we were using a global version of Parcel, only a few commands would change (we wouldn't preface anything with `npx`)
+
+#### Starter Files
+
+Starter file folder: ![image-20210527011819018](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527011819018.png) 
+
+clean.js :	  	 <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527171437171.png" alt="image-20210527171437171"  />
+
+main.js code: (we'll be adding more onto it later during our procedure)
+
+```js
+import {roundNumber} from './clean.js'  // import function from clean.js
+console.log("Parcel is online!")  // should see when viewing the webpage preview
+//—————————————————————【 Use imported function 】——————————————————————————
+let toBeRounded= roundNumber(9.666,2)
+console.log(toBeRounded) // should be 9.67
+//—————————————————————【 use lodash 】——————————————————————————
+let _= require("lodash")
+const girl={ name: "Kath", age: 29, family: ["Sis", "Father"] }
+const girlClone= _.cloneDeep(girl)	 // deepclone the girl object then test it out
+
+girlClone.age=25; 
+girlClone.family.push("Horse")	
+console.log('orig girl:', girl);
+console.log('clone girl:', girlClone);
+```
+
+After we're done: ![image-20210527171929696](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527171929696.png)
+
+- You can have all this JS code ready from the start if you want, or you can adjust it during the process I'm about to describe
+- You're not forced into using 1 import method; use any 1 of the 4 you prefer
+
+#### Procedure in Depth
+
+!!! Before we begin, remove type="module" from your script tags
+
+—————————————————————————————————————————————————————————————
+Step 1: Create package.json and install all dependencies you'll need
+
+```powershell
+npm init 						"create package.json (set index.html as entry pt)"
+npm i parcel --save-dev 		"install parcel locally as a dev dependency"
+npm install --save-dev sass		"install SASS as a dev dependency"
+
+npm i --save lodash				"install lodash as a dependency"
+npm install core-js				"locally install core JS for polyfilling purposes"
+npm i regenerator-runtime		"locally install pkg that polyfills async JS"
+```
+
+—————————————————————————————————————————————————————————————
+Step 2: Directly edit your package.json file and set up your npm scripts
+
+> <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527175243923.png" alt="image-20210527175243923" style="zoom:80%;" /> <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527234847485.png" alt="image-20210527234847485" style="zoom:80%;" />
+>
+> Forgot to add SASS in our first go around (that's why it's not in the devdependencies list)
+> Carry on! Nothing about the rest of the procedure changes
+>
+> If you run into issues, change 
+> "main": "index.html" 		to 			"default": "index.html"
+
+- Set the "main" property to our future entry point => `index.html`
+  Added a dev and build script which targets the entry point => `index.html`
+- Decide which versions of libraries future contributors will receive when they enter "npm install" to clone your node_modules folder (change version symbols)
+
+———————————————————————————————————————————————————————————————
+Step 3: Specify an entry point with NPX, then enable hot module reloads
+
+```powershell
+npx parcel index.html	
+"specify entry point and get offered a live-server style preview"
+```
+
+We need to preface "parcel index.html" with NPX because we're using Parcel locally
+If using GLOBAL parcel, skip the npx part
+
+——————————————————————————————————————————————————————————————-
+Step 4: Paste the following lines into your central JS file 
+
+```js
+if (module.hot) module.hot.accept() 	// "enables hot module replacement"
+import 'core-js/stable'; 				// "enables polyfills"
+import 'regenerator-runtime/runtime' 	// "enables polyfills for async JS"
+```
+
+These will enable certain features that you'll need to use hot module replacement and to property set up your conversion/polyfilling
+
+Step 5: During development you can run your webpage using the following command
+
+```
+npm run build
+```
+
+———————————————----————【 TIME SKIP 】——————————————————————————————
+Step 6: Once your project is finished being worked on, build your final bundle
+More detailed instructions in the "Final Project Build" lesson in Deployment Chapter
+
+```powershell
+npx parcel build index.html			"bundle code and convert to ES5 via Babel"
+```
+
+![image-20210527173950028](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527173950028.png)
+
+- This step compresses everything and has dead code elimination for all parts of libraries that aren't being used
+- It will give you the sizes of all the files that'll be send over for production 
+
+———————————————————————————————————————————————————————————
+
+#### Replacing NPX with NPM Scripts
+
+- As an alternative to NPX commands, you can type out NPM scripts inside your package.json to achieve the same results
+- You don't even have to pick 1 or the other- Use them whenever each is convenient
+- Ex. Want to re-bundle everything or specify a new entry point? Use an npm script if you don't feel like using NPX
+
+NPX:
+
+```powershell
+npx parcel index.html			"step 3"
+npx parcel build index.html		"step 6"
+```
+
+NPM SCRIPTS:		![image-20210628152328957](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210628152328957.png)
+
+Once these are typed, just enter the following into the terminal to run them
+
+```powershell
+npm run dev				"step 3"
+npm run build 			"step 6"
+```
+
+If you close your VSC window and want to re enter your project, simply re-enter steps 3 and 5. 
+
+#### End Result and Future Proofing
+
+FUTURE PROOFING:
+
+- The way things work might change in a couple years, so this procedure may not even work properly past a certain point
+- To get around that, install the same versions that we used today when locally installing packages later on
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527234847485.png" alt="image-20210527234847485" style="zoom:80%;" />
+
+END RESULT:
+
+After all our actions, Parcel will bundle up our code and create a new folder called "dist", which stands for distribution
+
+- This folder is what will be sent to the browser, and it is thoroughly optimized to the point where we can hardly read what's going on inside
+
+![image-20210527011242125](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527011242125.png)
+
+#### Compiling SASS with Parcel
+
+FYI: You don't have to follow this procedure 
+(you'll do these steps in the default procedure anyway, and Parcel does this autonomusly)
+
+1. Inside index.html, have a link tag point to the main SASS file in your project
+2. Use NPX or an NPM script like so...
+
+```
+<link rel="stylesheet" href="src/sass/main.scss" />		have ready in HTML
+——————————————————————————————————————————————————————
+npx parcel index.html			input to terminal		
+```
+
+![image-20210628153513764](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210628153513764.png)
+
+#### Where these Commands originate
+
+- Whenever we use a new library, we just go to their dedicated webpage and check out the documentation and "Getting started section"
+- Even if we don't understand what's going on, we experiment and troubleshoot with the commands and actions we do know
+
+LEARNING HOW TO USE A LIBRARY
+
+- Not all libraries are popular enough to have a Youtube series about them
+- Read their documentation, rework their simple examples, and tweak other projects you find online to learn how to use them
+
+EXAMPLE: How I learned to use Lodash the first time
+
+![image-20210527020335713](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527020335713.png) <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527020542061.png" alt="image-20210527020542061" style="zoom:80%;" />
+
+​				
+
+### Configuring Babel and Polyfills
+
+Babel will convert ES6+ code back to ES5 for the folks using outdated operating systems that won't let them update their browser. 
+
+This conversion already happened during the last lesson's procedure. 
+If you look in your bundled JS file, you'll notice its all in ES5
+
+#### Understanding Babel
+
+- Babel can be configured so you can specify exactly which browsers you want your code to support, but that's a lot of work
+- Instead, we let Babel make several default choices for us
+- They cover our bases for the most part, and most of the market share will be able to experience our website properly
+
+Presets and Plugins: 
+
+- Babel's code transformations are enabled by applying plugins to your config file
+- Babel has plugins for most ES6 features like arrow functions, template literals...etc
+
+#### Polyfills
+
+Babel can only convert syntax back to ES5 if the code acted as syntactic sugar or had alternatives back then
+
+- Ex. Arrow functions are converted back to regular function declarations, because they both accomplish the same task
+- Truly new features like Promises or the find() method are brand new to the language They have no ES5 alternatives, so these require polyfills
+
+
+
+This lesson continues on from last lesson's final product
+We've bundled our code, so now its time to convert that it back to ES5 with Babel
+
+> Drive Version
+> https://drive.google.com/drive/folders/1vOhozvWZNNX7T7Hpt4I3Q7ijaUi6nRPE?usp=sharing
+>
+> Local Version
+> /Study Projects/node/root_test3
+
+Fortunately for us, Parcel will automatically apply Babel
+
+
+
+### Manage Packages with NPM: Fast Notes
+
+#### Dependencies
+
+Install lodash 
+
+```
+npm install lodash
+```
+
+Install old version of lodash (will override other installed versions)
+
+```
+mpm install lodash@4.17.3
+```
+
+Uninstall lodash
+
+```
+npm uninstall lodash
+```
+
+#### dev-dependencies
+
+Install SASS as a dev dependency
+
+```
+npm install sass --save-dev 
+OR
+npm install --save-dev sass
+```
+
+Uninstall SASS as a dev dependency
+
+```
+npm uninstall sass
+```
+
+#### Global Installs
+
+Install nodemon globally
+
+```
+npm install --global nodemon
+```
+
+See a list of all global installs
+
+```
+npm list -g --depth=0
+```
+
+Uninstall a global package
+
+```
+npm uninstall -g  nodemon
+```
+
+
+
+### Single Lodash Function Implementation
+
+Lodash is a large library, so oftentimes we prefer to download and use a few select functions from the vast library instead of adding the entire thing to out project
+
+#### PROCEDURE
+
+1. Find the function you want in the Lodash docs
+   Its entry should contain an npm link to the repo that holds the install link for that one function
+
+![image-20220319232441823](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220319232441823.png) ![image-20220319232520151](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220319232520151.png)
+
+2. Install this package with npm or yarn
+3. In the file you intend on using this function, insert the following...
+
+If needed on Front end:
+
+```js
+import debounce from "lodash.debounce";
+
+// now use inside component function...
+const clickHandler = debounce( async function (dataObj) {} )
+```
+
+If needed on Backend:
+
+```js
+var debounce = require('lodash.debounce');
+// now use inside node function...
+```
+
+
+
+# Deployment
+
+### Final Project Build 
+
+Once you're finished building your project (at least for now), it's time to compress your code and get it ready for deployment
+
+#### Creating your Final Build
+
+1.  Delete your `.parcel-cache` and `dist` folders from your stack
+    (ASK PERMISSION BEFORE YOU DO THIS, if you're working at a company)
+
+![image-20210711125220933](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210711125220933.png)
+
+2.  Modify your package.json file
+
+BEFORE:  ![image-20210711125645767](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210711125645767.png)
+
+AFTER: 	![image-20210711130022819](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210711130022819.png)
+
+Parcel V2 beta has a bug that can only be fixed with `--dist-dir ./dist`
+This may be patched out, resulting in slightly different syntax later on
+
+3. Run `npm run build` in the terminal
+
+PARCEL V1:
+The commands may change depending on the version of parcel you're using
+
+- If using Parcel V1, use `--out-dir` instead of `--dist-dir`
+- Also, the import syntax for icons in your project will be different as well 
+  (relevant in the forkify project, but may not be in another)
+
+
+
+### Netlify: Front-end Only
+
+When deploying our site to Netlify, we have 2 options for how we'd like to do so; the manual deploy, and the continuous integration deploy method
+
+#### Continuous Integration Method
+
+Continuous integration links our project to a git repository
+Whenever we make a change in that repo, it gets deployed to our site on Netlify
+
+TO CHANGE OUR LIVE WEBSITE:
+
+1. Have your final project build ready (see prev. lesson)
+2. Make your changes locally on your laptop
+3. Push those changes up to Github
+   The site will get updated automatically
+
+PROCEDURE:
+
+1. Go to the sites tab and hit the "New site from Git" button
+
+2. Select your repo from the list
+
+3. Fill in the fields to deploy your site properly
+
+- Make sure your build command coincides with your package.json file
+
+- `dist` should be the folder containing your optimized build, if you followed the previous lesson 
+  And If your site is simple enough to not need a bundler, just use a manual deploy 
+
+![image-20210711164015896](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210711164015896.png)
+
+4. Once deployed, your site is visible to everyone that has its URL
+   Enter it's settings to change the URL name, delete the project...etc
+
+#### Manual Deploy Method
+
+With this method we just upload our local version of our project to Netlify
+
+PROCEDURE
+
+1. Have your final project build ready (see prev. lesson)
+2. Log into your Netlify account, then hit the "Sites" tab
+3. Drag and drop your `dist` folder inside 
+
+![image-20210711161247752](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210711161247752.png)
+
+#### Netlify Perks and Limitations
+
+PERKS:
+
+- Your website gets an SSL certificate, meaning your link will be HTTPS instead of HTTP
+- Your site will be spread across multiple servers worldwide, meaning people will get routed to the nearest one when they search for your site (helps speed)
+
+LIMITATIONS: Front-end only
+
+Netlify is a free service that lets you host static front-end websites. 
+You are free to use API's and libraries, so long as no backend code is part of your build
+
+
+
+# Yarn 3.0: Faster NPM
+
+Yarn is just NPM but with much faster install speeds and slightly different syntax
+The differences between yarn 1-3 make it real tough to use if you need global installs though
+
+### Installation & Advantages 
+
+#### What is it?
+
+Yarn is an alternative to NPM which is pretty colose to it in terms of speed (it's a tad faster)
+
+- Any package that can be installed with npm can be installed with yarn
+- NPM is built into NodeJS while yarn is not
+
+#### Installation & package.json
+
+1. Check if yarn is already installed with `yarn -v`
+
+2. If it isn't follow the instructions on the Yarn Homepage
+   Is currently [here](https://yarnpkg.com/getting-started/install) but this will change as new versions get released
+
+3. Check to see what version of yarn you have available with `yarn -v` again
+
+- Yarn 2.0 has a strange way of installing itself in its early 2.0 versions
+- If the version is still v1, then follow the remaining steps
+
+------
+
+4. Create a local package.json file using yarn and answer all the prompts
+
+```
+yarn init 
+```
+
+Add your scipts too:		 <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527175243923.png" alt="image-20210527175243923" style="zoom:80%;" />
+
+5. Enter the following in your terminal
+
+```
+yarn policies set-version berry
+```
+
+#### Don't mix NPM/Yarn
+
+Don't install packages with Yarn then install others with NPM
+
+- It can work sometimes, but it introduces potential complications
+- If someone does and it raises issues, try deleting the node_modules folder, then run `yarn install` again to install everything in package.json with yarn exclusively
+
+
+
+### Installing Packages with Yarn
+
+Yarn's syntax differs from NPM, but they both do the same things (mostly)
+
+FIND A YARN INSTALL FOR YOUR FAVORITE PACKAGES:
+https://yarnpkg.com/package/nodemon
+
+#### Dependency Installs
+
+Install the latest Lodash version as a dependency
+
+```
+yarn add lodash
+```
+
+Install an old version of Lodash  
+This will override the previous install and can be used to upgrade or downgrade
+
+```
+yarn add lodash@4.17.3
+```
+
+Uninstall Lodash as a dependency
+
+```
+yarn remove lodash
+```
+
+#### dev-dependency Installs
+
+Install Lodash as a dev-dependency
+
+```
+yarn add lodash -D
+```
+
+Uninstall Lodash as a dev-dependency
+
+```
+yarn remove lodash
+```
+
+
+
+#### Global Installs (avoid)
+
+As of early 2022 using Yarn 3.1.1 or higher, try not to globally install anything using yarn
+
+- I can't find a clear explanation for how to globally install using yarn
+- I also can't find an answer for how to check for a list of globally installed packages using yarn either
+
+There were old solutions for this, but they have been patched out as of Yarn 2.0
+
+![image-20211227231747431](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211227231747431.png)
+
+#### npm install alternative
+
+When you recieve a project with a package.json, you can easily install all its package dependencies in 1 go with `npm install` . Yarn can do the same thing, with a different command line
+
+```
+yarn install
+```
+
+#### Check for Outdated Packages
+
+Yarn can identify which packages you have installed for your project are outdated
+
+YARN 1:
+
+```
+yarn outdated
+```
+
+------
+
+This useful feature was actually removed for some reason
+In Yarn 2.0 and onwards, you need to quickly install a plugin to get this old command to work
+
+YARN 2.0+
+
+```
+yarn plugin import https://github.com/mskelton/yarn-plugin-outdated/raw/main/bundles/@yarnpkg/plugin-outdated.js
+
+yarn outdated 
+```
+
+![image-20211227233248624](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211227233248624.png)
+
+
+
+### yarn.lock file
+
+#### Purpose
+
+The yarn.lock file is important for fresh installs- when someone DL's a project without any dependencies installed yet
+
+- Yarn.lock looks inside your package.json and will force your computer to install the specific versions listed there after the coder enters `yarn install`
+- The versions installed may change if the dependency is listed with a certain version symbol
+  Ex. `"lodash": "^4.17.21"` may cause lodash 4.18.21 to be installed one day
+
+#### Working with it
+
+For the most part you don't want to touch this file- it is completely managed by Yarn
+There are a few scenarios that may come up however
+
+1. Check to see if yarn.lock package versions are in sync with package.json
+
+```
+yarn check (depreciated as of Yarn 2.0)
+```
+
+2. If the yarn.lock file gets deleted, run the following
+
+```
+yarn install
+```
+
+
+
+### Run Scripts with Yarn
+
+Just like with npm, your package.json should probably have some helpful scripts defined inside
+
+#### Make sure they Exist
+
+package.json example
+
+```json
+{
+  "name": "yarn_canvas",
+  "version": "1.0.0",
+  "default": "index.html",
+  "author": "jxb",
+  "license": "MIT",
+  "scripts": {
+    "dev": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "packageManager": "yarn@3.1.1",
+  "devDependencies": {
+    "lodash": "^4.17.21",
+    "parcel": "^2.0.1"
+  }
+}
+```
+
+#### Running Scripts
+
+This works the same as in NPM, just with slightly different syntax
+
+```
+yarn run dev		// runs a live preview of your site using Parcel HMR
+```
+
+![image-20211228000804146](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211228000804146.png)
+
+
+
+
 
 # ====== FUNCTIONAL CODING ======
 
@@ -22406,81 +17881,3032 @@ axios.request(options).then(function (response) {
 
 
 
-# =========== MISC ===========
+# ———【DOM MANIPULATION】———
+
+# DOM Fundamentals: 
+
+Most of this unit will feature lessons from Traversy Media's series on DOM manipulation:  
+[(20) JavaScript DOM Crash Course - Part 1 - YouTube](https://www.youtube.com/watch?v=0ik6X4DJKCc&list=PLWrdF35wo-ISLXL9R7khxtpZ17jCsmeiv&index=1)
+
+The central project we'll be building is an item listing application:
+
+![image-20210326083746978](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326083746978.png)
+
+STARTING CODE: The below pen with an empty JS doc instead
+
+ENDING CODE: [DOM Item Lister (codepen.io)](https://codepen.io/bradtraversy/pen/Bwapow)
 
 
 
-# Future Project Practice
+### What is the DOM? (Repeat)
 
-### UI Inspiration Sites
+The DOM is a complicated API that lets us interact with the DOM tree- which is formulated based off our HTML file. 
 
-Take a look at people's designs and use them for yourself. Look at what colors they use, how they style their CSS to create interesting visual effects...etc
+Through DOM manipulation, we can force JS to interact with the browser by... 
 
-#### Style Stage 
+- Adding/placing new elements
+- Modify or delete existing ones
+- Set CSS styles, classes, and attributes
+- Create events that trigger when we do certain things on our webpage
 
-All devs have access to 1 HTML file and the goal is to to create entirely new webpage styles using only CSS. 
+We use DOM methods and properties to interact with the tree. You've seen plenty already
 
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527131532697.png" alt="image-20210527131532697" style="zoom: 43%;" /> <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527131635977.png" alt="image-20210527131635977" style="zoom: 43%;" /> 
+![image-20210411232522464](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210411232522464.png)
 
+#### Terminology
 
+When speak about the DOM, we use these terms: 
+Child element, parent element, sibling element, nodes...etc
 
-### Project Practice Sites
+![image-20210226174738311](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210226174738311.png)
 
-#### Front End Mentor 
+If an element is the child of another, it will be placed below its parents
+Sibling elements result in branching paths
 
-MAIN PURPOSE: Take some of their best looking designs for yourself
-CONS: No live demos of the websites, just pictures and a description
+There are more than just element nodes on the actual DOM of a typical HTML document. There's nodes for all text, comments, and other things. Everything in the HTML document must be in the DOM
 
-You're tasked with using HTML/CSS/JS to finish building the projects they give you starter files for. This gives you folder packages with pre-made designs. 
+#### DOM and JS being Separate Entities
 
-- The challenges are ordered in terms of difficulty, and you get a picture of what they want you final product to look like
-- Take some of their good looking style choices and use then for your own projects
+To properly manipulate this structure, you'll need DOM methods and properties
+You've already used a common one: `document.querySelector()`
 
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527130334440.png" alt="image-20210527130334440" style="zoom: 67%;" />
+These properties and methods are technically not JS. 
+They're part of web API's- libraries that browsers implement. 
+You can directly access certain methods/properties in JS.
 
-#### Front End Practice
+There are many more API's than just the DOM: ![image-20210226180115095](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210226180115095.png)
 
-This website has 10 preselected websites that are visually appealing and require you to do different things. 
+### How the DOM Nodes Work
 
-- Build the websites they've chosen for you, and view the finished product on the web since they're up and running now
-- See exactly how the website works by playing around inside it yourself, and you can even dive into the source code through the dev tools
-- They provide you with the site's color palettes, plus necessary skills and resources to learn them
+TLDR: 
+The DOM API is broken up into different types of nodes.
+Each of these types of nodes has access to different properties and methods 
 
-![image-20210527133250170](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527133250170.png)
+#### HOW THE DOM API IS ORGANIZED
 
-<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527133030429.png" alt="image-20210527133030429" style="zoom:70%;" />
+![image-20210411222001680](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210411222001680.png)
 
-#### First Timers Only 
+This is not a visual representation of the DOM tree. 
+It is a diagram to help you understand what role nodes play in the DOM
 
-Contribute to open source projects and work on small teams with other people. 
+#### Everything in HTML is in the DOM
 
-- Lets you experience realistic workflows when you share your work via Git/GitHub
-- Meet some new people and contribute to larger scale projects by focusing on 1 or 2 niche things yourself. 
+DOM nodes come in many forms, but every one of them is represented by a JS object
+Some nodes represent elements while others are for the nested text, or even comments
 
-PROJECT LISTS: ![image-20210527133942159](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210527133942159.png)
+Each node gets access to special node methods and properties: ![image-20210411233443563](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210411233443563.png)
 
-Filter what kinds of jobs you're looking to complete, and 
+The node type (yellow rectangle) has a couple of "child-types". 
+These would be the element type, text type, comment type, and the document type
+This is how nodes can represent more than just elements (nested text, comments...etc)
 
-# Directory
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210411233953141.png" alt="image-20210411233953141" style="zoom:75%;" />
 
-Excellent Flowchart Maker: https://www.diagrams.net/
+EXAMPLE: Explain what nodes are generated b/c of this code snippet
 
-If we need to know how to do something, I'd suggest finding the appropriate unit and chapter. Most of the code is too long for a directory like this
-
-```js
-// PROPERTIES
-typeof variable
-variable.length	
-
-
-// CAPTURING USER INPUTS AS VARIABLES
-let a= prompt("Fill in user input string")
-let b= Number(prompt("Fill in user input number"))
+```html
+<p>Hello World</p> <!--explained-->
 ```
 
-METHODS:
+`<p></p>` gets an element node			`Hello World` gets a text Node
+`<!--explained-->` gets a comment node	 the entire document itself is a node
 
-### Miscellaneous Tasks
+#### Element Nodes and HTML Tag Origins
+
+The element nodes give HTML access to slew of useful methods and properties- all of which can be used for DOM manipulation through our JS document
+
+Useful properties and methods: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210411235452097.png" alt="image-20210411235452097" style="zoom: 67%;" />
+
+The element node has a child which represents the HTML element's type
+What I mean is, divs would result in a different type of node than article tags
+
+We have special types of nodes for buttons, images, links, and more. 
+By now, you've noticed that they all have differing properties
+
+- An image has a source attribute in HTML which no other element has
+- The anchor element for links has the HREF attribute which also no other element has
+
+The DOM needed a way of storing these different attributes. 
+This is how ~~babies~~ HTML elements were born in the DOM API
+
+#### Documents Node Type
+
+The document itself is just another type of node that lets us use important methods
+
+![image-20210412001747192](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412001747192.png)
+
+If you look closely at the diagram up top, you'll notice that querySelector is available for both element and document nodes, You'll see why later
+
+#### Intro to Prototypal Inheritance
+
+Inheritance means that all the child types will also get access to the methods and properties of all their parent node types.
+
+- For example, an HTML element will get access to everything from the element type, like innerHTML, or classList or all these other methods and properties.
+- And besides that it will also get access to everything from the node type because that is also its parent type. It's somewhat similar to the scope chain
+
+This will be explored further when we learn about Object-Oriented-Programming
+
+#### Why Event Listeners Work on Everything
+
+Event listeners work on every single node type on the DOM API
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412002323473.png" alt="image-20210412002323473" style="zoom:67%;" />
+
+As you can see on the diagram, EventTarget is a parent to the node and window node types- while being a node itself of course. Thanks to inheritance, everything down the descendant gets access to its methods
+
+EventTarget methods are extremely popular: ![image-20210412002215645](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412002215645.png)
+
+### The Document Object
+
+In the past, we've used `console.dir()` to look inside JS objects and see what's inside. Let's do the same with the document itself- which is in fact, an object
+
+```js
+console.dir(document)
+```
+
+goes much longer: ![image-20210326090140805](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326090140805.png)
+
+You get a very large tree of document methods and properties, all of which you can access through your JS code to read or manipulate things in the DOM
+
+#### A few Document Properties/Methods
+
+```js
+console.log(document.domain);  // Shows loop back address
+console.log(document.URL);     // Shows URL of the page
+console.log(document.doctype) // returns doctype. In this case <!DOCTYPE html>
+console.log(document.head) // returns entire head section in HTML
+console.log(document.body) // returns the body section in HTML w/ all its nested tags
+console.log(document.all) // gives an array of everything inside the DOM
+console.log(document.links) // fetches all links in your array
+console.log(document.images)  // fetches all images in your array
+console.log(document.forms) 
+	// fetches all forms in your webpage so you can access their properties
+```
+
+(Not disclosing my IP address for obvious reasons)
+
+#### Changing the Webpage with Doc Properties
+
+As you will see, we're not limited to reading off these properties on the console. 
+We can make changes in our code using them:
+
+EXAMPLE 1: Change Webpage Title
+
+```js
+console.log(document.title);   // Shows title of the doc that's found on tab
+document.title="New Age Black" //CHANGES the title on your site's browser tab
+console.log(document.title); // Shows new title
+```
+
+![image-20210326091239652](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326091239652.png)
+
+
+
+### Selecting HTML Elements & Adding/Removing Classes
+
+To create a dynamic webpage, we can't just hardcode everything in HTML/CSS, we need JS to perform certain actions once conditions are met by the page's visitors
+
+- There are multiple ways to bring HTML elements into JS- and once you do, you'll typically want to store them inside an aptly-named variable
+- After that, you can use them to change webpage content via your JS file, incorporate event listeners, change CSS styles, add classes to give pages a new look...whatever!
+
+#### 1 Element via ID:
+
+```js
+const varName= document.getElementById("elementID")
+//OR
+const varName= document.querySelector("#elementID")
+```
+
+- Some methods in JS allow you to target elements by their ID's without this importing step- for example, `rawID.addeventlistener` works
+- In case they don't however, this is important to know 
+
+#### 1 Element via Class:
+
+```js
+const varName= document.querySelector('.hello');	
+// standard CSS selector (can use any selector type, even combinators)
+```
+
+- Searches for a SINGLE element inside the "hello" class
+- If there are multiple elements in that "hello" class, this selector will go for the first one it finds in the HTML file (the one closest to the top)
+
+#### 2+ Elements via Class
+
+
+```js
+const varName= document.querySelectorAll('.hello');	 //returns node list
+//OR
+const varName= document.getElementsByClassName("hello") //returns HTML collection
+```
+
+- Searches for EVERY element inside the "hello" class
+- This creates a nodelist with every element successfully targeted, in the order they're found in HTML 
+- If you want to apply an event listener for all of them, you cannot do so normally.
+  You'll have to create a for loop to contain your event listener (Ex. WARP: AXQZE1)
+
+#### All HTML Tags by Type
+
+```js
+const varName= document.getElementsByTagName('li') //returns HTML collection
+// OR
+const varName= document.querySelectorAll('li'); //returns node list
+```
+
+- Captures every single `li` element (in this case) and places them all into an HTML collection, which is different than a node list or array
+- HTML collections update every time a change to the DOM is made.
+  Ex. if a list item is removed programmatically, our collection will reflect that
+  A node list or array would not
+
+#### Versatile Searches
+
+- Since querySelector and querySelectorAll use any kind of CSS selector to pick their targets, we are not forced into searching with ID's or classes only
+- This lets you create searches that can target different element types, or only pick some elements of what would normally be chosen
+
+EXAMPLE: You have a list. Pick the odd numbered list items only, then add color 
+
+```html
+<ul id="items" class="list-group">
+    <li class="list-group-item">Item 1</li>
+    <li class="list-group-item">Item 2</li>
+    <li class="list-group-item">Item 3</li>
+    <li class="list-group-item">Item 4</li>
+</ul>
+<script>
+	let listItems= document.querySelectorAll(".list-group-item:nth-child(odd)")
+	for (let i=0;i<listItems.length;i++){
+  		listItems[i].style.backgroundColor="lavender"
+	}
+</script>
+```
+
+![image-20210326154240607](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326154240607.png)
+
+#### Selecting the Entire Document
+
+```js
+let varName= document.documentElement
+varName.style.opacity=0; 		//makes entire webpage invisible
+```
+
+We also have an alternative to using querySelector on major webage sections. 
+Just refer to them directly on the document like this:
+
+```js
+document.head
+document.body
+```
+
+#### Only Searching within an Element Container
+
+- The `document.querySelector("")` method searches your HTML file for elements because of the "document" part. 
+- You can force it to only look inside an element by replacing "document" with it
+
+EXAMPLE: Search for anchor tags within the unordered list, not the entire document
+
+```js
+let ul= document.querySelector(".nav__links")
+let ul_Anchors= ul.querySelectorAll("a")
+```
+
+![image-20210421111452284](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421111452284.png)
+
+#### Add/Remove/Toggle Classes 
+
+Assume we imported an element from HTML named `testEl`
+
+|                         |                                                     |
+| ----------------------- | --------------------------------------------------- |
+| add a class             | `testEl.classList.add('className')`                 |
+| add multiple classes    | `testEl.classList.add('className1, className2')`    |
+| remove a class          | `testEl.classList.remove('className')`              |
+| remove multiple classes | `testEl.classList.remove('className1, className2')` |
+| toggle a class on/off   | `testEl.classList.toggle('className')`              |
+
+###### BAD METHOD TO SET CLASSES
+
+You should never use this method, but should be able to spot when it is.
+
+```js
+htmlEl.className= 'whatever'
+```
+
+This overrides every existing class the element once had. 
+Also, it limits the element to only having 1 class- the one you set here
+
+
+
+### Checking Elements for Classes
+
+You aren't required to use `.classlist.contains()` inside an event listener, in case you're wondering
+
+```js
+checkIt.addEventListener('click', ()=>{     //% CHECK FOR CLASS
+  let hasOrNot = $hello.classList.contains('bg','bd');  
+  //~ Checks if el belongs to the "bg" OR 'bd' class. returns true if in either 
+  // We can perform actions based on if an element has a certain class now...
+})
+```
+
+
+
+### Dealing with NodeLists of HTML Elements
+
+#### Targeting them All at Once
+
+If you've used `getElementsByClassName` or `querySelectorAll` , you need to loop over the arrays they produce if you want to apply changes to all the entries- which are HTML elements
+
+EXAMPLE: Take all the li elements in this list, and change the background color
+
+```html
+<ul id="items" class="list-group">
+      <li class="list-group-item">Item 1</li>
+      <li class="list-group-item">Item 2</li>
+      <li class="list-group-item">Item 3</li>
+      <li class="list-group-item">Item 4</li>
+</ul>
+<script> 
+    let listItems= document.getElementsByClassName("list-group-item")
+	for (let i=0;i<listItems.length;i++){
+  		listItems[i].style.backgroundColor="lavender"
+	}
+</script>
+```
+
+![image-20210326150112444](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326150112444.png)	=>	![image-20210326150050424](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326150050424.png)
+
+#### Targeting them Individually
+
+If you wish to target the items in an HTML element array one-by-one, just use bracket notation as you would with any array
+
+```js
+let listItems= document.getElementsByClassName("list-group-item")
+console.log(listItems);
+```
+
+![image-20210326150910239](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326150910239.png)
+
+- When we hover over a specific element in our array, it highlights the location on our webpage preview
+- This is how you know what you'll be directing your changes towards
+  You could also just see which element appears earliest in the HTML doc
+
+```JS
+listItems[0].style.backgroundColor="orange" // continuing from last snippet...
+```
+
+![image-20210326151336849](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326151336849.png)
+
+#### Add Event Listeners to all List Nodes
+
+FUN FACT, forEach works on node lists as well as arrays
+There's no need for conversion if we wish to apply event listeners to them all
+
+EXAMPLE: Add a modal to a group of captured buttons
+
+```js
+const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
+
+btnsOpenModal.forEach((btnElement)=>{
+  btnElement.addEventListener('click',eventHandlerFunction) //dw about the details
+})
+```
+
+Feel free to use a callback function you defined elsewhere
+Or you could define the event handler right inside the forEach loop (Doesn't matter)
+
+#### Applying Array Methods to a NodeList
+
+- `document.querySelectorAll()` and `getElementsByClassName` create a nodelist with all elements that match the selector in brackets. 
+- They don't create real arrays, so you have to convert it into one before you can use any array methods on it (use the spread operator)
+
+```js
+let listItems= document.getElementsByClassName("list-group-item")
+let listItemsArray= [...listItems]
+```
+
+
+
+### Manipulating or Using Text
+
+We have several options when it comes to adding, changing, or using existing webpage text. The most popular three are textContent, innerText, and innerHTML
+
+These methods are similar to each other, and can sometimes be used interchangeably
+That being said, they each have slight differences which dictate their use-cases
+
+|             | What it does                                                 | When to use                                                  |
+| ----------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| innerText   | retrieves and sets the content of the tag as plain text      | When you only need to see what’s in the element — with zero formatting |
+| innerHTML   | retrieves and sets the tag's content in HTML format          | When you want to see the HTML markup and what exactly is in our element — including any spacing, line break, and formatting irregulars |
+| textContent | same as innerText, but does NOT care about the rendered appearance of text | When you want to see what’s in the element, plus any styling on it |
+
+Additional notes for Inner HTML:
+
+If the text inside the element includes the characters `&`, `<`, or `>`, innerHTML will return these characters as HTML entities `&`, `<`, and `>`.
+
+#### Capturing Existing Text
+
+If you save existing text into a variable, you can reuse it at any time to do whatever you want. Make an alert with the text inside a div for example (not showing that)
+
+Sample HTML Code:
+
+```html
+<div id='blog-test'>
+This element is <strong>strong</strong> and     has some super fun <code>code</code>!
+</div>
+```
+
+![image-20210326135124002](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326135124002.png)
+
+NOTICE THE DIFFERENCES BETWEEN OUR 3 METHODS:
+
+```JS
+const getValue = document.getElementById('blog-test');
+let a= getValue.innerText 	// reformats text & removes HTML syntax
+let b= getValue.innerHTML	// keeps the tag's text as is, including all HTML code
+let c= getValue.textContent	// removes HTML syntax but keeps original formatting 
+
+console.log(a,b,c);
+```
+
+![image-20210326142643196](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326142643196.png)
+
+#### Changing Text
+
+The use-cases are much simpler when trying to change words on our sites. 
+
+- If you want to have HTML nested tag effects, use innerHTML
+- Otherwise, use innerText or textContent
+  The sentence will be reformatted thanks to HTML regardless
+
+```html
+<div id='blog-test'></div>
+<div id='blog-test2'></div>
+<div id='blog-test3'></div>
+<script> 
+	const getValue = document.getElementById('blog-test');
+	const getValue2 = document.getElementById('blog-test2');
+	const getValue3 = document.getElementById('blog-test3');
+
+	getValue.innerText= 'New		text with <strong>HTML bait</strong>'
+	getValue2.innerHTML= 'New		text with <strong>HTML bait</strong>'
+	getValue3.textContent= 'New		text with <strong>HTML bait</strong>' 
+</script>
+```
+
+![image-20210326144413440](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326144413440.png)
+
+#### Using/Manipulating Input Field Text
+
+- If you want to save or change text that's inside of an input field, the syntax is different.
+- The user typed it in his/herself or did something that changed its value
+
+```html
+<form class="form-inline mb-3">
+      <input type="text" class="form-control mr-2">
+      <input type="submit" class="btn btn-dark" value="Submit">
+</form>
+<!--Starter code above-->
+<script> 
+	document.querySelector('.mr-2').value="insert filler text hither"
+</script>
+```
+
+![image-20210326121512610](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326121512610.png) ![image-20210326121750738](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326121750738.png)
+
+#### .insertAdjacentText()  
+
+- You can actually add words to the beginning or end of an element- even it already has hardcoded words attached to it
+
+```js
+reference.insertAdjacentText("position-str",insertStr)
+```
+
+- `"afterbegin"` - at the top of the target element's children tree
+- `"beforeend"` - at the bottom of the target element's children tree
+
+You can use these last 2 if you want, but your text won't be nested inside any element
+
+- `"beforebegin"` - just before the target element
+- `"afterend"` - just after the target element
+
+EXAMPLE: Add some characters to the end of your existing list item
+
+```html
+<ul id="listContainer">
+	<li>List Item 1</li>
+	<li>List Item 2</li>
+	<li>List Item 3</li>
+</ul>
+<script>
+	const secondLI = document.querySelector("li:nth-child(1)");
+	const insertStr= "===="
+</script>
+```
+
+![image-20210328153552438](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328153552438.png)	![image-20210328183435348](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328183435348.png)
+
+# DOM: Manipulating HTML and CSS with JavaScript + Data Attributes
+
+### Extracting Values of CSS Properties (S1)
+
+There are a handful of methods which let you use hardcoded CSS property values in JS
+Changing their values is another topic- one found in a nearby lesson
+
+- Sometimes you might want to know a CSS property value without manually checking it. 
+
+|                                                | purpose                                                      |
+| ---------------------------------------------- | ------------------------------------------------------------ |
+| `window.getComputedStyle(element)`             | returns an object containing the values of all CSS properties of an element |
+| `HTMLelement.style.setProperty('color','red')` | changes the value of a CSS property                          |
+| getPropertyValue()                             | gets the property value of an HTML element that has getComputedStyle() applied to it. SEE NEXT LESSON |
+
+#### getComputedStyle()
+
+Remember, this method gets updated every time you change the document in a way that affects the property you're targeting
+
+STARTER CODE
+
+HTML: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412165550454.png" alt="image-20210412165550454" style="zoom:80%;" /> CSS: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412165612026.png" alt="image-20210412165612026" style="zoom:80%;" /> Result: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412165651644.png" alt="image-20210412165651644" style="zoom: 33%;" />
+
+EXAMPLE: Log the color of the div 
+
+```JS
+let square= document.querySelector('div')
+
+let divStyles=window.getComputedStyle(square)
+console.log(divStyles.backgroundColor); //OUTPUT: rgb(0, 255, 0)
+
+let widthVal = divStyles.getPropertyValue('width');
+console.log(widthVal); //OUTPUT: "200px"
+```
+
+As you can see, we get the computed rgb code for the "lime" color we hardcoded in CSS. It's not what we typed, but what the browser COMPUTES it to be
+
+- If you get the computed style of bold font weight, it'll return the computed thickness. 
+- If you feed the method a font size in em or rem, it'll return the hardcoded px size
+
+If you want to check a CSS property of a pseudo element, just add that as the second argument in `getComputedStyle()`
+
+Manipulating Regular CSS 
+
+#### Changing Inline CSS with getComputedStyle()
+
+We need to use parseFloat to extract a number from the result of getComputedStyle()
+
+```js
+let square= document.querySelector('div')
+let divStyles=window.getComputedStyle(square)
+
+square.style.width=Number.parseFloat(divStyles.width) + 200+ `px`
+```
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412175825840.png" alt="image-20210412175825840" style="zoom:33%;" />
+
+### Changing Inline CSS Properties (S2)
+
+#### Changing Inline CSS
+
+The DOM contains CSS styles as well- which means we can manipulate them using JS.
+There are just a few things you need to keep in mind
+
+- The method shown in this subsection applies inline CSS styles
+  You won't see any changes in the CSS or SASS documents
+- In JS, we need to use camelCase to name CSS properties that involve 2+ words
+  CSS: `font-size`	JS: `fontSize`
+- When typing the values for the CSS property in JS, they always need to be surrounded by quotation marks
+
+```js
+//SYNTAX
+importedElement.style.camelCaseProperty="value"
+```
+
+Some properties have different names altogther. For example, to use float we must type importedElement.style.cssFloat (cases like this are fairly uncommon though)
+
+DEMONSTRATION:
+
+Before we begin, realize that you can tweak any CSS property through JS
+Use your imagination, and don't limit yourself to simple applications like this one
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326113723672.png" alt="image-20210326113723672" style="zoom: 50%;" />
+
+Say we start off with a green square on our webpage- it's 200px by 200px
+Change the color to violet, then change the size to make it much longer
+
+```js
+let square= document.querySelector('div')
+square.style.backgroundColor= 'violet'
+square.style.width= '500px'
+```
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326114712649.png" alt="image-20210326114712649" style="zoom: 50%;" />
+
+PROPERTIES WITH MULTIPLE VALUES:
+
+If you want to set 2+ values for a single property, stay w/ 1 pair of quotation marks
+
+```js
+document.querySelector('.btn').style.padding = '20px 10px';
+```
+
+### Changing Regular CSS Properties (S3)
+
+Through JS, you can change the values of CSS properties, or even custom variables 
+As far as I know, this doesn't work with SASS variables - only native CSS variables
+
+WARP KEY: L943VR
+
+#### EXAMPLE 1: Practical Example
+
+STARTER CODE:
+
+```html
+<ul id="list1"> LIST 1
+	<li class="uno">List Item 1</li>
+	<li class="uno">List Item 2</li>
+	<li class="uno">List Item 3</li>
+</ul>
+
+<style>
+	:root{ --textColor: blue; }
+	#list1{
+  		color: var(--textColor);
+	}
+	.uno{ font-size: 24px }
+	p { font-size:24px }
+</style>
+```
+
+JS CODE:
+
+- From our JS doc, we can change custom properties, or even regular CSS properties
+- If the CSS custom property was defined on a different scope, you'd query select the selector it was defined inside of
+
+```js
+//———————————【Change custom property --textColor to teal 】—————————————
+const root= document.querySelector(':root')
+root.style.setProperty('--textColor','teal') 
+
+//————————————【Change regular property color to red (for p tags)】————————————————
+const paras= document.querySelector('p') // target all p tags
+paras.style.setProperty('color','red') /*change color property fr.JS*/
+```
+
+Before JS: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412202224161.png" alt="image-20210412202224161" style="zoom:80%;" /> After JS: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412202202785.png" alt="image-20210412202202785" style="zoom:80%;" />
+
+ALTERNATIVE (for changing CSS custom properties through JS)
+
+```js
+document.documentElement.style.setProperty('--textColor','teal')
+/*Keep in mind this only works for the ones defined in the root's scope*/
+```
+
+
+
+#### EXAMPLE 2: Very Niche Scenario
+
+Instead of hardcoding the second argument for setProperty(), we can even set it equal to the value of another property in CSS by using getProperty()
+
+```js
+const list= document.querySelector('#list1')
+const paras= document.querySelector('p') 
+
+/*Use the list's style object to get the property value of the "color" property*/
+const listStyles= getComputedStyle(list)
+const listColor= listStyles.getPropertyValue('color')
+
+/*Set the color property of something else equal to list's color*/
+paras.style.setProperty('color',listColor)
+```
+
+Before JS: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412202224161.png" alt="image-20210412202224161" style="zoom:80%;" /> After JS: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412221046921.png" alt="image-20210412221046921" style="zoom:80%;" />
+
+TLDR: We colored the paragraph at the bottom the same color as the list, by getting and setting property values
+
+Alternatively, we could have just gotten the property value of the root's custom variable, and colored the paragraph with that
+
+```js
+const root= document.querySelector(':root')
+const paras= document.querySelector('p') 
+
+const rootStyles= getComputedStyle(root)
+const rootColor= rootStyles.getPropertyValue('--textColor')
+
+paras.style.setProperty('color',rootColor)
+```
+
+https://codepen.io/NFuego24-7/pen/wvgmgPw
+
+### Extract or Change CSS Attributes
+
+METHODS WE'LL NEED:
+
+| method                                         | effect on the element it's applied to                    |
+| ---------------------------------------------- | -------------------------------------------------------- |
+| `htmlEl.getAttribute('id')`                    | returns the value of the attribute specified in brackets |
+| `htmlEl.setAttribute('attrib','desiredValue')` | sets an element attribute to your desired value          |
+
+#### EXAMPLE: Change Image using "src" Attribute
+
+We're going to use the exact same code for all subsections
+
+STARTER HTML: (we have no CSS)
+
+```html
+<h2 data-version-number='3.0'>We so fly</h2>
+<img href="#" src="https://i.postimg.cc/MTrfMx0t/94.jpg" width="500" height="600"> 
+```
+
+Before CSS: ![image-20210412225724711](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412225724711.png) After CSS: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412225140273.png" alt="image-20210412225140273"  />
+
+SOLUTION:
+
+```js
+const pic= document.querySelector('img')
+//————————————————【Get attributes in 2 ways】—————————————————————
+let picSRC1= pic.getAttribute('src')
+let picSRC2= pic.src // whichever one of these you use D.N matter in this example
+console.log(picSRC1);
+console.log(picSRC2);
+//————————————————【Set attribute】—————————————————————
+pic.setAttribute('src','https://i.postimg.cc/MTrfMx0t/94.jpg') // new image link
+```
+
+Console logs: ![image-20210412230457629](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412230457629.png)
+
+Directly accessing attributes using dot notation (picSRC2) has certain drawbacks. 
+
+- If the attribute is uncommon on the type of element its used on in HTML, JS won't recognize it when you try to read it. 
+- This does not mean we should always use setAttribute though
+
+#### The Diff b/t Dot Notation & getAttribute()
+
+Absolute vs Relative outputs is what separates our 2 methods of the day
+
+```js
+// all previous code is the same
+console.log(pic.href);					//returns undefined
+console.log(pic.getAttribute('href'));	// returns exactly what we typed in HTML
+```
+
+![image-20210412232119886](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412232119886.png)
+
+### Data Attributes 
+
+These are special kinds of attributes that start with `data-` 
+
+We use data attributes quite a lot when we work with the UI
+Especially when we need to store data in user interface (basically the HTML code)
+
+```HTML
+<h2 data-version-number='3.0'>We so fly</h2>    
+<h2 data-versionWAN='4.0'>Radio Rebel's underrated</h2>
+<script> 
+	let header2= document.querySelector('h2')
+	console.log(header2.dataset.versionNumber); //OUTPUT:3.0
+
+	let header22= document.querySelector('h2:nth-child(2)') //grab the second h2
+	console.log(header22.dataset.versionWAN);  //OUTPUT: undefined (JS d.n recognize)
+	console.log(header22.dataset.versionwan); //OUTPUT: 4.0
+</script>
+```
+
+All the data attributes can be found within the `dataset`
+
+- Just make sure to only capitalize words that come after the data attribute's second dash- assuming it has another dash in the first place
+- Look at the second last log. We namedropped the data attribute exactly as it was presented, yet JS still did not see it until we decapitalized the attribute name
+
+CONVERT THE DATASET OUTPUT TO A NUMBER:
+Fairly sure that datasets convert whatever you stored into a string (i forgot)
+
+
+
+# DOM: Create/Place/Delete Elements
+
+- We can create elements within our JS files then place them anywhere in the DOM. 
+- Once we place them in, it'll be as if they were hardcoded in our index.html file. 
+- This lets us dynamically introduce content that our actual HTML document never had
+
+### createElement Method  (S1)
+
+You can use JS to create entirely new HTML elements that work as if they were hardcoded in your HTML file initially. This can be used to dynamically add content to your webpage
+
+PRACTICAL EXAMPLE: 
+On Udemy, wishlisting a course will add it to the existing ones you have there
+You can interact with this new element- you can click it to go to a new webpage
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210325065442656.png" alt="image-20210325065442656" style="zoom:50%;" />
+
+You can create new DOM elements in multiple ways:
+
+#### Example 1: 
+
+These methods are used in conjunction to create brand new elements from your JS file.
+To demonstrate, create the following div element:
+
+EXAMPLE 1: Create the following element
+
+```html
+<div class="greet msg" id="hi" title="welcome">Hello World</div>
+```
+
+SOLN:
+
+```JS
+let newDiv = document.createElement("div");		//creates an element
+newDiv.className = "greet msg"; 				//sets class name(s)
+newDiv.id = "hi"; 								// sets ID
+newDiv.setAttribute("title", "welcome"); 		//sets a title attribute
+
+// Creating your element's text...
+
+let newDivText = document.createTextNode("Hello World"); // create text for element
+newDiv.appendChild(newDivText); 		// assign the text to your element
+console.log(newDiv); 
+```
+
+![image-20210327164755781](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210327164755781.png)
+
+- The text doesn't show on Firefox's log for some reason, but it does acknowledge its existence when you check the textContent property of your newly created element
+- Preview shown in the picture above is from edge
+
+List of attributes: [HTML Attributes (w3schools.com)](https://www.w3schools.com/tags/ref_attributes.asp)
+
+#### EXAMPLE 2: Nested Tags
+
+Create the following:
+
+```html
+<li>
+	<span class="name">The wise man's fear</span>
+    <span class="delete">delete</span>
+</li>
+```
+
+- The appendChild() method can assign tags to be nested inside other elements too. 
+  It's not just used for assigning text
+- We're going to use a different method to add in the words for your elements
+  Appending text nodes is one way, but textContent is also an option
+
+SOLN:
+
+```JS
+//# Creating 3 new sets of tags: li, and 2 pairs of span
+const listItem = document.createElement("li");
+const span1 = document.createElement("span");
+const span2 = document.createElement("span");
+
+//# Add the spans' words
+span1.textContent="The wise man's fear"
+span2.textContent="Delete"
+
+//# Add the spans' class names
+span1.className = "name";
+span2.className = "delete";
+
+//# Append the nested elements to their parents
+// by assigning span1 first, it goes to the top of the list
+listItem.appendChild(span1);
+listItem.appendChild(span2);
+
+console.log(listItem);
+```
+
+![image-20210328082118716](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328082118716.png)
+
+#### Adding CSS Styles to New Elements
+
+```js
+newDiv.style.fontSize= "30px" //changing a CSS style of our new element
+```
+
+
+
+
+
+### Inserting Elements into the DOM (S2)
+
+When you create an element in JS, it does not get placed in your HTML file by default. You must place it there yourself using a specific method
+
+- You have a handful of methods for new element insertion- choose based on where you want it to be placed (relative to the element you use your method on)
+- If you create an element in JS, it can only exist at one place at the same time
+
+#### insertAdjacentElement()
+
+```js
+referenceEl.insertAdjacentElement("position-str", elementToInsert)
+```
+
+- `"beforebegin"` - just before the target element
+- `"afterend"` - just after the target element
+- `"afterbegin"` - at the top of the target element's children tree
+- `"beforeend"` - at the bottom of the target element's children tree
+
+#### Demonstrations
+
+Starter Code: ![image-20210328121210319](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328121210319.png)
+
+```html
+<div id="container">
+	<article>THE UNORDERED LIST BEGINS HERE</article>
+	<ul ID="listContainer">
+		<li>List Item 1</li>
+		<li>List Item 2</li>
+		<li>List Item 3</li>
+	</ul>
+</div>
+<script>
+    // Imported 2 elements from our hardcoded HTML file to use as references
+    const container= document.getElementById("container") 
+	const listContainer= document.getElementById("listContainer");
+    
+    //Created a simple new element to insert
+    const newHeader= document.createElement("h2"); 
+	newHeader.textContent= "Someone INSERT me!"
+</script>
+```
+
+JS Code:
+
+```js
+listContainer.insertAdjacentElement("beforebegin",newHeader) //before UL list
+listContainer.insertAdjacentElement("afterend",newHeader) // after UL list
+```
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328121345334.png" alt="image-20210328121345334" style="zoom:90%;" /> <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328121430449.png" alt="image-20210328121430449" style="zoom:90%;" />
+
+
+
+```JS
+listContainer.insertAdjacentElement("afterbegin", newHeader); // start of child list
+listContainer.insertAdjacentElement("beforeend", newHeader); // end of child list
+```
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328124337836.png" alt="image-20210328124337836" style="zoom:90%;" /> <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328124432969.png" alt="image-20210328124432969" style="zoom:90%;" />
+
+
+
+### Alternative Ways to Insert DOM Elements
+
+I've already gone over the simplest ways to place elements in the previous lesson, but you may encounter others when looking over code. They perform similar or congruent tasks, and can be used interchangeably
+
+- If you want to read more about these, read this: 
+  [How to Add an Element to the DOM? (areknawo.com)](https://areknawo.com/how-to-add-an-element-to-dom/)
+- Don't focus on these too much- this type of work is now done using JS frameworks
+
+#### Alternate Element Inserts: 
+
+(We will refer to the element we use these methods on as the REFERENCE)
+
+|                      | Effect                                                       |
+| -------------------- | ------------------------------------------------------------ |
+| `.appendChild(el)`   | places a new element at the end of the reference's child list |
+| `.prepend(el)`       | places new element at the START of the reference's child list. Can accept multiple arguments |
+| `.append(el)`        | same as appendChild() but can accept multiple arguments      |
+|                      |                                                              |
+| `.insertBefore(a,b)` | inserts element right before the reference<br />a is the element you're inserting, b is the reference |
+| insert after         | Does not exist, but you can achieve this effect using a premade function |
+
+ADDITIONAL INFO:
+
+- prepend.() and append() only have 92% support ATM, but it has simple polyfills 
+- I recommend using insertAdjacentElement instead- it accomplishes the same thing plus it's universally supported
+
+
+```js
+// Insert After Function
+const insertAfter = (parent, child, reference) => {
+  parent.insertBefore(child, reference.nextElementSibling);
+};
+
+document.body.append(el);
+insertAfter(document.body, el2, el);
+```
+
+
+
+### Template Literal Method to Create/Place Elements
+
+Instead of using a slew of methods to create an element, you have the option to just type out HTML syntax within JS...as a string. 
+
+- The browser can convert the string into actual HTML in a location you specify
+- You can use innerHTML form this, but it has major drawbacks:
+
+![image-20210328155834776](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328155834776.png)
+
+#### insertAdjacentHTML()
+
+This is your main choice for turning typed out strings in JS into HTML elements
+You can even combine these with functions along with ${placeholders}
+
+```JS
+reference.insertAdjacentHTML("position-str","template-literal")
+```
+
+- `"beforebegin"` - just before the target element
+- `"afterend"` - just after the target element
+- `"afterbegin"` - at the top of the target element's children tree
+- `"beforeend"` - at the bottom of the target element's children tree
+
+EXAMPLE:
+
+```html
+<ul id="listContainer">
+	<li>List Item 1</li>
+	<li>List Item 2</li>
+	<li>List Item 3</li>
+</ul>
+//—————————————————————【starter code above】——————————————————————————
+<script>
+	const unorderedList = document.querySelector("#listContainer");
+	const fourthLI= `<li class="str">List item 4- created via temp literal</li>`
+	unorderedList.insertAdjacentHTML("afterbegin",fourthLI)
+</script>
+```
+
+![image-20210328153552438](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328153552438.png)	![image-20210328175404345](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328175404345.png)
+
+#### Cloning Created Elements
+
+insertAdjacentHTML() lets us place a newly generated HTML element in multiple locations at the same time
+
+```js
+const unorderedList = document.querySelector("#listContainer");
+const fourthLI= `<li class="str">List item 4- created via temp literal</li>`
+unorderedList.insertAdjacentHTML("afterbegin",fourthLI) //top of child list
+unorderedList.insertAdjacentHTML("beforeend",fourthLI) // end of child list
+```
+
+![image-20210412134359556](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412134359556.png)
+
+- Newly created elements in JS can only exist in one place a time, if you're placing it with an append method or one of the other alternates
+
+- Fortunately, the cloneNode() method exists to let us position new elements in 2+ locations at the same time. 
+
+However, this can be done naturally by using insertAdjacentHTML anyway, so I'm not going to demonstrate it
+
+
+
+### Replace or Erase Existing Elements
+
+#### Replace
+
+```js
+oldEl.parentNode.replaceChild(newEl, oldEl);	//SYNTAX
+```
+
+EXAMPLE: Replace the final list item with a new one you create
+
+```html
+<ul id="listContainer">
+	<li>List Item 1</li>
+	<li>List Item 2</li>
+	<li>List Item 3</li>
+</ul>
+<script>
+    // Select the last li element
+	const lastLI = document.querySelector("#listContainer :last-child");
+    // Create a new li element
+	const newLI= document.createElement("li");
+	newLI.textContent="Replacement"
+    
+    //Replace the old one with the new
+	lastLI.parentNode.replaceChild(newLI,lastLI)
+</script>
+```
+
+![image-20210328153552438](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328153552438.png)	![image-20210328153607621](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328153607621.png)
+
+#### Delete All Children in a Container
+
+```js
+importedEl.innerHTML=""
+```
+
+- We can actually use template literals with innerHTML to create new DOM elements
+  Not recommended over insertAdjacentHTML though
+- One twist on this is to set a container's innerHTML to nothing (an empty string)
+  This clears any children it originally has
+
+#### Delete a Specific Element
+
+For this, we use the remove() method which is fairly new and has 96% support (no IE)
+
+```html
+<ul id="listContainer"> 
+    <li>List Item 1</li> 	<li>List Item 2</li> 	<li>List Item 3</li>
+</ul>
+<script>
+	let thirdLI= document.querySelector('li:nth-child(3)')
+	thirdLI.remove()
+</script>
+```
+
+![image-20210328153552438](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210328153552438.png) ![image-20210412141846678](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210412141846678.png)
+
+OLD ALTERNATIVE (is wordier)
+
+A lot of people don't know about this feature yet, and use removeChild() instead
+The support is less than 0.1% larger- but IE supports it...so
+
+```html
+<ul id="listContainer"> 
+    <li>List Item 1</li> 	<li>List Item 2</li> 	<li>List Item 3</li>
+</ul>
+<script>
+	let thirdLI= document.querySelector('li:nth-child(3)')
+	thirdLI.parentElement.removeChild(thirdLI) // old method
+</script>
+```
+
+### Generate HTML w/ Template Tags
+
+Instead of generating DOM content with strings each time, you can actually pre-make container blocks in your HTML file
+
+1. Surround a container block you plan on reusing multiple times with template blocks
+   Give each one a unique ID- makes it easier to reference them
+
+![image-20210704230131494](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210704230131494.png)
+
+2. Find a location where you want to put this template
+
+![image-20210704230231159](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210704230231159.png)
+
+3. Use a variation of the following code snippet:
+
+```js
+var temp = document.querySelector("#statsCountTemplate");
+var clon = temp.content.cloneNode(true);
+var location= document.querySelector("aside")
+location.appendChild(clon);
+```
+
+#### Compared to Template Literal Method
+
+ADVANTAGES:
+
+- Any container wrapped in template tags will not be visible or take up any space before you render it, so you can place them where they will be rendered later
+- It lets you see where DOM content will eventually be directly in your HTML file
+- Takes up less space in your JS file, compared to generating brand new HTML methods
+
+DISADVANTAGES:
+
+- You can't add dynamic data to template tag content, like you can with template literals with `${}`
+
+# DOM: Element Parents, Children, and Siblings
+
+When performing DOM manipulation, you'll often need to target the siblings, parents, or children of the elements you import to JS. 
+
+You won't always target them directly with classes or ID's when selecting your tags to bring over to JS- that could bloat our code significantly
+
+STARTER CODE FOR THIS ENTIRE CHAPTER:
+
+```html
+<h2 class="title">Items</h2>
+<ul id="items" class="list-group">
+    <li class="list-group-item">Item 1</li>
+    <li class="list-group-item">Item 2</li>
+    <li class="list-group-item">Item 3</li>
+    <li class="list-group-item">Item 4</li>
+</ul>
+```
+
+
+
+### QUICK REFERENCE
+
+You have the option to save the elements these methods capture into a variable
+Or you can put them to use directly by chaining more methods onto the end of these
+
+| `htmlEl.whatever`         | Captures [~~] of the HTML element you use the method on      |
+| ------------------------- | ------------------------------------------------------------ |
+| `.parentElement`          | the parent element                                           |
+|                           |                                                              |
+| `.children`               | all the direct child elements <br />Creates an HTML collection that looks like an array. Suggest converting to an actual array with `Array.from()` |
+| `.firstElementChild`      | the first child                                              |
+| `.lastElementChild`       | the last child                                               |
+|                           |                                                              |
+| `.nextElementSibling`     | the sibling that comes directly after                        |
+| `.previousElementSibling` | the sibling that came right before                           |
+|                           |                                                              |
+
+FODDER: Don't bother using these methods- they each have counterparts in this table that work better
+
+.parentNode (may be the only 1 that's maybe worth using over .parentElement)
+.firstChild - useful counterpart is .firstElementChild
+.lastChild - useful counterpart is .lastElementChild
+.nextSibling - useful counterpart is .nextElementSibling
+.previousSibling - useful counterpart is .previousElementSibling
+
+#### .closest()
+
+The `closest()` method searches up the DOM tree for the closest elder element which matches a specified CSS selector. 
+
+- It starts at the element itself, then tests the parent, grandparent, and so on until a match is found. 
+- If a match is not found, this method returns *null*.
+
+```js
+let vari= htmlEl.closest('CSS_selector') // returns a matching element or null
+
+// Guard clause:
+if (!vari) return; // ends E-L early if closest() returns "null"
+```
+
+###### Sample Problem Description
+
+[Closest() (codepen.io)](https://codepen.io/NFuego24-7/pen/MWJzYWL?editors=1010)
+
+![image-20210421054709910](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421054709910.png)
+
+These button elements have spans inside them. If we want to apply E-Ls to them via delegation, we're going to run into a small problem
+
+```JS
+const tabsContainer = document.querySelector('.operations__tab-container');
+tabsContainer.addEventListener('click', e => {
+  const clicked = e.target;
+  console.log(clicked);
+});
+```
+
+![image-20210421055443741](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421055443741.png)
+
+- Clicking on the buttons works well- they return the button elements. 
+  However, clicking on the inline span elements within the buttons, does not
+- Ideally, we want to click anywhere on the button (even the span), and have it return the button element
+
+###### Solution 
+
+- We have to use closest(), because it will select the element we're currently on when we click the button, AND it will search up for the nearest match for the CSS selector we feed it
+- closest() searches for the the nearest button element in this instance
+
+```JS
+tabsContainer.addEventListener('click', e => {
+  const clicked = e.target.closest('button'); // find nearest button element
+  console.log(clicked);
+});
+```
+
+![image-20210421060226962](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421060226962.png)
+
+
+
+### Parent of an Element
+
+#### .parentNode and .parentElement  
+
+These 2 methods are nearly identical, and can often be used interchangeably. 
+Their purpose is to target your imported HTML element's parents
+
+```js
+let listItem1 = document.querySelector(".list-group-item"); 
+listItem1.parentNode.style.flexDirection = "row"; // switched parent flex direc
+listItem1.parentElement.style.border = "5px dashed black"; //created border 
+```
+
+We brought the `li` element into JS, yet we managed to target its parent element `ul` for all our changes
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326184928187.png" alt="image-20210326184928187" style="zoom:80%;" />   ![image-20210326184857029](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326184857029.png)
+
+### Children of an Element
+
+#### .children 
+
+```js
+let unorderedList= document.querySelector("#items"); // bring in the UL element
+let listItems= unorderedList.children // this is an HTMLcollection, not an array
+console.log(listItems);
+listItems[2].color = "green" //FAILS, because listItems is not really an array
+```
+
+![image-20210326195936437](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326195936437.png)
+
+- This method creates an HTML collection, containing the direct children of the element we imported. (in this case, ul is the parent while 4 li's are the children)
+- If there are elements nested more than 1 level deeper, `.children` does not capture those. Direct-children only, no grandchildren or further descendants
+
+You CAN access individual entries in our node as if it were an array 
+
+- However, you cannot loop over it with a for loop normally- you must first overcome the fact that this is technically not a real array
+
+Method 1: 
+Convert the collection to an array using `Array.from()`
+Iterate over your newly created array with `forEach or map` methods
+
+```js
+let unorderedList = document.querySelector("#items"); // bring in the UL element
+let listItems = Array.from(unorderedList.children); //NOW this is an array
+
+listItems.map((li) => {
+  li.style.color = "blue";
+});
+```
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326184928187.png" alt="image-20210326184928187" style="zoom:80%;" /> 	Now the text is blue: <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210326200911563.png" alt="image-20210326200911563" style="zoom:80%;" />
+
+METHOD 2: Use a for loop and redefine the node inside
+
+```JS
+let unorderedList = document.querySelector("#items"); // bring in the UL element
+let listItems = unorderedList.children; // HTMLcollection
+
+for (let i = 0; i < listItems.length; i++) {
+  let tableChild = listItems[i]; // i guess this converts it? idk but it works 
+  tableChild.style.color="BLUE"
+}
+```
+
+
+
+#### .firstElementChild & .lastElementChild
+
+- firstElementChild fetches us the first element that's the child of the HTML element we imported to JS
+- lastElementChild fetches us the last element that's the child of the HTML element we imported to JS
+
+```JS
+let unorderedList = document.querySelector("#items"); // bring in the UL element
+let firstBornLI = unorderedList.firstElementChild;
+let lastBornLI= unorderedList.lastElementChild
+firstBornLI.style.backgroundColor='dodgerBlue'
+lastBornLI.style.backgroundColor="#909090"
+```
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210327060020835.png" alt="image-20210327060020835" style="zoom:80%;" />
+
+### Siblings
+
+#### .nextElementSibling and .previousElementSibling
+
+As their names suggest, these methods target the elements that come right before or after the HTML tag we import
+
+```js
+let secondLI = document.querySelector(".list-group-item:nth-child(2)");
+secondLI.nextElementSibling.style.backgroundColor="#E71989"
+secondLI.previousElementSibling.style.backgroundColor="#FFE042"
+```
+
+![image-20210327061631150](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210327061631150.png)
+
+
+
+### Useless Methods
+
+#### .childNodes 
+
+Is the useless version of the `children` method
+
+- Works the same as children, but adds in extra text nodes every time HTML elements are separated by a line jump (is the reason why we hardly ever use it)
+- These extra text nodes don't show up when the HTML elements kiss, but either way, we have better options to select our children
+
+```js
+let unorderedList = document.querySelector("#items"); // bring in the UL element
+let listItems = unorderedList.childNodes; // array-like node
+console.log(listItems);
+```
+
+![image-20210327053055468](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210327053055468.png)
+
+#### List of Remaining Useless Methods
+
+- For the record, just know that all of these are considered worthless because of the HTML line jump issue described above. 
+- They offer us text nodes we don't want to consider as family members to our elements
+  Each of these have their own counterpart that does not consider line jumps
+
+.firstChild - useful counterpart is .firstElementChild
+.lastChild - useful counterpart is .lastElementChild
+.nextSibling - useful counterpart is .nextElementSibling
+.previousSibling - useful counterpart is .previousElementSibling
+
+
+
+# DOM: Events
+
+### Add/Remove Classes with Event Listeners
+
+Event listeners have the power to cause something once the specified condition is met. Oftentimes, we add/remove/toggle CSS classes to make a visual change.
+
+- Typically, devs will give styles to a class in CSS, but they won't give any elements that class in the HTML doc- that's hardcoding.
+- Instead, they'll give the class to an element in JS, only when a certain condition is met (this is why event listeners are so crucial)
+
+One common example would be a login page. 
+
+- Your site's content could be given a class that's coded to be transparent in CSS. 
+- Once you give your email and password, that class can be taken away- letting you see what used to be invisible
+
+#### Structure of Event Listeners
+
+- The target element is the element that changes when you click something
+  It's typically an HTML import - though you can also directly target elements with their ID's
+
+- If you're dealing with multiple classes, use 2 sets of quotation marks and separate them with a comma `('bg','bd')`
+- Event listeners typically use arrow functions due to how compact they are
+  The official term for these functions are EVENT HANDLERS
+
+![image-20210204090413044](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210204090413044.png)
+
+We can do more than just add classes in the callback function. 
+You can save the event listener to a variable, and it'll still work as if it wasn't
+
+#### Explanation of the Above 
+
+Know that my terminology differs fr/ official sources
+
+instigation element: `add`
+
+- Click the element with id="add"... something happens to itself and/or another element
+- Can also point to the instigation element using classes (shown in the "Add a singular class" example found later in this lesson)
+
+target element: `$hello`
+
+- $hello is an imported HTML element. This element is going to have the class "bg" added to it when someone clicks the id="add" element
+- This is one of the cases where the instigation/target elements are not the same
+
+![image-20210204090808826](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210204090808826.png) ![image-20210204090943726](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210204090943726.png)
+
+![image-20210226103722178](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210226103722178.png)
+
+When we press the add button (which has id="plus"), the classes are added to the hello world box, not the add button itself
+
+#### Different Kinds of Event Listeners
+
+Different action keywords allow us to....
+
+1) Add a singular class		 2) Add multiple classes
+
+2) Remove a singular class 	 4) Remove multiple classes
+
+3) Toggle a class on/off		6) Check if class/classes are active
+
+HTML CODE:
+
+```html
+  <div class="controls"> 
+    <!--% Class Controller. 
+Performs many operations (see their ID's)-->
+      <button id="plus">Add</button>
+      <button id="ditch">Remove</button>
+      <button id="flip">Toggle</button>
+      <button id="checkIt">Check</button>
+      <button id="plusAll">Add All</button>
+      <button id="clear">Remove All</button>
+    </div>
+
+    <div class="hello">
+      Hello World!
+    </div>
+```
+
+CSS CODE:
+
+```CSS
+.bg { background-color: gray; color: white;}
+.bd { border: 5px solid pink;}
+
+/* bg class makes the box gray with white text*/
+/* bd class adds a black border*/
+/* Some code was excluded above, but it was purely aesthetic*/
+```
+
+JS CODE:
+
+```js
+const $hello= document.querySelector('.hello');
+```
+
+//—————————————————————【】——————————————————————————
+
+If you're adding/removing/toggling classes, the dev tools will be updating in real time-telling you what classes or styles are active
+
+ADD A SINGULAR CLASS:
+
+```JS
+plus.addEventListener('click', ()=>{     //% targets el. with id="add"
+  $hello.classList.add('bg'); 
+  //~"bg" class added to .hello element
+})
+```
+
+ADD MULTIPLE CLASSES:
+
+```JS
+plusAll.addEventListener('click', ()=>{    //% targets el. with id="addALL" 
+  $hello.classList.add('bg', 'bd'); 
+  //~ Adds both the bg and bd classes to .hello element
+})
+```
+
+REMOVE A SINGULAR CLASS:
+
+```js
+ditch.addEventListener('click', ()=>{     //% targets el with id="remove"
+  $hello.classList.remove('bg'); 
+  //~ "bg" class removed from .hello element
+})
+```
+
+REMOVE MULTIPLE CLASSES:
+
+```js
+clear.addEventListener('click', ()=>{    //% targets el with id="removeAll"
+  $hello.classList.remove('bg', 'bd'); 
+  //~ Removes both the bg and bd classes to .hello element
+})
+```
+
+TOGGLE A CLASS ON/OFF: (does not work with multiple)
+
+```js
+flip.addEventListener('click', ()=>{    //% targets el. with id="flip"
+  $hello.classList.toggle('bg'); 
+  //~ "bg" class toggled on/off on $hello element
+})
+```
+
+CHECK IF CLASS/CLASSES ARE ACTIVE
+
+```js
+checkIt.addEventListener('click', ()=>{     //% CHECK FOR CLASS
+  let hasOrNot = $hello.classList.contains('bg','bd');  
+  //~ Checks if el belongs to the "bg" OR 'bd' class. returns true if in either 
+  // We can perform actions based on if an element has a certain class now...
+})
+```
+
+
+
+#### Variations to this Procedure
+
+Instead of using the element with the id="add", import an HTML element using class
+Then replace the instigation element with the JS variable for the import
+
+```html
+<button id="plus" class="backup">Add</button>
+```
+
+```js
+const $howdy= document.querySelector('.backup');
+$howdy.addEventListener('click', ()=>{     //% ADD CLASS
+  $hello.classList.add('bg'); 
+})
+```
+
+^^ Works just as well as the ID method
+
+We can even skip the process of storing our element imports into variables. 
+Target elements for manipulation all in 1 line:
+
+```js
+document.querySelector('.backup').addEventListener('click', ()=>{     //% ADD CLASS
+  $hello.classList.add('bg'); 
+})
+```
+
+#### Full Codepen Example
+
+See here: Full Codepen Example: [Event Listeners (codepen.io)](https://codepen.io/NFuego24-7/pen/WNoQWwM)
+
+class "bg" gives its target a gray background and white text
+class "bd" gives its target a pink border 
+
+Lesson this series is based on: 
+[(1) How to Add and Remove Class in Javascript - YouTube](https://www.youtube.com/watch?v=IKzlUvYSZO4)
+
+
+
+### The Event Object
+
+When we create an event listener, our callback function lets us access the event object
+This object has a large number of properties
+
+Take a look at the general structure of an event handler defined within the event listener method:
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210204090413044.png" alt="image-20210204090413044" style="zoom: 33%;" />
+
+- The arrow function has no argument in this version- but event handlers do have 1 parameter hardcoded into them- the event object
+
+- This is just like how forEach looks have index values and array entries hardcoded into them
+
+```js
+let body = document.querySelector("body");
+
+function buttonClick(event) { console.log(event); }
+let a= body.addEventListener("click", buttonClick);
+```
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210329132415931.png" alt="image-20210329132415931" style="zoom: 80%;" />
+
+#### Relevant Properties
+
+These adhere to the event listener we created above- just imagine you swapped console.log() statements
+
+```js
+eventObj.type; 	// gives the event type
+
+eventObj.clientX; // gives the X position of where you clicked (rel2window)
+eventObj.clientY; // gives the Y position of where you clicked (rel2window)
+eventObj.offsetX; // gives the X position of where you clicked (rel2element)
+eventObj.offsetY; // gives the Y position of where you clicked (rel2element)
+```
+
+These next few methods return true or false, depending on if you clicked the event trigger with another key held down at the same time
+
+```js
+eventObj.shiftKey; // True if you shift-clicked, false if you didn't
+eventObj.altKey; 
+eventObj.ctrlKey;
+```
+
+#### Event target Properties
+
+These are important to understand when writing event handlers for multiple elements
+Just assume the event listener type is 'click' for all these explanations
+
+```js
+eventObj.target; 		// the element you clicked
+this; 					// same as .target
+eventObj.target.id; 	// gives the ID of the element you clicked on
+
+eventObj.currentTarget; 
+// gives the element whose eventListener triggered the event
+// Does not mean that this element is what was clicked on (or whatever your trigger is)
+// comes into play when bubbling occurs due to HTML element nesting
+
+eventObj.target.className; 		// gives a single string with all classnames in it
+eventObj.target.classList; 		// gives an ""array"" w/ each class as an entry
+```
+
+To illustrate the difference between `eventObj.target` and `eventObj.currentTarget` , use this demo: https://codepen.io/NFuego24-7/pen/wvgYGGv?editors=1010
+
+
+
+### Mouse Events
+
+There are more event triggers we can use aside from a traditional click on an element
+
+#### Click-Oriented Events:
+
+```
+"dblclick"		requires you to double click
+"mousedown"	 	trigger occurs as soon as you left click (does not wait for a release)
+"mouseup"  		similar to a click event
+```
+
+Difference between "click" and "mouseup":
+
+- With a mouseup event, you can click somewhere else on the screen, hold down the click button, and move the pointer to your mouseup element, and then release 
+- A click event requires the mousedown and mouseup event to happen on that element
+
+#### Hover-Oriented Events:
+
+Triggers event when...
+
+```
+"mousemove"		you move your mouse through the element field
+
+"mouseenter"	your mouse enters the element area (doesn't bubble)
+"mouseover"		same as above, but triggers again if you hover over child els inside 
+
+"mouseleave"	triggers event when your mouse leaves the element area
+"mouseout"		same as above, but triggers again if you exit child els inside 
+
+See 18:30 of this vid to see the diff: 
+https://www.youtube.com/watch?v=wK2cBMcDTss&t=838s
+```
+
+TIP FOR EVENT DELEGATION AND BUBBLING: 
+Use `mouseover and mouseout`
+mouseenter and mouseleave don't work with bubbling
+
+#### Inline HTML Mouse Events (try not to use)
+
+You can apply these directly onto elements in HTML if you want to set up events in JS 
+It's an inferior, old school alternative to the addEventListener method
+
+
+
+![image-20210419144322132](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419144322132.png)
+
+EXAMPLES:
+
+```html
+<p id="demo" onclick="myFunction()">Click me to change my text color.</p>
+
+<script>
+	function myFunction() {
+  		alert('You clicked a paragraph element')
+	}
+</script>
+```
+
+- Here, we define an "onclick" event and point the HTML element to the event handler which will be written in JS later
+- We can actually define the event handler right inside the HTML tag, but you probably shouldn't ( it's an extremely archaic way of doing things)
+
+```html
+<p id="demo" onclick="alert('You clicked a paragraph element')">Click me to change my text color.</p>
+```
+
+DISADVANTAGES
+
+- You can't apply multiple event listeners to one element
+  Using 2 on-events on a single element will cause the earlier ones to get overwritten
+- addEventListener lets us remove an event handler if we don't need it anymore, while on-events do not (see the temporary events lesson)
+
+### Keyboard Events
+
+Keyboard events are another form of event triggering, just like hitting a button
+
+- They are "global events" because they do not happen on one specific element
+- The main difference here is that we're pressing a button on our keyboard to trigger something, making this a keyboard event
+
+There are 3 kinds of keyboard events: `key down`   `key press`    `key up`
+
+|             | triggers an event when...                                    |
+| ----------- | ------------------------------------------------------------ |
+| `key up`    | we lift our finger OFF a key after pressing it first         |
+| `key press` | event triggers for this works a bit differently<br />It continuously fires when we keep our finger pressed on a key |
+| `key down`  | we tap a key                                                 |
+
+- When using keyboard event listeners, knowing which key has been pressed is important. 
+- You'll need to grab they "key" property from the object that's created as soon as you click anything(assuming a keyboard event is active)
+
+Check out this keyboard event we apply to the entire document
+The object is much larger than this- but the key property we care about is visible
+
+```js
+document.addEventListener('keydown', (eventObj) => console.log(eventObj));
+```
+
+We pressed Caps Lock:	![image-20210228151148045](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210228151148045.png)
+
+#### Applying Specific Keyboard Events
+
+Now that we can see the key property we need, we can use it to create conditional statements. We can tell JS to do something only if a specific key is pressed
+
+```js
+document.addEventListener("keydown", (eventObj) => {
+  if(eventObj.key==="Escape") console.log("We pressed the escape key");
+    // be careful. This is case sensitive. escape != Escape
+});
+```
+
+- We applied this to the entire webpage (because of document.~~)
+- "We pressed the escape key" gets logged every time someone presses ESC
+
+#### Checking Official Key Names:
+
+- If you're mapping actions to keyboard keys, you'll need their names- which we can find with a simple custom function 
+- They are case sensitive, so you'll need to be exact
+
+```js
+document.addEventListener("keydown", (eventObj) => {
+  console.log(eventObj.key);
+});
+```
+
+Pressed some keys: ![image-20210329163448714](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210329163448714.png)
+
+
+
+### Input Events
+
+These events deal with input fields
+
+```
+"focus"		fires when you left click inside an input field (selecting it)
+"blur"		requires an input field to be selected 1st. Fires when you click out
+
+"cut"		triggers event when you cut content inside the input field
+"paste"		triggers event when you paste content in your input field
+"input"		fires when you do anything in the input field (copy,cut,paste,type)
+
+"change"	fires when you select an option from a drop down list
+```
+
+#### Clearing Input Fields
+
+When you click/select an input field, you give it focus
+
+- If you successfully log in or fail to do so, you should erase the old contents of the input field and remove its focus
+
+- You probably want to place these upcoming actions in an event listener- specifically for the submit button (typically, fields clear after being submitted)
+
+Carefully decide what gets deleted though. 
+
+- If the user types in a correct username but wrong password, it'd be annoying to have to retype everything just because of 1 minor mistake
+
+EXAMPLE:
+
+Assuming we imported the HTML elements representing these input fields earlier, and named them `userField` and `pinField`
+
+```JS
+userField.value=""; // clears contents of username field
+userField.blur();	// removes focus
+pinField.value=""; // clears contents of PIN input field
+pinField.blur(); // removes focus
+```
+
+![image-20210331132200524](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210331132200524.png)	![image-20210331132107976](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210331132107976.png)
+
+
+
+#### Submit Button Event Handlers
+
+This one event type gets its own sub section because it's usually problematic. 
+Submit buttons usually have default behaviors that reload pages or send data 
+
+- If you want an event to happen after clicking them, you'll need to prevent that default behaviour with `eventObj.preventDefault();` in your event handler. 
+- You'll need to use the built-in event object parameter for your event handler
+
+```js
+btnClose.addEventListener('click', (eventObj) => {
+  eventObj.preventDefault(); // stops submit btn from reloading page
+  // ~~~ Whatever else you want to happen when you hit submit
+}
+```
+
+#### All form field Inputs are Strings
+
+- Remember, all typed user inputs in a form field are considered strings
+  Convert them when comparing them to numbers for example (PIN verification)
+- By default, hitting enter inside a form field will trigger a "click" event for the actual submit button
+
+![image-20210331091015679](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210331091015679.png)
+
+#### < Empty string > Bug
+
+Sometimes when you try to use the words/numbers typed inside input fields, JS will say what's written inside your fields is an `<empty string>` or `""` 
+
+See here: [JSFiddle - Code Playground](https://jsfiddle.net/JasonXtuyotech/bus7z458/10/)
+
+SOLN: Move the form field element imports out of the global scope and into the event handler. 
+
+### Temporary Event Listeners
+
+By using the addEventListener method, we can can make it so events are only listened for a limited number of times, or for a limited time period
+
+#### Remove Event based on Trigger Counts or Time
+
+GREEN: 	 Remove event after triggered once
+AQUA: 	  Remove event after triggered 3X
+PURPLE: 	Remove event after 4 seconds have passed
+
+```html
+<div id= "demo"></div>
+<div id= "demo2"></div>
+<script>
+//—————————————————————【GREEN】——————————————————————————
+	// Green box only has event active for 1
+	let greenEl= document.querySelector('#demo')
+    
+	let handler= ()=>{
+		alert('You clicked me')
+  		greenEl.removeEventListener('click', handler)
+	}
+    
+	greenEl.addEventListener('click', handler)
+//—————————————————————【AQUA】——————————————————————————
+	//Aqua box has event active for 3
+	let aquaEl= document.querySelector('#demo2')
+	let counter=0
+    
+	let handler2= ()=>{
+		counter++
+		alert('You clicked me')
+  	if(counter===3) aquaEl.removeEventListener('click', handler2)
+	}
+    
+	aquaEl.addEventListener('click', handler2)
+    //—————————————————————【PURPLE】———————————————————————
+	let purpleEl= document.querySelector('#demo3')
+    
+	let handler3= ()=>{ alert('You clicked me') }
+	purpleEl.addEventListener('click', handler3)
+    
+	setTimeout(()=>{
+		purpleEl.removeEventListener('click', handler3)
+	},4000)
+    
+</script>
+```
+
+![image-20210419161420324](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419161420324.png)
+
+TEST HERE: https://jsfiddle.net/JasonXtuyotech/oah4857w/46/
+
+In both examples, we define our callback ƒ() externally. 
+
+- Inside them, we use the `removeEventListener` method, with the exact same parameters used in the `addEventListener` method for that element
+- To listen for an even more than once, but not infinity times, use a counter variable
+  Wrap your `removeEventListener` in an if statement
+
+
+
+### Preventing Default Behaviors
+
+As described in the previous lesson, many items on a webpage have default behaviors that me may want to disable with `preventDefault()`
+
+- Submit button reloads the page when pressed
+
+- An anchor link with `href=#` as an attribute brings you to the top of the webpage
+- An anchor with `href="#some-id"` would scroll to an element on the page with that specific ID
+
+#### Where to Apply preventDefault()
+
+Typically, the event handlers are defined inside the event listener. 
+So, we cancel default behaviors in there
+
+```js
+elementName.addEventListener('click', (eventObj) => {
+  eventObj.preventDefault(); // stops default behaviors
+}
+```
+
+If the event handler is a callback function we defined elsewhere, we must cancel the default behavior wherever that callback is located
+
+![image-20210411210921116](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210411210921116.png)
+
+In the above photo, we were applying event listeners to `btnElement`, a node list of buttons captured by `querySelectorAll`
+
+**Note:** Not all events are cancelable. Use the [cancelable](https://www.w3schools.com/jsref/event_cancelable.asp) property to find out if an event is cancelable.
+
+
+
+### Trick for Multiple Event Listeners on the same Element
+
+PREREQUISITES
+
+1. Multiple event listeners being applied to the same HTML element
+   Event types may vary
+2. The same callback function is being used on all of them
+
+#### Demonstration
+
+```js
+window.addEventListener('hashchange', callbackA) 
+window.addEventListener('load', callbackA) 
+```
+
+Refactored:
+
+```js
+['hashchange','load'].forEach((eventType)=> window.addEventListener(eventType, callbackA))
+```
+
+
+
+### Rendering Efficiently
+
+When building more complex applications, you'll be generating and rendering new HTML constantly, whenever someone interacts with your site.
+
+- If you constantly re render the entire DOM after every state change, that will be terrible for performance
+- Instead, we need to use a technique called Paint Flash rendering, which is performed automatically in React but can be replicated in vanilla JS
+
+#### How does React Update the DOM?
+
+Virtual DOM: 
+A virtual representation of the DOM which only exists in our computer's memory- but is not actively on the webpage
+
+React will make 2 virtual copies of the DOM:
+
+1.  A representation of your DOM's current state
+2.  A representation of the DOM after a state change 
+    Usually means "after you generate new HTML and render it"
+
+NOW WHAT?
+
+- Once those 2 representations are made, React will compare the 2 and only change the current DOM in the specific areas where the 2 differ. 
+- This way, you get your requested changes, but only re render things when absolutely necessary- saving performance
+
+#### Replicating React Rendering in JS
+
+React is written in JS, so you can absolutely replicate the process described in the previous subsection- although admittedly it is effortless in React and a pain in vanilla JS
+
+TRY USING THIS:
+
+```JS
+  update(data) {
+    this._data = data; // update class _data variable
+    // Set data variable equal to the info we pass in as an arg 
+    // (info came from model=>controller)
+    const newMarkup = this._generateMarkup(); // uses _data (can't see how atm)
+    const newDOM = document.createRange().createContextualFragment(newMarkup);
+    // Capture all els w/in the current HTML container and the one about 2Brendered
+    // conv nodelists into arrays with Array.from(), you can loop over them ATST
+    const newElements = Array.from(newDOM.querySelectorAll('*'));
+    const curElements = Array.from(this._parentElement.querySelectorAll('*'));
+
+    newElements.forEach((newEl, i) => {
+      const curEl = curElements[i];
+      // 1) Updates changed TEXT
+      // Changes old DOM elements with new DOM elements, 
+      // but only those whose text content's changed
+      if (
+        !newEl.isEqualNode(curEl) &&
+        newEl.firstChild?.nodeValue.trim() !== ''
+      ) {
+        curEl.textContent = newEl.textContent;
+      }
+      // 2) Updates changed ATTRIBUTES
+      // We change the old attributes with the new ones
+      if (!newEl.isEqualNode(curEl)) {
+        console.log(newEl.attribute); 
+        // logs attributes of all EL's that have changed
+        Array.from(newEl.attributes).forEach(attr =>
+          curEl.setAttribute(attr.name, attr.value)
+        );
+      }
+    });
+  }
+```
+
+#### EXAMPLE: forkify
+
+For an example of what I just described, feel free to check out the forkify git repo I've posted
+Look in View.js, update() method
+
+- Be aware that the functions we used are not robust enough for IRL professional work
+  You'd probably want o use a framework like React that does it automatically
+- Use them to learn or as a tool for your smaller code projects
+
+Explanation: https://www.udemy.com/course/the-complete-javascript-course/learn/lecture/22649619#questions/5589754
+
+# DOM: Event Delegation & Bubbling
+
+### Bubbling/Capturing (S1)
+
+JavaScript events have a capturing phase and a bubbling phase- and they are incredibly important properties to understand
+
+- A common 'click' event is generated at the document root, at the top of the DOM tree. 
+  It's not generated at the element the event listener's attached to
+- This event travels down a path of different elements, then back upwards
+  Along the way, it sets off event listeners of the same type
+
+QUICK REVIEW ON EVENT OBJECT PROPERTIES:
+Assuming we're using 'click' event listeners
+
+`eventObj.currentTarget` : the element whose event listener triggered (could be bubbled)
+`eventObj.target` : the element we actually clicked on (or whatever trigger)
+`this` keyword: the exact same thing as `eventObj.target`
+
+#### Explanations for Bubbling and Capturing
+
+![image-20210419224729646](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419224729646.png)
+
+In the example on the left, several elements are nested in each other. 
+The diagram in the middle is like a family tree with 1 branch, showing the hierarchy
+Assume each one of these elements has an <u>event listener with the same type (ex. click)</u>
+
+SCENARIO
+
+- Anchor `<a>` and `<section>` elements both have 'click' event listeners used on them
+- Their event handlers can perform the same actions or do completely different things, but the event listener types MUST be the same for bubbling to occur
+- Can both involve events based on 'click', or 'mouseenter'...etc
+
+If someone clicks the `<a>` element, the handler for `<a>` and `<section>` will go off
+This is because `<a>` is below `<section>` on the chain, and bubbling occurs upward
+
+If someone clicks on the `<section>` element, only its handler goes off (in this ex.)
+The event for `<section>` bubbles up the chain, not down
+If something higher on the chain than `<section>` had a click event, that would go off
+
+Now, let's say I click the anchor tag, which is nested fairly deeply
+
+- The click event is not generated down where element `<a>` is
+  It's generated at the document root, at the top of the DOM tree
+- From there, the so-called capturing phase happens, where the event then travels all the way down from the document root to the target element `<a>`
+
+#### Phases Described in Detail
+
+CAPTURING PHASE (represented by downward arrows)
+
+As the event travels down the tree, it will pass through every single parent element of the target element 
+
+TARGET PHASE
+Event listeners wait for a certain event to occur on a certain element. Once the condition is met, they run the callback function in this phase
+
+BUBBLING PHASE (represented by upward arrows) 
+After reaching the target, the event then actually returns all the way up to the document root, passing all its elders again.
+
+#### Event Delegation Intro
+
+Event delegation is when we use bubbling to our advantage by attaching an event listener to a common parent of all the elements we're interested in. (practical example shown in next lesson)
+
+EXAMPLE 1:
+
+> ![image-20210420064632116](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210420064632116.png)
+>
+> There's some jQuery here- it adds an event listener to the parent and child element. (other element has none)
+
+Click on the child: ![image-20210420064849720](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210420064849720.png)
+
+Explanation of console logs:
+Child event is clicked, so its event handler goes off 
+Parent element also has a click event listener, so that handler goes off too 
+
+Click on parent: ![image-20210420065113176](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210420065113176.png)
+
+Explanation of console logs:
+Parent's click event handler goes off, but not the child's
+
+Click on other: ![image-20210420065226980](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210420065226980.png)
+
+Other element never had an event listener applied to it directly. 
+Since it's inside the parent element anyway, its as if you clicked that instead
+
+EXAMPLE 2: https://codepen.io/NFuego24-7/pen/wvgYGGv
+
+I created my own demonstration for the above phenomenon, and included console logs of `eventObj.target` and `eventObj.currentTarget` , so you can adequately understand the difference
+
+#### Practical Demonstration
+
+DEMO: https://jsfiddle.net/JasonXtuyotech/4fpaw8Lt/2/
+
+![image-20210419183345951](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419183345951.png)
+
+In this navbar, we have `<a>` nested in `<li>` nested in `<ul>` 
+
+- We have an event listener applied to each groups of these elements, which generates a random color for their background
+- It's easy to see which elements have their events triggered, because their appearance will look drastically different than their original states
+- The console will also log which event handlers go off
+
+![image-20210419181433418](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419181433418.png)
+
+JS CODE:
+
+```js
+let a_tag = document.querySelector(".nav__link");
+let li_tag = document.querySelector(".nav__item");
+let ul_tag = document.querySelector(".nav__links");
+function getRandomColor() { generates random color **}
+
+a_tag.addEventListener("click", () => {
+  a_tag.style.backgroundColor = getRandomColor();
+  console.log("anchor!");
+  // eventObj.stopPropagation() 
+  // UNCOMMENT TO PREVENT BUBBLING
+});
+
+li_tag.addEventListener("click", () => {
+  li_tag.style.backgroundColor = getRandomColor();
+  console.log("list item!");
+});
+
+ul_tag.addEventListener("click", () => {
+  ul_tag.style.backgroundColor = getRandomColor();
+  console.log("unordered list item!");
+});
+```
+
+#### Explanations
+
+TEST 1: Click on "Features"
+When we clicked on the element nested deepest, its elders got their colors changed
+
+![image-20210419183749463](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419183749463.png) ![image-20210419183758810](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419183758810.png)
+
+TEST 2: Click on the space between nav links
+We we clicked on the element at the top of the chain, only it got changed
+
+![image-20210419183850054](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419183850054.png) ![image-20210419183910374](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419183910374.png)
+
+TEST 3: Prevent bubbling with `eventObj.stopPropagation()` then click "Features" again
+Now, when we click an anchor tag, only its color gets changed
+
+- The location of `.stopPropagation()` can be seen in our JS code snippet 
+  (is commented out for all tests except for this one)
+- This is useful in complex scenarios where you have more than one event handler for the same events
+- However, stopping the propagation of events is apparently not a good idea normally
+
+REMEMBER:
+
+The `eventObj.target` is the same across all 3 of our handlers- due to bubbling passing the same event across multiple elements
+
+THIS TEST COULD'VE BEEN PERFORMED BETTER:
+
+For the record, it's pretty tough being able to click on `li` but not `a` at the same time, just because of my CSS. 1 background color has been overshadowed by another, but the point behind the lesson still stands
+
+Better execution fr/ tutorial: ![image-20210419184554915](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210419184554915.png)
+
+#### Capturing
+
+We hardly ever have a practical use for capturing over bubbling these days. 
+It only remains in JS for legacy reasons. 
+
+- Still, capturing can be activated by setting a third argument in your event listener to the Boolean "true"
+- This causes the inverse of typical bubbling behaviour. Event listeners trigger things on the way down instead of up
+
+```js
+htmlEl.addEventListener('click',()=>{whatever}, true)
+```
+
+By default, the third argument for an event listener is set to false
+Only set it to true when you want to use capturing (hardly ever)
+
+
+
+### Writing Handlers for Multiple Events (S2)
+
+So far, you've stuck to defining event handlers within the listeners they're meant for. If several listeners share the same callback however, you can't hardcode certain values
+
+#### Important Event Object Properties
+
+`eventObj.currentTarget` : the element whose event listener triggered (could be bubbled)
+`eventObj.target` : the element we actually clicked on (or whatever trigger)
+`this` keyword: the exact same thing as `eventObj.target`
+
+EXAMPLE:
+
+```html
+<button id="uno" style="width: 50px">1</button>
+<button id="dos" style="width: 50px">2</button>
+<button id="tre" style="width: 50px">3</button>
+<script> 
+	let handler= function(eventObj){
+		alert(eventObj.currentTarget.innerText)
+  		console.log(eventObj.target.innerText);
+	}
+	uno.addEventListener('click',handler)
+	dos.addEventListener('click',handler)
+	tre.addEventListener('click',handler)
+</script>
+```
+
+OUTPUT: Press "1" button, get an alert and console log containing "1"
+
+In this example, we have no nested elements in HTML, so the choice we make really doesn't matter
+
+TEST IT OUT: https://jsfiddle.net/JasonXtuyotech/kc70p6bn/9/
+
+The event object properties described earlier can help cut down your code
+
+#### Problem Description:
+
+![image-20210420005132988](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210420005132988.png)
+
+Take a look at this navbar. We want each click on a nav link to take us to that section of the page, with smooth scrolling
+
+![image-20210420005423283](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210420005423283.png)
+
+#### Solutions 1-2 in Detail
+
+SOLUTION 1: Define each event handler inside the listener
+
+```js
+// HTML elements imported earlier***
+featuresLink.addEventListener('click', (e) => {
+  e.preventDefault()
+  document.getElementById('section--1').scrollIntoView({ behavior: 'smooth' });
+});
+operationsLink.addEventListener('click', (e) => {
+  e.preventDefault()
+  document.getElementById('section--2').scrollIntoView({ behavior: 'smooth' });
+});
+testimonialsLink.addEventListener('click', (e) => {
+  e.preventDefault()
+  document.getElementById('section--3').scrollIntoView({ behavior: 'smooth' });
+});
+```
+
+SOLUTION 2: Recycle a handler that can be used on all nav links
+
+```js
+let handler= function(e){
+  e.preventDefault()
+  let destinationID= e.target.getAttribute("href") // equals #id-name
+  // (changes per element. Each event listener is applied to a new one)
+  console.log(destinationID);
+  document.querySelector(destinationID).scrollIntoView({ behavior: 'smooth' });
+}
+featuresLink.addEventListener('click',handler)
+operationsLink.addEventListener('click',handler)
+testimonialsLink.addEventListener('click',handler)
+```
+
+SOLLUTION 2.5: Use forEach to apply the handler function (will only describe)
+
+- We could even apply event listeners to an array of anchor links captured with querySelectorAll if we wanted. 
+- It would stop us from applying the handler function 3 times individually. 
+  We'd apply it 3 times in 1 go instead
+- Though this is easier to read, you'd still be applying this same callback thrice. 
+  A more efficient method would be to use event delegation (next lesson)
+
+SOLUTION 3: Event Delegation
+
+
+
+### Event Delegation (S3) - Fix the span in Button Issue
+
+#### Simple Example
+
+Event delegation is when we use bubbling to our advantage by attaching an event listener to a common parent of all the elements we're interested in
+
+Take a navbar, and make clicking the links return the `<li>` element they're nested in
+You are not allowed to attach event listeners to all anchors, use bubbling/delegation
+
+PERSONAL TUT: https://drive.google.com/file/d/1eqp3l_u6l5abuzNf3UDqXEpSw_Jda0PR/view
+CODE: [Event Delegation (codepen.io)](https://codepen.io/NFuego24-7/pen/MWJzeOG)
+
+```html
+<ul class="nav__links">
+  <li class="nav__item">
+    <a class="nav__link" href="#section--1">Features</a>
+  </li>
+  <li class="nav__item">
+    <a class="nav__link" href="#section--2">Operations</a>
+  </li>
+  <li class="nav__item">
+    <a class="nav__link" href="#section--3">Testimonials</a>
+  </li>
+  <li class="nav__item">
+    <a class="nav__link nav__link--btn btn--show-modal" href="#">Open account</a>
+  </li>
+</ul>
+```
+
+JS:
+
+```JS
+console.clear()
+const navContainer= document.querySelector(".nav__links")
+
+navContainer.addEventListener('click', (e) => {
+  let clicked= e.target.closest("li") // returns li nested upwards or in place
+  if(!clicked) return // guard clause in case there are no li elders around
+  console.log(clicked);
+})
+```
+
+Remember that closest looks up the DOM, it doesn't just find the nearest element that happens to be `<li>` (see the lesson)
+
+We now click on the general area where these elements are. If we hit `<li>` or `<a>`, we'll get the li element returned to us. If we hit the `<ul>` and nothing else, nothing will happen. 
+
+#### SOLUTION 3:
+
+Let's solve last lesson's problem with event delegation now 
+
+- Look at our last solutions- it looks efficient, but in reality we're copying the same function and event listener 3 times
+
+- What if we were attaching the handler ƒ() to 1000 buttons? That'd be inefficient
+
+Step 1) Add event listener to the common parent element (`<ul>` in this case)
+Step 2) Determine what element originated the event (which el we clicked on)
+
+WANT:
+
+- Clicking a nav link anchor element smooth scrolls us to the location dictated by the `<a>` tag's href value. 
+- We also don't want to apply event listeners to those tags individually multiple times
+  Is time consuming and bad for performance when you have a lot of elements
+
+PLAN:
+Chain => `<ul>` parent of `<li>` parent of `<a>`
+
+- So, we'll apply an event listener to `<ul>`, but make it so it only performs an action if you click on the anchor `<a>`
+- This step is necessary, or else clicking anywhere on the nav would sooth scroll us somewhere, which would be annoying AF
+
+```js
+let ulElement = document.querySelector('.nav__links');
+
+ulElement.addEventListener('click', e => {
+  e.preventDefault();
+  //# Now, make sure the element you clicked is the anchor <a>
+  let isAnchor = e.target.classList.contains('nav__link'); // returns T/F
+  // if the element you clicked IS an anchor, it'll be in the nav__link class
+  //# Once you verify, smooth scroll to the location dictated by its href value
+  if (isAnchor === true) {
+    let destinationID = e.target.getAttribute('href');
+    document.querySelector(destinationID).scrollIntoView({ behavior: 'smooth' });
+  }
+});
+```
+
+FULL SOLUTION: https://codepen.io/NFuego24-7/pen/KKaGaRB
+
+#### Great Use Case
+
+- When working on larger projects, you'll be rendering lots of new HTML for your webpage, and you'll want event listeners to be set on startup
+- You can't  `document.querySelector("")` an element that does not exist, but you can use event bubbling and delegation
+
+If curious, take a look at your forkify project's controller module. 
+The bottom of that file has several event listeners set up that way
+
+IN VIEW:
+![image-20210708160828625](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210708160828625.png)
+
+![image-20210708161647974](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210708161647974.png)
+
+IN CONTROLLER:
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210708162108912.png" alt="image-20210708162108912" style="zoom:80%;" />
+
+# Intersection Observer API
+
+Typical Uses:
+
+- Lazy-loading of images or other content as a page is scrolled.
+- Implementing "infinite scrolling" web sites, where more and more content is loaded and rendered as you scroll, so that the user doesn't have to flip through pages.
+- Reporting of visibility of advertisements in order to calculate ad revenues.
+- Deciding whether or not to perform tasks or animation processes based on whether or not the user will see the result
+
+### API Basics
+
+#### Definitions 
+
+|                | What it is                                                   |
+| -------------- | ------------------------------------------------------------ |
+| target element | the element we're checking is in range of the root or root element |
+| root           | The reference for what the target element will be intersecting<br />root: htmlEl makes the reference an element on your page<br />root: null makes the reference the viewport |
+| rootMargin     | operates just like the CSS margin property "40px 0px 0px 0px" [TRBL] Negative values extend the trigger area for target elements<br />Positive values reduce the trigger area<br />Can be set in px or percent which is based on the target element dims |
+| threshold      | The percent of the target element that must be inside the viewport if root equals 0 for example. (threshold of 0.5 means that half must be on screen for your callback to go off) |
+| entries        | An array containing objects which house several useful properties which you'll likely use to write your event handlers |
+| observer       | `observer.unobserve(entry.target);` is often used to stop the API from observing an element after its been detected once. "entry" is just a name given to one of entries' array values- can be called something else |
+
+If unspecified, `threshold:0` and `root:null`
+
+entries:  <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421170645872.png" alt="image-20210421170645872" style="zoom:80%;" />
+
+observer: ![image-20210421170820886](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210421170820886.png)
+
+#### How the Entries Array of Objects Works:
+
+Let's say you have 4 target elements. Upon loading, your callback function goes off 4 times- once for each element. The entries array will contain 4 objects total
+
+When you scroll down your page, you're eventually going to intersect with some target elements. 
+
+- If you intersect with 1, the entries array will contain one object. 
+- If you encounter 2 at the same time, it will have 2 objects
+- Every time a handler is invoked for a new target element encounter, the previous one seems to be discarded. 
+- The current entries array length is dictated by how many target elements are detected right at that moment (with the exception of the very start, as I explained)
+
+(I came up with this, but it may need additional verification)
+TEST HERE: [Entries Observation (codepen.io)](https://codepen.io/NFuego24-7/pen/mdRaRZP)
+
+#### ENTRIES PROPERTIES:
+
+| entries.             | gives...                                                     |
+| -------------------- | ------------------------------------------------------------ |
+| `isIntersecting`     | a Boolean based on if targetEl is intersecting the root at this exact moment |
+| `intersectionRatio`  | a rough ratio estimation of where a callback is invoked.<br />If threshold is 0.4, you'd get around 0.38 if you were scrolling into targetEl, and 0.41 if you were scrolling it out. |
+| `boundingClientRect` | the width, height, and L/R/B/T measurements relative to viewport (visual seen below) |
+| `target`             | the target element you're seeking intersections for          |
+|                      |                                                              |
+
+`.boundingClientRect` provides:  <img src="https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect/element-box-diagram.png" alt="img" style="zoom: 33%;" />
+
+#### THRESHOLD VALUE MEANINGS
+
+|                 | triggers event when...                                       |
+| --------------- | ------------------------------------------------------------ |
+| `threshold:0`   | any part of the target el gets on screen, or when all of it leaves |
+| `threshold:1`   | the entire target el is on screen (impossible if targetEl's bigger than the viewport) |
+| `threshold:0.4` | 40% of target element must be on screen to invoke the callback function |
+
+#### MULTIPLE THRESHOLD VALUES
+
+- You can have multiple thresholds in an array if you want- just make sure to loop over the entries argument inside the handler (assuming you need it)
+- You can loop over entries even if you only have 1 threshold. 
+  Just do that every time, for simplicity
+
+![image-20210422112637658](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210422112637658.png)
+
+#### CALLING THE OBSERVE FUNCTION ON 2+ ELEMENTS
+
+You have the option to use the API on several elements at once by looping over your observe function with your target element inside
+
+![image-20210422114349475](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210422114349475.png)
+
+#### THE API START-UP ISSUE 
+
+This API will automatically invoke the callback function as soon as the page loads up- regardless whether the target element intersects the root or not 
+
+That being said, `entries.isIntersecting` will still return an accurate true/false value. Use that in your callback function to guard yourself from this problem
+
+#### UNDERSTANDING ENTRIES (return4)
+
+I'll admit, I don't fully comprehend how this aspect of the API works. Not sure if the number of elements in this array is dependent on the number of target elements, or thresholds, or whatever.
+
+- To negate this, I use forEach on every entries array I deal with, then filter out all values that don't matter using if statements. (slightly worse for performance)
+
+![image-20210423122033473](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210423122033473.png)
+
+- I've seen the Udemy instructor pick out which array value from entries they want. 
+  Go back and review this video at 7:08 to see what I mean (picture above)
+
+[The Complete JavaScript Course 2021: From Zero to Expert! | Udemy](https://www.udemy.com/course/the-complete-javascript-course/learn/lecture/22648999#questions)
+
+
+
+### Example Problems
+
+#### Challenge 1: Track 1 Element's Ins and Outs
+
+CHALLENGE DESCRIPTION: 
+Log a message to the console when an element ENTERS the screen (any % of it)
+Log a message to the console when an element EXITS the screen fully (0% on screen)
+Be sure to ignore the first callback function invocation (no message at all)
+
+Refer to the element entering and leaving the screen with its ID
+
+```html
+<h1>SCROLL DOWN AND SEE WHAT'S IN STORE</h1>
+<p id="p1"> Long paragraph ~ </p>
+<section>pads out space</section>
+```
+
+JS CODE:
+
+```js
+//# Define options array
+const obsOptions = {
+  root: null, // Viewport is the frame of reference
+  threshold: 0, // trigger ƒ() if any of the targetEl is on screen
+};
+//# Observe callback ƒunction
+let count = 0;
+const obsCallback = function (entries, observer) {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) console.log(entry.target.id + " on screen");
+    if (!entry.isIntersecting) {
+      count > 0 && console.log(entry.target.id + " NOT on screen");
+      count++;
+      // if count is at least 1, then log a message (skips the first invocation)
+    } 
+  });
+};
+
+//# API call, specify the target element
+const paraChecker = new IntersectionObserver(obsCallback, obsOptions);
+paraChecker.observe(document.querySelector("p")); // target element
+```
+
+FULL SOLUTION: https://jsfiddle.net/JasonXtuyotech/9z3bu1hf/14/
+
+INCOMPLETE SOLUTION: https://jsfiddle.net/JasonXtuyotech/uharz6Ld/5/
+
+The incomplete solution does not address the problem where callbacks are invoked on page-loading. (Test the difference between these 2)
+
+#### CHALLENGE 2: Track 4 Elements' Ins and Outs
+
+Repeat, but track if any part of 4 paragraph elements are on screen
+Track all 4 of them entering and leaving all at the same time
+
+```html
+<h1>SCROLL DOWN AND SEE WHAT'S IN STORE</h1>
+<p id="p1"> Long paragraph ~ </p>	<p id="p2"> Long paragraph ~ </p>
+<p id="p3"> Long paragraph ~ </p>	<p id="p4"> Long paragraph ~ </p>
+<section>pads out space</section>
+```
+
+Aside from the HTML looking different, this is the only change:
+
+```JS
+"use strict";
+const allParagraphs = document.querySelectorAll("p");
+//# Define options array
+const obsOptions = {
+  root: null, // Viewport is the frame of reference
+  threshold: 0, // trigger ƒ() if any of the targetEl is on screen
+};
+//# Observe callback ƒunction
+let count = 0;
+const obsCallback = function (entries, observer) {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) console.log(entry.target.id + " ON screen");
+    if (!entry.isIntersecting) {
+      count > allParagraphs.length - 1 && console.log(entry.target.id + " OFF screen");
+      count++;
+      // (skips the first 4 invocations) 
+    } 
+  });
+};
+
+//# API call, specify the target element
+const paraChecker = new IntersectionObserver(obsCallback, obsOptions);
+allParagraphs.forEach((para) => {
+  paraChecker.observe(para); // target element
+});
+```
+
+SOLUTION: https://jsfiddle.net/JasonXtuyotech/1k72vanj/6/
+
+This time, we needed to ignore the first 4 callbacks. 
+
+- We have 4 elements, and the API will think all of them are in the viewport at start. 
+- Change the condition regarding your count variable. 
+  Don't hardcode the number 4 either 
+- Let JS calc how many elements there are to ignore using the captured target elements' array/nodelist (assuming you used `document.querySelectorAll` or an equivalent)
+
+
+
+#### CHALLENGE 3: Track 4 Elements w/ Diff Thresholds
+
+CHALLENGE DESCRIPTION: 
+Log a specific message to the console when each element FULLY is on screen (100%)
+Log a message to the console when an element EXITS the screen fully (0% on screen)
+Be sure to ignore the first callback function invocation (no message at all)
+Refer to the elements entering and leaving the screen with its ID
+
+HINT: You'll need 2 threshold values. 
+Fully exit screen needs a threshold is 0
+Fully on screen needs a threshold of 1
+
+Don't skip the initial callbacks this time. Just make sure the logs accurate tell you if an element is on screen or not
+
+```html
+<h1>SCROLL DOWN AND SEE WHAT'S IN STORE</h1>
+<p id="p1"> Long paragraph ~ </p>	<p id="p2"> Long paragraph ~ </p>
+<p id="p3"> Long paragraph ~ </p>	<p id="p4"> Long paragraph ~ </p>
+<section>pads out space</section>
+```
+
+JS Code:
+
+```js
+const allParagraphs = document.querySelectorAll("p");
+//# Define options array
+const obsOptions = {
+  root: null, // Viewport is the frame of reference
+  threshold: [0, 1], // trigger ƒ() if any of the targetEl is on screen
+};
+//# Observe callback ƒunction
+let count = 0;
+const obsCallback = function (entries, observer) {
+  entries.forEach((entry) => {
+    //&—————————————————————【 Is element fully onscreen? 】——————————————————————————
+    if (entry.isIntersecting && entry.intersectionRatio === 1) {
+      console.log(entry.target.id + " fully ON screen");
+    }
+    //&—————————————————————【 Is element FULLY offscreen? 】——————————————————————————
+    if (!entry.isIntersecting) console.log(entry.target.id + " fully OFF screen");
+  });
+};
+
+//# API call, specify the target element
+const paraChecker = new IntersectionObserver(obsCallback, obsOptions);
+allParagraphs.forEach((para) => {
+  paraChecker.observe(para); // target element
+});
+```
+
+SOLUTION: https://jsfiddle.net/JasonXtuyotech/1vtzhpoq/4/
+
+Logic Explained:
+
+We need to feed the API 2 thresholds to be on the lookout for. 
+Naturally, more event handlers are going off than we bother to show. 
+
+We only have 2 circumstances in mind where we want the console to log a message
+Define those circumstances, then code the actions to be taken after they're met
+The circumstances should be described using properties of the entries object
+
+#### CHALLENGE 4: Stop Tracking Elements after they're found
+
+With all previous challenges, the API detects a target element intersecting the root, which is usually the viewport. You can scroll all the way down a webpage, then back up- while the API detects every new intersection that occurs because of it
+
+- Some features don't need more than 1 detection for a target element
+- Example: Text animation occurring only when you scroll deep enough. 
+  Once an animation fires, that's it. No reason to let the API keep running tests
+
+###### How to do this:
+
+This is where we need the observe parameter built into the handler function 
+
+```js
+observer.unobserve(targetEl); // stops API from detecting a target element
+```
+
+- This works best when the browser determines what has already been detected
+  Use this in the entries forEach loop you rely on so much
+- The above method is effective, but this can be applied in slightly different ways (see the Udemy video ending about "Revealing Elements on Scroll")
+
+###### Back to the Challenge:
+
+Take Challenge 1, and tweak it...
+
+Version A 
+Stop detecting the element after it's found to be on screen 
+Exclude initial event handler going off
+
+```js
+//# Define options array
+const obsOptions = {
+  root: null, // Viewport is the frame of reference
+  threshold: 0, // trigger ƒ() if any of the targetEl is on screen
+};
+//# Observe callback ƒunction
+let count = 0;
+const obsCallback = function (entries, observer) {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      console.log(entry.target.id + " on screen");
+      //^ VERSION A:
+      count > 0 && observer.unobserve(entry.target); // this version does not
+    }
+    if (!entry.isIntersecting) {
+      count > 0 && console.log(entry.target.id + " NOT on screen");
+      count++;
+    }
+  });
+};
+
+//# API call, specify the target element
+const paraChecker = new IntersectionObserver(obsCallback, obsOptions);
+paraChecker.observe(document.querySelector("p")); // target element
+```
+
+Version B
+Stop detecting element after its been found to be off screen
+Exclude initial event handler going off
+
+```js
+//# Define options array
+const obsOptions = {
+  root: null, // Viewport is the frame of reference
+  threshold: 0, // trigger ƒ() if any of the targetEl is on screen
+};
+//# Observe callback ƒunction
+let count = 0;
+const obsCallback = function (entries, observer) {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      console.log(entry.target.id + " on screen");
+    }
+    if (!entry.isIntersecting) {
+      count > 0 && console.log(entry.target.id + " NOT on screen");
+      //^ VERSION B: 
+      count > 0 && observer.unobserve(entry.target);
+      count++;
+    }
+  });
+};
+
+//# API call, specify the target element
+const paraChecker = new IntersectionObserver(obsCallback, obsOptions);
+paraChecker.observe(document.querySelector("p")); // target element
+```
+
+Version A: https://codepen.io/NFuego24-7/pen/BapvRJE
+Version B: https://codepen.io/NFuego24-7/pen/dyNwWdm
+
+
+
+# Modal Window
+
+WHERE TO FIND OUR FINAL CODE FOR THIS PROJECT
+FULL: Check Modal Practice file in your Study problems folder
+	  Or use this: https://codepen.io/NFuego24-7/pen/VwmXXva
+
+### Project Description
+
+- The modal pop-up window, and the backdrop are all set to `display:none` when the webpage is in its default state. 
+- They're just regular HTML elements whose appearances are hardcoded. 
+  We'll be switching `display:none` off when it's time for them to appear
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210228001921096.png" alt="image-20210228001921096" style="zoom:25%;" />    <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210228001951933.png" alt="image-20210228001951933" style="zoom:25%;" />
+
+TIP: If many elements have something in common (needing to be hidden with display none for example), put them all in the same CSS class. That way, we can target multiple elements at once using `querySelectorAll` in JS
+
+EXAMPLE:
+
+Behold the code for the 'show modal' buttons
+
+```html
+    <button class="show-modal">Show modal 1</button>
+    <button class="show-modal">Show modal 2</button>
+    <button class="show-modal">Show modal 3</button>
+
+    <div class="modal hidden"> <!--modal in hidden class-->
+      <button class="close-modal">&times;</button>
+      <h1>I'm a modal window 😍</h1>
+      <p> Random karp </p>
+    </div>
+    <div class="overlay hidden"></div> <!--backdrop in hidden class-->
+```
+
+Log the text content of each modal button, and the entire query selector array
+
+```js
+let modalBtn= document.querySelectorAll('.show-modal')
+console.log(modalBtn);  	// log the entire array
+
+for (let i=0; i<modalBtn.length;i++){
+  console.error(modalBtn[i].textContent); // show text content
+}
+```
+
+![image-20210228014357163](C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210228014357163.png)
+
+### Adding and Removing Classes (P1: Execution)
+
+Read the previous lesson. The modal and backdrop are both already hardcoded in our HTML and CSS. 
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210228001921096.png" alt="image-20210228001921096" style="zoom:25%;" />    <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images-repo1\image-20210228001951933.png" alt="image-20210228001951933" style="zoom:25%;" />
+
+- They're unseen in our website's default state because of their "hidden" class.
+- To show them, remove this class as soon as we click one of our "Show Modal" buttons 
+
+#### Handling Query Selector Arrays
+
+We've done something similar to this at the start of section 7, but this is more advanced. 
+
+- We have 3 buttons that must summon both the modal and backdrop at the same time. We'll need to manage the arrays that `querySelectorAll` creates
+
+```html
+<!--Relevant HTML-->
+	<button class="show-modal">Show modal 1</button>
+    <button class="show-modal">Show modal 2</button>
+    <button class="show-modal">Show modal 3</button>
+
+    <div class="modal hidden">			<!--Modal element-->
+      <button class="close-modal">&times;</button>
+    </div>
+    <div class="overlay hidden"></div>	<!--Overlay element-->
+```
+
+```css
+/*Relevant CSS*/
+.hidden { display: none; }	/* hidden class hides everything inside it*/
+```
+
+#### Procedure
+
+OBJECTIVES:
+
+- Activate modal and backdrop when any one of our "Show Modal" buttons are clicked
+- Be able to exit the modal/backdrop by pressing the x button on the upper right
+- Be able to exit by hitting the background space behind the modal (aka the backdrop itself)
+- Be able to exit using ESC (later lesson)
+
+1) Store the modal element and the overlay element in JS elements, SEPERATELY
+
+- We could target them both with `querySelectorAll`, but then it would make them harder to manage since they'd be in an array. 
+
+- This'd lead to problems like pressing a button and only activating them 1 at a time
+
+```js
+let modal= document.querySelector('.modal')
+let overlay= document.querySelector('.overlay') 
+```
+
+2) Create JS variables for the 3 buttons and the X button for exiting
+
+```js
+let btnOpenModal= document.querySelectorAll('.show-modal')  // 3 button elements
+let btnCloseModal= document.querySelector('.close-modal') // X button
+```
+
+3) Create a single event listener for your 3 buttons
+
+Since your 3 buttons are placed in an array thanks to `querySelectorAll`, use a for loop to make sure each of the 3 are affect by your event listener
+
+```js
+for (let i=0; i<btnOpenModal.length;i++){
+  btnOpenModal[i].addEventListener('click', ()=>{
+    overlay.classList.remove('hidden');
+    modal.classList.remove('hidden');
+    // target the overlay and modal elements then REMOVE "hidden"
+  })
+} // WARP: AXQZE1
+```
+
+4) Create an event listener for the modal's X button. Exit the modal+backdrop when its clicked
+
+```js
+//# Exit the modal+backdrop when you hit the X button
+btnCloseModal.addEventListener('click', ()=>{
+  overlay.classList.add('hidden');
+  modal.classList.add('hidden');
+  // target the overlay and modal elements then ADD "hidden"
+})
+```
+
+5) Create an event listener for the background space behind the pop up window. Exit the modal+backdrop when its clicked
+
+```js
+overlay.addEventListener('click', ()=>{
+  overlay.classList.add('hidden');
+  modal.classList.add('hidden');
+})
+```
+
+6) Refactor to create dry code
+
+You may have noticed that the callback function for the X button and the backdrop space are identical. 
+
+- Let's define the callback function externally instead, letting us dry up our code
+- Do the same for our callback function to open the modal as well
+
+```js
+// FINAL CODE
+'use strict';
+// classes: overlay hidden  ... modal hidden
+
+let modal = document.querySelector('.modal');
+let overlay = document.querySelector('.overlay');
+let btnOpenModal = document.querySelectorAll('.show-modal'); // 3 button elements
+let btnCloseModal = document.querySelector('.close-modal'); // X button
+
+//@ open modal when something is pressed (will be used for callbacks)
+const openModal = function () {
+  overlay.classList.remove('hidden');
+  modal.classList.remove('hidden');
+};
+//@ close modal when something is pressed (will be used for callbacks)
+const closeModal = function () {
+  overlay.classList.add('hidden');
+  modal.classList.add('hidden');
+};
+
+//# Activate modal and backdrop when we hit 1 of 3 "Show Modal" buttons
+for (let i = 0; i < btnOpenModal.length; i++) {
+  btnOpenModal[i].addEventListener('click', openModal);
+}
+//# Exit the modal+backdrop when you hit the X button, OR hit the backdrop
+btnCloseModal.addEventListener('click', closeModal);  //READ IMPORTANT DETAILS BELOW
+overlay.addEventListener('click', closeModal);  //READ IMPORTANT DETAILS BELOW
+//—————————————————————【】——————————————————————————
+// This last section requires you to understand keyboard events
+document.addEventListener('keydown', (obj) => { 
+  let isModalActiv= modal.classList.contains('hidden') //returns a Boolean
+  let isBackdropActiv= overlay.classList.contains('hidden') //returns a Boolean
+  if(obj.key==="Escape" && isModalActiv==false && isBackdropActiv==false) {
+    closeModal(); 
+    console.log("closed the modal!");	// HELPER LINE
+  }
+});
+```
+
+!!! IMPORTANT !!!
+When using your externally defined callback function inside your event listener, do not include parameter brackets ().
+
+CORRECT WAY TO USE CALLBACK: `btnCloseModal.addEventListener('click', closeModal);`
+IT IS NOT=> `overlay.addEventListener('click', closeModal());`
+
+If we include brackets (), that tells JS to execute that function as soon as its parsed over. We want the event handler to only call that function WHEN/IF the event trigger occurs
+
+//—————————————————————【】——————————————————————————
+
+COMPLETED DEMO: https://codepen.io/NFuego24-7/pen/VwmXXva
+
+The last part of our code can be understood by reading our lesson on keyboard events
+
+
+### Adding and Removing Classes (P2)
+
+#### 2 Ways to Implement Class Toggling
+
+Method 1) WHAT WE DID HERE
+Have the class with your modal+backdrop hardcoded to the webpage
+Add a secondary class with "display: none" applied to it
+Remove that secondary class to show your outcome
+
+Method 2) ALTERNATIVE
+Have a class that produces a modal+backdrop, but don't assign it to anything
+Assign the class to an element as soon as a button is pressed
+
+Both of these are equally viable, and can be applied to any scenario involving eventy listeners
+
+#### This Method VS Manipulating CSS Styles
+
+Adding and removing classes using JS is a much more efficient way to make website changes compared to manipulating CSS styles one by one
+
+- In CSS, a class can contain dozen's of changes, all of which will affect elements when we add or remove that class
+- With CSS style manipulation, we can only change CSS properties 1 at a time
+
+### Making ESC Exit the Modal
+
+```JS
+btnCloseModal.addEventListener('click', closeModal);	//randome example
+```
+
+- Our event handler function is waiting for a button on our webpage to clicked. 
+- Once this happens, JS generates an object that contains information about the event. We can access this object in the event handler function
+
+This is necessary to tell JS which key should activate our keyboard event. Otherwise, your event will trigger as soon as any key is pressed.
+
+
+#### RTTP: Making ESC exit the modal+backdrop
+
+We don't want to make the modal hidden if it is already being concealed- that would be sloppy coding. So we make an if statement that list our conditions for making the ESC exit our modal
+
+```js
+document.addEventListener('keydown', (obj) => { 
+  let isModalActiv= modal.classList.contains('hidden') //returns a Boolean
+  let isBackdropActiv= overlay.classList.contains('hidden') //returns a Boolean
+  
+  if(obj.key==="Escape" && isModalActiv==false && isBackdropActiv==false) {
+    closeModal(); 
+    console.log("closed the modal!"); //HELPER LINE 
+  }
+});
+```
+
+EXPLANATION: 
+Conditions: ESC key is pressed, modal is active, & the backdrop is active...
+OUTCOME: Exit the pop-up by calling the closeModal function we made in a prev. lesson
+
+When you click escape and no modal/backdrop is open, the console should say nothing
+If you use ESC to exit them, the console will say "closed the modal!". Test it out
+
+Find code here: https://codepen.io/NFuego24-7/pen/VwmXXva
+
+
+
+# Miscellaneous Tasks
 
 #### HTML Imports
 
@@ -22652,3 +21078,8 @@ Math.max(...arr) // when you feed an array
 Math.max(1,10,2) //when you feed a regular list of numbers
 ```
 
+Map and Markers
+https://developers.google.com/maps/documentation/javascript/react-map
+
+Directions
+https://developers.google.com/maps/documentation/javascript/directions

@@ -230,11 +230,51 @@ Then it will give MeetupItem.js data through props since it's already set up to 
 
 Output:	<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210926224116705.png" alt="image-20210926224116705" style="zoom:67%;" />
 
+
+
+### Dynamic Imports
+
+#### The Problem it Solves
+
+There are certain libraries/packages that are only meant to be used on the front-end. 
+
+- If something like this needs to be used inside a component that relies on server-side rendering, then you'll need dynamic imports to avoid fatal errors
+- It makes it so a component is imported after pre-rendering takes place (as far as I can tell)
+  Trying to import/use a front end only library via SSR will result in errors/crashes
+
+EXAMPLE:
+We dynamically load a component that contains Leaflet (a frontend only lib) to be used in a component that uses SSR
+
+```js
+import dynamic from "next/dynamic";
+
+export async function getServerSideProps(context) {
+  // details not important
+  return { props: { companyData: response, related: response2 } };
+}
+
+export default function Hours() {
+  const StaticMap = useCallback(
+    dynamic(
+      () => import("../src/page-blocks/businessID/StaticMap"),
+      { ssr: false } // prevents server-side render
+    ), [] ); 
+   // useCallback is not always required 
+   // but it can be useful for preventing unneeded rerenders
+}
+```
+
+
+
+#### Source
+
+> Next.js docs: https://nextjs.org/docs/advanced-features/dynamic-import
+
 # Rules to Maintain Security
 
 When working with Next.js, there are certain things you should avoid doing for the sake of security
 
-> SOURCE: https://www.youtube.com/watch?v=dsAalk1NpVk
+> SOURCE: https://nextjs.org/docs/advanced-features/dynamic-import#with-no-ssr
 
 
 
@@ -335,7 +375,7 @@ https://next-code-elimination.vercel.app/
 
 ![image-20211111180754293](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211111180754293.png)
 
-# Pages and File-based Routing
+# File-based Routing, Query Parameters, Dynamic Pages
 
 <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211002004727942.png" alt="image-20211002004727942" style="zoom: 80%;" />
 
@@ -469,7 +509,28 @@ You can have multiple pages dedicated to this dynamic route as well
 
 ![image-20210926203228500](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210926203228500.png)
 
-#### Query Parameters
+#### Capture Dynamic Value 
+
+On the front end: useRouter
+On the backend/pre-render methods: context params
+
+![image-20220325051144943](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220325051144943.png)
+
+Ex. Capture dynamic value in getServerSideProps
+
+```react
+export async function getServerSideProps(context) {
+  const id = context.params.businessID; // ONLY IMPORTANT LINE
+  const response = await getBusinessData(id); // we make a request to Yelp API 
+  return { props: { companyData: response } };
+}
+```
+
+
+
+### Query Parameters
+
+#### No need for File Changes
 
 You don't have to do anything to the files or folders to inject search parameters into your page URL
 
@@ -479,9 +540,97 @@ You can have multiple pages dedicated to this dynamic route as well
 | path                      | renders       |
 | ------------------------- | ------------- |
 | /news                     | news/index.js |
-| /news?searchTerm=japanese | news/index.js |
+| /news?searchterm=japanese | news/index.js |
 
 ![image-20210926153129825](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210926153129825.png)
+
+#### Access Query Params on Front End
+
+We can extract data from our URL via useRouter
+
+```react
+import { useRouter } from "next/router";
+export default function Restaurants() {
+  // Get query parameters from URL + current location object to make a YelpAPI string
+  const { query } = useRouter(); // query object contains strings only
+}
+```
+
+> Tested while on a similar URL:
+> Remember, the query obj is empty on mount
+>
+> http://localhost:3000/searchlimit=50&radius=20000&hours=false&latitude=43.85149363641742&longitude=-79.4299458268563&price=false&term=chinese
+>
+> ​													![image-20220302191749783](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220302191749783.png) 		 ![image-20220302181755041](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220302181755041.png)
+
+#### Flaw of the Query Object
+
+THE QUERY OBJECT ONLY CONTAINS STRINGS
+
+- Values that shouldn't be strings like Booleans, null, undefined...etc will be converted into strings when placed in the URL
+- This can screw up your conditional logic
+
+```
+query.price == false   (expression is false)	// query.price is not a boolean
+query.price == "false" (expression is true)		// it's a string
+```
+
+Be aware of this and manually convert these values back using a utility function so we can use conditional logic
+
+#### Access Query Object on Backend 
+
+The context parameter will give you an object of URL KVP's
+
+```js
+export async function getServerSideProps(context) {
+  const queryObj = context.query
+  return { props: { queryObj } };
+}
+```
+
+
+
+### When to use Query Params vs Dynamic Pages
+
+EXPLANATION TABLE
+
+| Option           | USE WHEN                                                     |
+| ---------------- | ------------------------------------------------------------ |
+| dynamic pages    | Each page looks different based on the dynamic value- usually because we must make http requests based on dynamic values |
+| query parameters | Same as above, but we have the ability to store multiple KVP's of data instead of one |
+
+#### Dynamic Page Example
+
+Ex 1. /search/[businessID].js
+
+- Each version of this page looks different because we make Yelp API calls using the dynamic business ID value
+
+![image-20220325045444751](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220325045444751.png)
+
+Ex 2. /auth/forgot-password/[email].js
+
+- Each version of this page looks the same for all people who visit it, but we make requests to our database using the dynamic email value
+- We must retreive the user password based on the dynamic email value
+  This value is set using a form- which redirects us to /forgot-password/[email].js when completed 
+
+/auth/forgot-password
+
+![image-20220325045719674](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220325045719674.png)
+
+/auth/forgot-password/[email].js
+
+![image-20220325045835325](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220325045835325.png)
+
+#### Search Param Page Example
+
+Ex. /search/index.js
+
+- The restaurant search page looks the same for everyone, with the exception of the search results
+- We store several search parameters that we'll use to make an http request to Yelp API in the URL
+
+/search? limit=50&radius=20000&offset=0&sort_by=best_match&hours=false&latitude=43.651893&longitude=-79.381713&price=false&term=chinese
+
+![image-20220325050153043](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220325050153043.png)
 
 ### Catch-all Pages
 
@@ -597,6 +746,66 @@ export default function blogID() {
 ```
 
 ![image-20211001183841264](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211001183841264.png)
+
+### How Dynamic Pages Impact Backend Code 
+
+It is very important that we're able to combine static/dynamic folders and pages
+
+- The most common use for dynamic pages is for when we need a reusable file
+- This file should recreate the same webpage with variations directly dependent on data supplied
+
+EXAMPLE: 
+Facebook Profile Pages
+Everyone's is different but the structure is the exact same due to the reuse of one dynamic page
+
+#### Impact Backend Code
+
+When we have one reusable dynamic file, we need to provide it some data to differentiate each iteration. 
+
+- We usually feed it this data through props which requires us to use getStaticProps or getServerSideProps which you'll learn about soon
+- Our backends are usually organized with some sort of ID required to access chunks of data
+
+EXAMPLE:
+
+- My Facebook Profile data may be saved in Mark Zuckerberg's private servers with a special facebookID of `jasonxb90990` 
+- My buddy Jesse's data may be saved with a special ID of `jesseakjldl`
+
+COMMON OBJECTIVE FOR DEVELOPERS:
+Reference these ID's when we decide to fetch the data from the Facebook backend
+
+> If we have millions of users we can't just fetch the entire database then sort through it
+>
+> Entire Database:    ![image-20210930025249503](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210930025249503.png)
+>
+> We need to use the fetchAPI to grab a specific object full of data somewhere in there
+> For that we need the facebookID (look below)
+>
+> ![image-20210930025203044](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210930025203044.png)
+
+#### How the Dynamic Path is Used with Backend Code
+
+TLDR:
+Dynamic folders and files create dynamic paths/URL's- which we can access in our code
+
+- Access their URL's with useRouter or the context parameter object which is built into getStaticProps(SSG) or getServerSideProps(SSR)
+- This following example is extremely generalized and is basically pseudocode
+  Just understand the concept, because we'll act on it properly later on
+
+> ![image-20210930024619357](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210930024619357.png)
+>
+> red: 
+> refers to the 2 ways we can get the URL which will contain the facebookID from the dynamic folder
+>
+> green:
+> Just illustrates that we make props using the method on the bottom (explained better in a dedicated lesson)
+
+
+
+
+
+# Links and Imperative Navigation
+
+
 
 ### Site-internal Page < Link >
 
@@ -890,58 +1099,6 @@ The 404.js component code does not matter for this explanation
 
 
 
-### How Dynamic Pages Impact Backend Code (major)
-
-It is very important that we're able to combine static/dynamic folders and pages
-
-- The most common use for dynamic pages is for when we need a reusable file
-- This file should recreate the same webpage with variations directly dependent on data supplied
-
-EXAMPLE: 
-Facebook Profile Pages
-Everyone's is different but the structure is the exact same due to the reuse of one dynamic page
-
-#### Impact Backend Code
-
-When we have one reusable dynamic file, we need to provide it some data to differentiate each iteration. 
-
-- We usually feed it this data through props which requires us to use getStaticProps or getServerSideProps which you'll learn about soon
-- Our backends are usually organized with some sort of ID required to access chunks of data
-
-EXAMPLE:
-
-- My Facebook Profile data may be saved in Mark Zuckerberg's private servers with a special facebookID of `jasonxb90990` 
-- My buddy Jesse's data may be saved with a special ID of `jesseakjldl`
-
-COMMON OBJECTIVE FOR DEVELOPERS:
-Reference these ID's when we decide to fetch the data from the Facebook backend
-
-> If we have millions of users we can't just fetch the entire database then sort through it
->
-> Entire Database:    ![image-20210930025249503](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210930025249503.png)
->
-> We need to use the fetchAPI to grab a specific object full of data somewhere in there
-> For that we need the facebookID (look below)
->
-> ![image-20210930025203044](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210930025203044.png)
-
-#### How the Dynamic Path is Used with Backend Code
-
-TLDR:
-Dynamic folders and files create dynamic paths/URL's- which we can access in our code
-
-- Access their URL's with useRouter or the context parameter object which is built into getStaticProps(SSG) or getServerSideProps(SSR)
-- This following example is extremely generalized and is basically pseudocode
-  Just understand the concept, because we'll act on it properly later on
-
-> ![image-20210930024619357](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210930024619357.png)
->
-> red: 
-> refers to the 2 ways we can get the URL which will contain the facebookID from the dynamic folder
->
-> green:
-> Just illustrates that we make props using the method on the bottom (explained better in a dedicated lesson)
-
 
 
 # React Libraries & Features in Next.js
@@ -1112,6 +1269,36 @@ You can use either method or both while still maintaining a lean Pages folder
 - You must wrap your Provider tags around the `<Component>` inside _app.js
 
 ![image-20211012191332689](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211012191332689.png)
+
+
+
+# Deployment
+
+### Types of Builds
+
+<img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220521174444414.png" alt="image-20220521174444414" style="zoom:80%;" />
+
+#### Standard Build
+
+Your default choice if you use any server-oriented features that come with next.js
+
+-  Requires a hosting provider than offers Node.js servers (Ex. Vercel)
+- I've made the mistake of using Hostinger- a site hosting service than can host Node.js apps, but isn't built for it- making the process tricky and time consuming
+
+#### Full Static Build
+
+An option if you Next.js project doesn't involve any server side code for some reason
+I don't know why you'd use Next.js for a project like this, but whatever
+
+Cannot use the following features - and more
+
+-  API routes, server side props
+- Page revalidations
+- Static paths with fallbacks set to true
+
+
+
+
 
 
 
@@ -2091,7 +2278,7 @@ export async function getStaticProps(context) {
   const jsonData = await fs.readFile(filepath);
   const data = JSON.parse(jsonData);
 
-  return { props: { info: data } }; // supply findings as rhe comp ƒ()'s props
+  return { props: { info: data } }; // supply findings as the comp ƒ()'s props
 }
 
 export default function HomePage(props) {
@@ -2811,7 +2998,7 @@ Imagine a user makes a request to a URL that contains private data
 In this demonstration, we will implement mock-authentication
 We'll do it for real in a later chapter- but the main point is to showcase getServerSideProps syntax
 
-### getServerSideProps with Data Fetching
+### getServerSideProps with Data Fetching fr/ Local JSON files
 
 In this example, we're going to fetch data from a mock-backend (JSON file), then use that data for the main component function's props
 
@@ -2930,6 +3117,98 @@ export default function ProductDetail({ loadedProduct }) {
       <p>{loadedProduct.descrip}</p>
     </>
   );
+}
+```
+
+
+
+### getServerSideProps with Data Fetching fr/ External Sources
+
+When using Next.js, we rely on API routes to fetch data from external sources- since making requests from the Front end usually isn't a good idea
+
+We should not call API routes from inside getServerSideProps- but we have 2 workarounds for this
+
+#### What should be in getServerSideProps
+
+| potential actions                                            | should be inside getServerSideProps                          |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| calls to API routes                                          | no                                                           |
+| logic that would be inside an API route                      | yes                                                          |
+| refactored API route turned into an exportable utility function | yes, because functions only executed in pre-render methods aren't visible on the front end |
+
+EXAMPLE:
+
+> ![image-20220305150214203](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220305150214203.png)
+>
+> ![image-20220305150230779](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220305150230779.png)
+>
+> ![image-20220305150305230](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220305150305230.png)
+>
+> At the end, pass your fetched data via props
+>
+> ![image-20220305212706450](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220305212706450.png)
+>
+> SOURCE:  [StackOverflow](https://stackoverflow.com/questions/65752932/internal-api-fetch-with-getserversideprops-next-js)
+
+#### Using dynamic pages to fetch data
+
+When using dynamic files, we can access the parameters inside our URL directly in getServerSideProps
+This is useful when we want to fetch data using them
+
+```react
+export async function getServerSideProps(context) {
+  const businessID= context.params
+  return { props: { info: businessID } };// pass into comp f() via props
+}
+export default function Business({ info }) {
+  console.log(info);
+  return (JSX);
+}
+```
+
+URL: http://localhost:3000/search/gOXM5zVVsrQ3_8WTzlUw4w
+
+Dynamic file name: 		 ![image-20220305213814844](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220305213814844.png)
+
+Console logs:  ![image-20220305213901845](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220305213901845.png)
+
+#### Practical Example
+
+> SOURCE: local-eats project
+
+- Make a request to fetch data from the Yelp API when the user gets redirected to a dynamic page 
+  Specifically [businessID].js
+- Use an exportable function to fetch the data inside the SSR pre-render method
+
+/api/search/businessID (exportable function)
+
+```JS
+import axios from "axios";
+
+export async function getBusinessData(id) {
+  const endpoint = `https://api.yelp.com/v3/businesses/${id}`;
+  const authKey = process.env.YELP_API_KEY;
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `bearer ${authKey}`,
+  };
+  const response = await axios.get(endpoint, { headers }); // skipped error handling
+  return { status: "success", info: relevantInfo };
+}
+```
+
+[businessID].js
+
+```react
+export async function getServerSideProps(context) {
+  const businessID= context.params.businessID; // grab the [value] in our URL
+  const response = await getBusinessData(businessID); // fetch fr/ Yelp API
+  return { props: { info: response.info } };
+}
+
+export default function Business({ info }) {
+  // Use data to render some JSX or feed your functions... etc
+  return (JSX);
 }
 ```
 
@@ -3965,6 +4244,208 @@ Pressing the "Delete array entry" button
 
 
 
+### Error Handling in API Routes
+
+The most common use case for API routes is to fetch data from API's using confidential keys you don't want to be accessible in the Front End. 
+
+#### Different ways API Routes can Fail
+
+There are several scenarios where we must end our routes as a failed process, so let's explore how to handle them
+
+| WHAT CAN GO WRONG?                                           | EXAMPLE                                                      | HOW TO HANDLE                                                |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| A process in the API route fails                             | Attempt to connect to MongoDB fails, because of 3rd party issues and not our coding | try/catch the processes that have potential to fail          |
+| Process in the API routes succeed, but we get back data we consider to be bad | Someone submits a PIN verification code, but it's wrong      | if blocks whose conditions match these bad scenarios and end the route |
+| Uncaught error in API route (no try/catch surrounds it)      | Your route tries to get properties from undefined values. "undefined".location.latitude === fatal error | If your API route crashes in a way we don't plan for in the API route itself, the try/catch in the front end will still catch it |
+
+
+
+#### Local-Eats Ex P1: API Route
+
+In this example from our portfolio project, we have plenty of places where we'd like our API route to end
+
+/api/auth/forgotPasswordP2
+
+```js
+import { hash, compare } from "bcryptjs";
+import { connectToDB } from "../../../src/utility-functions/auth/connectToDB";
+import { pwStrengthCheck } from "../helperFunctions/pwStrengthCheck";
+import { removeWhiteSpace } from "../../../src/utility-functions/general/lengthNoSpaces";
+
+export default async function handler(req, res) {
+  const { email, pin, newPassword } = req.body;
+
+  // Connect to the DB
+  const client = await connectToDB(); // access db instance
+  const db = client.db();
+
+  // UtilityFN that ends the API route when the user submits invalid information
+  const endFailedProcess = async () => {
+    await db
+      .collection("users")
+      .updateOne(
+        { email: email },
+        { $unset: { passwordChangePin: "", passwordChangePinExpiryDate: "" } }
+      );
+    client.close();
+  };
+
+  // If the code is not 6 digits long, end the route
+  if (pin.length !== 6) {
+    endFailedProcess();
+    res.status(401).json({ message: "Invalid PIN" });
+    return;
+  }
+  // End the route if the new password is submitted empty
+  const thinnedPassword = removeWhiteSpace(newPassword);
+  if (thinnedPassword.length === 0) {
+    endFailedProcess();
+    res.status(402).json({ message: "New password field empty" });
+    return;
+  }
+  // Check the new password to see if it meets our standards
+  let acceptablePW = pwStrengthCheck(newPassword); // Boolean
+  if (!acceptablePW) {
+    endFailedProcess();
+    res.status(403).json({ message: "Password does not meet requirements" });
+    return;
+  }
+
+  // Find the account associated with the submitted email and extract its info 
+  // If no account is found, end the route with an error
+  const userAccount = await db.collection("users").findOne({ email: email });
+  if (!userAccount) {
+    await endFailedProcess();
+    res
+      .status(404)
+      .json({ message: "No account found for the submitted email" });
+    return;
+  }
+  const hashedVerifyPin = userAccount.passwordChangePin;
+  const expiryDate = userAccount.passwordChangePinExpiryDate;
+
+  // Compare the verification code with the pin submitted in the request body
+  // If we don't get a match, end the route with a harsh error
+  const pinMatch = await compare(pin, hashedVerifyPin); // T/F
+  if (!pinMatch) {
+    await endFailedProcess();
+    res.status(405).json({ message: "Incorrect PIN" });
+    return;
+  }
+
+  // See if the PIN is submitted on time. If not, end with a harsh error
+  const currentUnixTime = new Date().getTime();
+  if (currentUnixTime > expiryDate) {
+    await endFailedProcess(); 
+    res.status(406).json({ message: "PIN has expired" });
+    return;
+  }
+
+  // Past this point, we know the pin's correct & submitted on time
+  // Change the password to what they suggested, but hash it first
+  const hashedPW = await hash(newPassword, 12);
+
+  await db.collection("users").updateOne(
+    { email: email },
+    {
+      $set: { password: hashedPW }, // set the new password
+      $unset: { passwordChangePin: "", passwordChangePinExpiryDate: "" },
+      // delete the temporary pending change fields
+    }
+  );
+  client.close(); // don't forget to end Mongo session
+  res.status(201).json({ message: "Created user!" });
+}
+```
+
+NOTICE ALL THE POTENTIALLY UNCAUGHT ERRORS
+
+- You may have noticed we have no try catch block surrounding most MongoDB operations
+  (Connecting to it, updating info at the very end of the route...etc)
+- Thankfully we have a try/catch block in the front end where we can code actions to take if the API crashes with an error we didn't anticipate
+
+#### Local Eats Ex P2: Front End
+
+ERRORS WE ANTICIPATE:
+We're going to reach into the error parameter in the catch block and grab the response object inside
+
+- We return different messages depending on what anticipated error occurs
+- This is how we determine what type of error happened and code actions according to what the problem was (different error messages rendered depending on what went wrong, for example)
+
+POTENTIAL UNCAUGHT ERRORS:
+If the error was uncaught, then there may not be a response object, or at least not one with a message KVP since we didn't wrap every async operation in try/catch in our API route
+
+- In this case, we code error actions for any potential uncaught errors in our Front End catch block first
+- Prevent the rest of the catch block from executing or your page will crash
+  If `error.response` equals undefined, `error.response.data.message` will crash your webpage
+- After this, we use a switch statement to handle all the other errors that we've anticipated and coded a response object message for (in the API route)
+
+forgot-password/[email].js
+
+```react
+  const verifyHandler = async function () {  
+    try {
+      await axios.post("/api/auth/forgotPasswordP2", {
+        email: query.email,
+        pin: pinRef.current.value,
+        newPassword: passwordRef.current.value,
+      });
+      // If API route succeeds, redirect the user elsewhere
+      router.push(`/auth/credChangeSignin`);
+    } catch (error) {
+      // Since we used axios, we access the response object message this way...
+      console.log(error.response.data.message);
+      
+      // Uncaught errors D.N have data nested that deep. err.response.data.message
+      // CODE UNCAUGHT ERROR ACTIONS HERE 
+      // (then prevent the rest of the catch block fr/ executing)
+      if (!error.response || !error.response.data) return revealErrorModal();
+      const errorMSG = error.response.data.message;
+      
+      // All other errors we can anticipate
+      // Code actions depending on what the response object message is
+      switch (errorMSG) {
+        // Leave error feedback but do not redirect for these first few errors
+        case "Invalid PIN":
+          dispatch({ type: "INVALID_PIN", payload: "Invalid entry" });
+          break;
+        case "New password field empty":
+          dispatch({ type: "INVALID_PASSWORD", payload: "This field is required" }); 
+          break;
+        case "Password does not meet requirements":
+          dispatch({ type: "INVALID_PASSWORD", payload: errorMSG });
+          break;
+        // The following errors should trigger redirects
+        case "No account found for the submitted email":
+          router.push(`/auth/forgot-password`);
+          break;
+        case "Incorrect PIN":
+          dispatch({ type: "INVALID_PIN", payload: "Invalid PIN length" });
+          router.push(`/auth/forgot-password`);
+          break;
+        case "PIN has expired":
+          dispatch({ type: "INVALID_PIN", payload: errorMSG });
+          router.push(`/auth/forgot-password`);
+          break;
+
+        // If one of our 3rd party services fail, render a generic error modal
+        default:
+          revealErrorModal();
+          break;
+      }
+    }
+  };
+```
+
+EXPLAINING THE REDUCER DISPATCH FUNCTIONS
+
+The dispatch functions render error visuals and text on a form. 
+So when we dispatch a function for invalid PIN for instance, the JSX goes red and renders a message
+
+![image-20220315173243518](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220315173243518.png)
+
+
+
 # MongoDB Theory and Setup
 
 ### Why we Need Databases
@@ -3990,6 +4471,8 @@ It'll make sense eventually
 > Source:	[overflow](https://softwareengineering.stackexchange.com/questions/273340/when-to-use-a-nosql-database-such-as-mongodb-over-mysql?rq=1)
 >
 > ![image-20211017222104717](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211017222104717.png)
+
+
 
 ### Collection Document Model
 
@@ -4975,7 +5458,7 @@ import { connectToDatabase } from "../../../helpers/db";
 
 
 
-# MongoDB Atlas: Access Database on your Code Editor
+# MongoDB Atlas: Access Database in the Code Editor
 
 At this point, we know how to interact with hosted databases to perform CRUD operations
 Now, let's learn how to access a database hosted on the cloud from our code in Next.js
@@ -5382,6 +5865,8 @@ if (props.error) return <p>{props.error}</p>;
 
 Use this anytime you need to connect to the db for whatever reason
 
+Place this utility function in the api folder:
+
 ```react
 import { MongoClient } from "mongodb";
 
@@ -5397,11 +5882,27 @@ export async function connectToDatabase() {
 } // no error handling used here yet (fyi)
 ```
 
+In API routes:
+
+```js
+import { connectToDB } from "../helperFunctions/connectToDB";
+
+export default async function handler(req, res) {
+  const client = await connectToDB(); // access db instance
+  const db = client.db();
+  const userAccount = await db
+    .collection("users")
+    .findOne({ email: userEmail });   // perform your operations
+  client.close();
+  res.status(201).json({ message: "Test run done" });
+}
+```
 
 
-### Make Multiple Changes to a Document
 
-#### Demo
+### Making Complex Changes 
+
+#### Make Multiple Changes to a Document
 
 ![image-20220208112012841](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220208112012841.png)
 
@@ -5420,7 +5921,62 @@ Snippet of code that did this
   );
 ```
 
+#### Access Nested Documents
 
+The information you'll want to edit won't always be at surface level
+Ex. Edit the idsOnly array in the following DB
+
+![image-20220316071055586](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220316071055586.png)
+
+1. Push data into the saved and idsOnly array
+
+```js
+    await db.collection("users").updateOne(
+      { email: userEmail }, // locate the document using a unique identifier
+      {
+        // Perform a push operation to add array entries
+        // Reaching the arrays we wish to edit requires a bit of drilling
+        $push: {
+          "bookmarks.saved": dataObj,
+          "bookmarks.idsOnly": storeID,
+        },
+      }
+    );
+```
+
+#### Pushing and Removing Entries into Arrays
+
+We've seen pushing in action ion the previous subsection
+When it comes to removing array entries, you must use `$push`
+
+EXAMPLE:
+
+![image-20220316071636104](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20220316071636104.png)
+
+To remove the object circled in red, use the following snippet
+We must specify the exact value of the array entry we intend on removing
+
+```js
+    const dataObj = {
+    	address:"7634 Woodbine Avenue",
+    	category:"Japanese, Sushi Bars",
+    	distance:"6.6 km",
+    	image:"https://s3-media1.fl.yelpcdn.com/bphoto/g4HcbS3qWtwXXKTB597PAQ/o.jpg",
+    	price:"$$$$",
+    	rating:4,
+    	storeID:"Hk1Q874UqawFXq0XzIIBYg",
+    	storeName:"Zen Japanese Restaurant",
+    }
+    
+	await db.collection("users").updateOne(
+      { email: userEmail }, // locate the document to edit using a unique identifier
+      {
+        // Perform a pull operation to remove array entries
+        // Reaching the arrays we wish to edit requires a bit of drilling
+        $pull: { "bookmarks.saved": dataObj },
+      }
+    );
+```
 
 
 
@@ -6256,6 +6812,21 @@ export default NextAuth({
 });
 ```
 
+We can access the user email inside of API routes thanks to how we ended this callback function
+
+API ROUTE:
+
+```JS
+        const session = await getSession({ req: req }); // equals null if logged off
+        if (!session) {
+            res.status(407).json({ message: "Not authenticated!" });
+            return
+        }
+        const userEmail = session.user.email;
+```
+
+
+
 #### Front End Code
 
 components/auth/auth-form.js 	(what matters inside)
@@ -6496,6 +7067,35 @@ I have referred to hashing as "encryption" numerous times, and even named my has
 
 - This is technically misinformation, so I'll have to redo my notes for the Credentials Provider if I choose to teach someone NextAuth
 - Any readers should be aware of this error- I apologize (hi June-bug)
+
+
+
+### Production Prerequisites
+
+NextAuth requires 2 environment variables to work in production
+Not having them during development may induce a warning, but in production it causes a crash
+
+Example:
+
+```
+NEXTAUTH_URL
+https://localeats.vercel.app/
+
+NEXTAUTH_SECRET
+I54t1fn+WDaI2Xy0C95jyZdAMJ1k2MskKisyJt/2qDg=
+```
+
+Explanations:
+
+- `NEXTAUTH_URL`
+    The main url of the website you'll be hosting
+- `NEXTAUTH_SECRET`
+    A random 32 character code used for hashing
+    Create one by entering the following snippet into any command line
+
+```
+openssl rand -base64 32
+```
 
 
 
@@ -6864,10 +7464,6 @@ export default function ProfilePage() {
   return <UserProfile />;
 }
 ```
-
-
-
-### ------- Useful Features -------
 
 
 
@@ -7370,24 +7966,6 @@ export default function useLoginCheck(redirectPath) {
 
 ### Server-side Page Protection
 
-We created our own helper function to help us recycle logic we need to use when guarding our webpages using Node.js 
-
-loginCheckSSR
-
-```REACT
-import { getSession } from "next-auth/react";
-
-// Move the logic that would be in the API route to this helper
-export async function loginCheckSSR(getSeshParameter) {
-  const session = await getSession(getSeshParameter);
-  if (session) {
-    return session; // a truthy 
-  } else {
-    return null;
-  }
-}
-```
-
 #### Demo
 
 Visit the last commit on the provider-only branch of our chapter-wide repo
@@ -7395,14 +7973,13 @@ Visit the last commit on the provider-only branch of our chapter-wide repo
 pages/secret.js
 
 ```react
-import { loginCheckSSR } from "../helpers/loginCheckSSR";
 import classes from "../components/auth/secret.module.scss";
 
 export async function getServerSideProps(context) {
   const getSeshParam = { req: context.req };
-  const response = await loginCheckSSR(getSeshParam); // equals null or an obj
+  const session = await getSession({ req }) // equals null if online or an object
   // If we're offline, redirect to /
-  if (!response) {
+  if (!session) {
     return {
       redirect: {
         destination: "/",
@@ -8098,6 +8675,12 @@ https://zetcode.com/javascript/lodash/
 
 # Backburner
 
+### Questions
+
+If you have a URL like /search?term=Chinese&distance=100
+
+Can you access the query parameters inside getServerSideProps? Or can you only do that via useRouter on the front end?
+
 ### NextAuth
 
 1. We have a list of things to implement on our slack-auth v1 project
@@ -8116,25 +8699,6 @@ https://zetcode.com/javascript/lodash/
 <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211001203335574.png" alt="image-20211001203335574" style="zoom:80%;" />
 
 <img src="C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20211001203412326.png" alt="image-20211001203412326" style="zoom:80%;" />
-
-### Generating Dynamic Pages (URGENT NEED 2 FINISH)
-
-By combining dynamic folders/files, we can iterate over arrays or objects of data and give each entry its own dedicated page
-
-EXAMPLE:
-
-![image-20210930190938883](C:\Users\jason\AppData\Roaming\Typora\typora-user-images\image-20210930190938883.png)
-
-You'll need to give the file we link to data via props
-getStaticProps may require the getStaticPaths method which i don't understand yet
-
-[React - The Complete Guide (incl Hooks, React Router, Redux) | Udemy](https://www.udemy.com/course/react-the-complete-guide-incl-redux/learn/lecture/25616848#overview)
-
-^^ above video explains it best
-
-1. Rekindle your Facebook Profile Page visit idea inside of next-learn
-2. Create a reusable hook that allows you to send data to a specific firebase backend 
-   Save it in your notes and files becasue placing data inside Firebase by manually typing sucks
 
 ### Sql vs NoSQL (incomplete)
 
@@ -8169,18 +8733,3 @@ Some websites rely on dynamically updated information- like Google Docs for exam
 - If a group writes a report, we need each change to be reflected in the document right away or else there will be a lot of clashing 
 - Updating your backend information using the SSR approach is just as helpful as the SSG approach when it comes to improving SEO - just check the source files after your following demonstration!
 
-# Common Bugs
-
-Look for Next.js errors in the console when you render a webpage
-
-- If you have errors present, read the error message and look inside that page's file
-- Look inside any external files that webpage relies on as well
-  Ex. Components rendered on that page that were defined elsewhere`<Navbar>` in pages/order.js
-
-### className did not match
-
-#### Procedure
-
-1. Check to see if you labeled any classes as `class=` instead of `className=`
-   Use CTRL F to scour the files your webpage is involved with
-2. If you do not have any `class=` present, and you've checked all files the webpage with this problem uses... delete to .next folder, then run `npm run dev` to recreate it
